@@ -15,9 +15,30 @@ variable "proxmox_api_token_secret_var" {
 }
 
 variable "template_name" {
-    default = "jammy-template"
+    default = "jammy-template-2"
+    #default = "jammy-ubuntu"
 }
 
 variable ssh_key {
-    default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGV3A7AjEKrTwp8KnWIvF5z5WzqEH/MrBiP5zE07MQaA ken default"
+    default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGV3A7AjEKrTwp8KnWIvF5z5WzqEH/MrBiP5zE07MQaA ken default"           
 }
+
+variable ciuser {
+  default = "pofo14"
+}
+
+variable env {
+    default = "dev"
+}
+
+variable "vm_type" {
+  default = "workload"
+}
+
+variable "vm_name" {
+    default = "test"
+}
+
+#variable "server_hostname" {
+#  default = "${var.env}-${var.vm_type}-${var.vm_name}"
+#}
