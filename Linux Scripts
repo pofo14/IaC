@@ -1,0 +1,13 @@
+qm create 999 --name focal-template --memory 2048 --net0 virtio,bridge=vmbr0
+
+qm importdisk 999 jammy-server-cloudimg-amd64.img local-lvm
+
+qm set 999 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-999-disk-0
+
+qm set 999 --ide0 local-lvm:cloudinit
+
+qm set 999 --boot c --bootdisk scsi0
+
+qm set 999 --serial0 socket --vga serial0
+
+qm template 999
