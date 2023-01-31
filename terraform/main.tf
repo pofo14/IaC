@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source = "telmate/proxmox"
-      version = "2.9.6"
+      version = "2.9.11"
     }
   }
 }
@@ -19,29 +19,37 @@ provider "proxmox" {
 
   # leave tls_insecure set to true unless you have your proxmox SSL certificate situation fully sorted out (if you do, you will know)
   pm_tls_insecure = true
+
+  pm_debug = true
+  pm_log_levels = {
+    _default    = "debug"
+    _capturelog = "tf-debug.log"
+  }   
+}
+
+# output IP Address
+output "vm_ip" {
+  value = proxmox_vm_qemu.vm_factory.*.default_ipv4_address
 }
 
 # resource is formatted to be "[type]" "[entity_name]" so in this case
 # we are looking to create a proxmox_vm_qemu entity named test_server
-resource "proxmox_vm_qemu" "test_server" {
-  count = 1 # just want 1 for now, set to 0 and apply to destroy VM
-  name = "test-vm-${count.index + 1}" #count.index starts at 0, so + 1 means this VM will be named test-vm-1 in proxmox
-
-  # this now reaches out to the vars file. I could've also used this var above in the pm_api_url setting but wanted to spell it out up there. target_node is different than api_url. target_node is which node hosts the template and thus also which node will host the new VM. it can be different than the host you use to communicate with the API. the variable contains the contents "prox-1u"
+resource "proxmox_vm_qemu" "vm_factory" {
+  name = "${var.env}-${var.vm_type}-${var.vm_name}"
+  #name = var.server_hostmane
   target_node = var.proxmox_host
-
-  # another variable with contents "ubuntu-2004-cloudinit-template"
   clone = var.template_name
 
   # basic VM settings here. agent refers to guest agent
   agent = 1
-  os_type = "cloud-init"
-  cores = 2
+  os_type = "ubuntu"
+  cores = 3
   sockets = 1
   cpu = "host"
-  memory = 2048
+  memory = 4096
   scsihw = "virtio-scsi-pci"
   bootdisk = "scsi0"
+  ci_wait = 30
 
   disk {
     slot = 0
@@ -49,7 +57,7 @@ resource "proxmox_vm_qemu" "test_server" {
     size = "10G"
     type = "scsi"
     storage = "local-lvm"
-    iothread = 1
+    iothread = 0
   }
   
   # if you want two NICs, just copy this whole network section and duplicate it
@@ -58,22 +66,35 @@ resource "proxmox_vm_qemu" "test_server" {
     bridge = "vmbr0"
   }
 
-  # not sure exactly what this is for. presumably something about MAC addresses and ignore network changes during the life of the VM
   lifecycle {
     ignore_changes = [
-      network,
+        network,
     ]
   }
-  
-  # the ${count.index + 1} thing appends text to the end of the ip address
-  # in this case, since we are only adding a single VM, the IP will
-  # be 10.98.1.91 since count.index starts at 0. this is how you can create
-  # multiple VMs and have an IP assigned to each (.91, .92, .93, etc.)
 
-  ipconfig0 = "ip=10.98.1.9${count.index + 1}/24,gw=10.98.1.1"
+  #set to get IP from DHCP
+  ipconfig0= "ip=dhcp" 
   
+  ciuser = var.ciuser
   # sshkeys set using variables. the variable contains the text of the key.
   sshkeys = <<EOF
   ${var.ssh_key}
   EOF
+
+}
+
+resource "null_resource" "set-hostname" {
+  connection {
+    type = "ssh"
+    user = "${var.ciuser}"
+    host = proxmox_vm_qemu.vm_factory.*.default_ipv4_address
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo hostnamectl set-hostname ${var.env}-${var.vm_type}-${var.vm_name}",
+      "echo '127.0.0.1 ${var.env}-${var.vm_type}-${var.vm_name}' | sudo tee -a /etc/hosts",
+      "sudo reboot"
+    ]
+  }
 }
