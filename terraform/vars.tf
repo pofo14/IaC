@@ -19,6 +19,8 @@ variable "template_name" {
     #default = "jammy-ubuntu"
 }
 
+# TODO: Need to make this a list and include the Ansible SSH key to be installed by default
+# TODO: Need to ensure no passphrase is required
 variable ssh_key {
     default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGV3A7AjEKrTwp8KnWIvF5z5WzqEH/MrBiP5zE07MQaA ken default"           
 }
