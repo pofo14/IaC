@@ -1,0 +1,21 @@
+---
+
+- name: Install Apache
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Update repository index
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install apache package
+      # ansible.builtin.apt:
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+
+    - name: Add PHP support for apache
+      ansible.builtin.apt:
+        name: libapache2-mod-php
+        state: present
