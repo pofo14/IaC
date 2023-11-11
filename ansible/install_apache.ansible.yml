@@ -5,17 +5,20 @@
   become: true
   tasks:
 
-    - name: Update repository index
+    - name: Install apache and php packages
       ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: present
         update_cache: true
-        
-    - name: Install apache package
-      # ansible.builtin.apt:
-      ansible.builtin.apt:
-        name: apache2
-        state: present
+      when: ansible_distribution == "Ubuntu"
 
-    - name: Add PHP support for apache
-      ansible.builtin.apt:
-        name: libapache2-mod-php
+    - name: Install apache and php packages
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php
         state: present
+        update_cache: true
+      when: ansible_distribution == "CentOS"

@@ -1,0 +1,9 @@
+---
+
+- name: Install Galactus
+  hosts: galactus
+  become: true
+  tasks:
+
+  roles:
+    - role: geerlingguy.node_exporter

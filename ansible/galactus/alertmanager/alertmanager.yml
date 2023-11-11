@@ -1,0 +1,14 @@
+route:
+  receiver: 'mail'
+  repeat_interval: 4h
+  group_by: [ alertname ]
+
+
+receivers:
+  - name: 'mail'
+    email_configs:
+      - smarthost: 'smtp.gmail.com:465'
+        auth_username: 'petroplex56@gmail.com'
+        auth_password: "nXo#q28*uNzv"
+        from: 'petroplex56@gmail.com'
+        to: 'petroplex56@gmail.com'
