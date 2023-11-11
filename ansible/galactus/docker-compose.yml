@@ -1,0 +1,59 @@
+## docker-compose.yml ##
+
+version: '3'
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+  alertmanager-data: {}
+
+services:
+
+#  alertmanager:
+#    container_name: alertmanager
+#    hostname: alertmanager
+#    image: prom/alertmanager
+#    volumes:
+#      - ./alertmanager.conf:/etc/alertmanager/alertmanager.conf
+#      - alertmanager_data:/data
+#    command:
+#      - '--config.file=/etc/alertmanager/alertmanager.conf'
+#    ports:
+#      - 9093:9093
+
+
+  alertmanager:
+    image: prom/alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./alertmanager:/config"
+      - alertmanager-data:/data
+    command: --config.file=/config/alertmanager.yml --log.level=debug
+
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    links:
+      - alertmanager:alertmanager
+    ports:
+      - 9090:9090
+
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    image: grafana/grafana
+    volumes:
+      - ./grafana_datasources.yml:/etc/grafana/provisioning/datasources/all.yaml
+      - ./grafana_config.ini:/etc/grafana/config.ini
+      - grafana_data:/var/lib/grafana
+    ports:
+      - 3000:3000

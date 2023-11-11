@@ -11,3 +11,5 @@ qm set 999 --boot c --bootdisk scsi0
 qm set 999 --serial0 socket --vga serial0
 
 qm template 999
+
+ssh-copy-id -i ~/.ssh/mykey user@host
