@@ -1,14 +1,4 @@
 
-# install NFS
-#sudo apt install nfs-kernel-server
-# ID MUST MATCH PLEX SERVER
-#sudo adduser plex 
-
-# INSTALL  docker
-
-  # add user to docker group
-#sudo usermod -aG docker $USER
-
 # write script for all directory creations
 #sudo mkdir /mnt/data/torrents/{movies,tv,books}
 #cd /mnt/data
