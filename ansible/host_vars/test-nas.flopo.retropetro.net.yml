@@ -4,7 +4,7 @@ appdata_path: /opt/appdata
 container_config_path: /config
 container_data_path: /data
 containers:
--   active: true
+- active: true
     image: lscr.io/linuxserver/radarr:latest
     ports:
     - 7878:7878
@@ -26,7 +26,7 @@ containers:
     image: lscr.io/linuxserver/prowlarr:latest
     ports:
     - 9696:9696
-    restart: unless-stopped
+    restart: unless-stopped 
     service_name: prowlarr
     volumes:
     - '{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}'

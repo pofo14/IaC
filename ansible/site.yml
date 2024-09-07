@@ -1,96 +1,94 @@
 ---
-  - hosts: starlord
-    become: true
-    pre_tasks:
+- hosts: starlord
+  become: true
+  pre_tasks:
+    - name: Create Media User
+      ansible.builtin.user:
+        name: media
+        comment: Media User
+        create_home: false
+        password: $6$moRTU8CvTEUDwaPF$JB6sqi.gAvBWytOBZYw7nDbRH220.ar.Hi9Y61ET4GSB3WQ4TBDUrVsg5bTp/Bjmw1oa8OAn1kNhF3Xwh4lcE1
 
-      - name: Create Media User
-        ansible.builtin.user:
-          name: media
-          comment: Media User
-          create_home: false
-          password: $6$moRTU8CvTEUDwaPF$JB6sqi.gAvBWytOBZYw7nDbRH220.ar.Hi9Y61ET4GSB3WQ4TBDUrVsg5bTp/Bjmw1oa8OAn1kNhF3Xwh4lcE1
+    - name: Add pofo14 to Media Groups
+      ansible.builtin.user:
+        name: pofo14
+        append: true
+        groups: media
 
-      - name: Add pofo14 to Media Groups
-        ansible.builtin.user:
-          name: pofo14
-          append: true
-          groups: media
+    - name: Create node_exporter cert dir
+      ansible.builtin.file:
+        path: /etc/node_exporter
+        state: directory
+        owner: root
+        group: root
 
-      - name: Create node_exporter cert dir
-        file:
-          path: "/etc/node_exporter"
-          state: directory
-          owner: root
-          group: root
+    - name: Create NFS Mount Directory
+      ansible.builtin.file:
+        path: /mnt/media
+        state: directory
+        owner: pofo14
+        group: media
 
-      - name: Create NFS Mount Directory
-        file:
-          path: "/mnt/media"
-          state: directory
-          owner: pofo14
-          group: media
+  roles:
+    - role: joenyland.plexmediaserver
+    - role: Oefenweb.nfs_client
+    - role: geerlingguy.node_exporter
 
-    roles:
-      - role: joenyland.plexmediaserver
-      - role: Oefenweb.nfs_client
-      - role: geerlingguy.node_exporter
+  post_tasks:
+    - name: Add plex user to Media Groups
+      ansible.builtin.user:
+        name: plex
+        append: true
+        groups: media
 
-    post_tasks:
-      - name: Add plex user to Media Groups
-        ansible.builtin.user:
-          name: plex
-          append: true
-          groups: media 
+- hosts: nas
+  become: true
 
-  - hosts: nas
-    become: true
+  pre_tasks:
+    - name: Create plex User
+      ansible.builtin.user:
+        name: plex
+        comment: Plex User-MatchID on Plex server
+        uid: 997
+        create_home: false
+        password:
 
-    pre_tasks:
-      - name: Create plex User
-        ansible.builtin.user:
-          name: plex
-          comment: Plex User-MatchID on Plex server
-          uid: 997
-          create_home: false
-          password: !
+    - name: Ensure group "plex" exists with correct gid
+      ansible.builtin.group:
+        name: plex
+        state: present
+        gid: 997
 
-      - name: Ensure group "plex" exists with correct gid
-        ansible.builtin.group:
-          name: plex
-          state: present
-          gid: 997
+    - name: Create Media User
+      ansible.builtin.user:
+        name: media
+        comment: Media User
+        create_home: false
+        password: $6$moRTU8CvTEUDwaPF$JB6sqi.gAvBWytOBZYw7nDbRH220.ar.Hi9Y61ET4GSB3WQ4TBDUrVsg5bTp/Bjmw1oa8OAn1kNhF3Xwh4lcE1
 
-      - name: Create Media User
-        ansible.builtin.user:
-          name: media
-          comment: Media User
-          create_home: false
-          password: $6$moRTU8CvTEUDwaPF$JB6sqi.gAvBWytOBZYw7nDbRH220.ar.Hi9Y61ET4GSB3WQ4TBDUrVsg5bTp/Bjmw1oa8OAn1kNhF3Xwh4lcE1
+    - name: Add pofo14 to Media Groups (need to add docker and rom users later)
+      ansible.builtin.user:
+        name: pofo14
+        append: true
+        groups: media
 
-      - name: Add pofo14 to Media Groups (need to add docker and rom users later)
-        ansible.builtin.user:
-          name: pofo14
-          append: true
-          groups: media
+    - name: Create Mount Data Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        group: media
+        owner: pofo14
+        mode: "0775"
+      loop:
+        - /mnt/disk1
+        - /mnt/disk2
+        - /mnt/disk3
+        - /mnt/parity1
 
-      - name: Create Mount Data Directories
-        ansible.builtin.file:
-          path: "{{ item }}"
-          state: directory
-          group: media
-          owner: pofo14
-          mode: '0775'
-        loop:
-          - /mnt/disk1
-          - /mnt/disk2
-          - /mnt/disk3          
-          - /mnt/parity1          
-
-    roles:
-      - role: disk
-      - role: ironicbadger.snapraid
-      - role: tigattack.mergerfs
-      - role: geerlingguy.nfs
-      - role: geerlingguy.docker
-      - role: ironicbadger.docker_compose_generator
-        tags: compose
+  roles:
+    - role: kevincoakley.disk
+    - role: ironicbadger.snapraid
+    - role: geerlingguy.nfs
+    - role: geerlingguy.docker
+    - role: ironicbadger.docker_compose_generator
+      tags: compose

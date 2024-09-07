@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Joe Nyland
+  role_name: plexmediaserver
+  namespace: joenyland
+  description: Installs Plex Media Server
+  license: MIT
+  min_ansible_version: "2.1"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm # 12 (stable)
+        - bullseye # 11 (oldstable)
+        - buster # 10 (oldoldstable)
+  galaxy_tags:
+    - plex
+dependencies: []

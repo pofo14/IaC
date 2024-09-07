@@ -39,3 +39,9 @@ terraform.rc
 
 ## Don't check in settings 
 .vscode/
+
+## Ignore the python virtual environment
+ansible_env/
+
+# Ignore Ansible roles installed by requirements
+/roles/
