@@ -36,3 +36,6 @@ terraform.rc
 
 #### ANSIBLE ####
 *.retry
+
+## Don't check in settings 
+.vscode/

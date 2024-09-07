@@ -1,3 +1,4 @@
+# code: language=ansible
 ---
 - name: Mount formatted disks using ansible-role-disk
   hosts: all
@@ -66,11 +67,33 @@
         node_exporter_info: "{{ node_exporter_info | default([]) + [{'ip': ansible_default_ipv4.address, 'port': 9100}] }}"
 
   post_tasks:
+
+    - name: Debug node_exporter_info
+      debug:
+        var: node_exporter_info
+      run_once: true
+
+    - name: Debug JSON content
+      debug:
+        msg: "{{ {'node_exporter_hosts': node_exporter_info} | to_json }}"
+      run_once: true
+
     - name: Write node_exporter hosts to file
-      copy:
-        content: "{{ {'node_exporter_hosts': node_exporter_info} | to_json }}"
+      local_action:
+        module: copy
+        content: "{{ {'node_exporter_hosts': node_exporter_info} | to_nice_json }}"
         dest: "/tmp/node_exporter_hosts.json"
+      run_once: true
+
+    - name: Check if file exists
+      stat:
+        path: "/home/pofo14/node_exporter_hosts.json"
+      register: file_stat
       delegate_to: localhost
       run_once: true
 
+    - name: Display file info
+      debug:
+        var: file_stat
+      run_once: true
   

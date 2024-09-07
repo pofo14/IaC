@@ -8,7 +8,7 @@ delete_pars:
 	ansible-playbook ./playbooks/delete-partitions.yml -i staging --limit nas --ask-become-pass
 
 mount-disk-nas:
-	ansible-playbook -vvv ./playbooks/mount-disks.yml -i staging --limit nas --ask-become-pass
+	ansible-playbook ./playbooks/mount-disks.yml -i staging --limit nas --ask-become-pass
 
 reqs:
 	ansible-galaxy install -r requirements.yaml
