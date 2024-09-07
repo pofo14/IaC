@@ -1,3 +1,5 @@
+# code: language=ansible
+
 appdata_path: /opt/appdata
 container_config_path: /config
 container_data_path: /data
