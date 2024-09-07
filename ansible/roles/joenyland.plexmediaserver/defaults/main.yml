@@ -1,5 +1,0 @@
----
-# Should the plexmediaserver service start at boot?
-plexmediaserver_service_enabled: true
-# What state should the plexmediaserver service be in? e.g. started/stopped
-plexmediaserver_service_state: started
