@@ -1,0 +1,39 @@
+- name: Update Prometheus configuration
+  hosts: prometheus_server
+  become: yes
+  vars:
+    prometheus_targets_file: "/etc/prometheus/file_sd/node_exporter_targets.json"
+
+  tasks:
+    - name: Read node_exporter hosts file
+      slurp:
+        src: "/tmp/node_exporter_hosts.json"
+      register: node_exporter_hosts_content
+
+    - name: Parse node_exporter hosts content
+      set_fact:
+        node_exporter_hosts: "{{ node_exporter_hosts_content['content'] | b64decode | from_json }}"
+
+    - name: Generate Prometheus targets JSON file
+      copy:
+        content: |
+          [
+            {
+              "targets": [
+                {% for host in node_exporter_hosts.node_exporter_hosts %}
+                "{{ host.ip }}:{{ host.port }}"{% if not loop.last %},{% endif %}
+                {% endfor %}
+              ],
+              "labels": {
+                "job": "node"
+              }
+            }
+          ]
+        dest: "{{ prometheus_targets_file }}"
+      notify: Reload Prometheus
+
+  handlers:
+    - name: Reload Prometheus
+      systemd:
+        name: prometheus
+        state: reloaded

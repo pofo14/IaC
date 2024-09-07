@@ -1,0 +1,13 @@
+---
+- name: Partition, format disks, and update host vars
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Create GPT partition
+      community.general.parted:
+        device: "/dev/disk/by-id/{{ item }}"
+        label: gpt
+        number: 1
+        state: absent
+      loop: "{{ new_disk_ids }}"

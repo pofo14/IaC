@@ -1,0 +1,197 @@
+---
+
+## disks
+parted:
+- device: /dev/sdb
+  number: 1
+  label: gpt
+  state: present
+
+- device: /dev/sdc
+  number: 1
+  label: gpt
+  state: present
+
+- device: /dev/sdd
+  number: 1
+  label: gpt
+  state: present
+
+- device: /dev/sde
+  number: 1
+  label: gpt
+  state: present
+
+filesystem:
+- fstype: ext4
+  dev: /dev/sdb1
+
+- fstype: ext4
+  dev: /dev/sdc1
+
+- fstype: ext4
+  dev: /dev/sdd1
+
+- fstype: ext4
+  dev: /dev/sde1
+
+mount:
+- path: /mnt/disk1
+  src: /dev/sdb1
+  fstype: ext4
+  opts: defaults
+
+- path: /mnt/disk2
+  src: /dev/sdc1
+  fstype: ext4
+  opts: defaults
+
+- path: /mnt/disk3
+  src: /dev/sdd1
+  fstype: ext4
+  opts: defaults
+
+- path: /mnt/parity1
+  src: /dev/sde1
+  fstype: ext4
+  opts: defaults
+
+## snapraid
+snapraid_config_excludes:
+- "*.unrecoverable"
+- "/tmp/"
+- "/lost+found/"
+- "lost+found/"
+- ".nfo"
+- "*.!sync"
+
+snapraid_install: true
+snapraid_runner: true
+
+snapraid_data_disks:
+  - { path: /mnt/disk1, content: true }
+  - { path: /mnt/disk2, content: true }
+  - { path: /mnt/disk3, content: false} 
+
+snapraid_parity_disks:
+- { path: /mnt/parity1, content: true }
+
+snapraid_content_files:
+- /var/snapraid.content
+
+
+## snapraid runner
+snapraid_runner_healthcheck_io_uuid: ""
+
+snapraid_runner_email_address: "petroplex56@gmail.com"
+snapraid_runner_email_pass: "nXo#q28*uNzv"
+
+snapraid_sync_schedule:
+  minute: 30
+  hour: 2
+
+snapraid_scrub_schedule:
+  hour: 5
+  weekday: 4  
+
+## mergerfs
+
+mergerfs_mounts:
+- path: /mnt/data
+  branches:
+      - /mnt/disk*
+  # options: defaults,nonempty,allow_other,use_ino
+  options: >
+    defaults,nonempty,allow_other,use_ino,cache.files=partial,ignorepponrename=true,moveonenospc=true,dropcacheonclose=true,minfreespace=25M,func.getattr=newest,category.create=mfs,fsname=mergerfs
+
+
+# NFS
+nfs_exports: ["/mnt/data/ *(fsid=0,rw,no_subtree_check)"]
+
+# ironicbadger.docker-compose-generator
+
+# global vars
+global_env_vars:
+  - "PUID=1000"
+  - "PGID=1001"
+  - "TZ=America/New_York"
+appdata_path: /opt/appdata
+storage_path: /mnt/data
+container_config_path: /config
+container_data_path: /data
+
+containers:
+  ### Arrs 
+  ###
+  - service_name: radarr
+    active: true
+    image: lscr.io/linuxserver/radarr:latest
+    volumes:
+      - "{{ appdata_path }}/arrs/radarr:{{ container_config_path }}"
+      - "{{ storage_path }}:{{ container_data_path }}"
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  - service_name: sonarr
+    active: true
+    image: lscr.io/linuxserver/sonarr:latest
+    volumes:
+      - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
+      - "{{ storage_path }}:{{ container_data_path }}"    
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  - service_name: prowlarr
+    active: true
+    image: lscr.io/linuxserver/prowlarr:latest
+    volumes:
+      - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}" 
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+  ### Download Apps 
+  ###
+  - service_name: deluge
+    active: true
+    image: lscr.io/linuxserver/deluge:latest
+    volumes:
+      - "{{ appdata_path }}/downloaders/deluge:{{ container_config_path }}"
+      - "{{ storage_path }}:{{ container_data_path }}"    
+    ports:
+      - 8112:8112
+      - 6881:6881
+      - 6881:6881/udp
+    restart: always
+
+  - service_name: qbittorrent
+    active: true
+    image: cr.hotio.dev/hotio/qbittorrent
+    volumes:
+      - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
+      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"    
+    ports:
+      - "8080:8080"
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+    restart: always
+
+  - service_name: sabnzbd
+    active: true
+    image: cr.hotio.dev/hotio/sabnzbd
+    volumes:
+      - "{{ appdata_path }}/downloaders/sabnzb:{{ container_config_path }}"
+      - "{{ storage_path }}/usenet:{{ container_data_path }}/usenet"    
+    ports:
+      - "8080:8080"
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+    restart: always

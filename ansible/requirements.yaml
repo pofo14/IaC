@@ -1,0 +1,13 @@
+roles:
+- src: joenyland.plexmediaserver
+- src: Oefenweb.nfs_client
+- src: geerlingguy.node_exporter 
+- src: geerlingguy.docker
+- src: geerlingguy.nfs
+- src: ironicbadger.snapraid
+- src: ironicbadger.docker_compose_generator
+- src: grog.package
+- src: kevincoakley.disk
+
+collections:
+- prometheus.prometheus

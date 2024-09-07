@@ -1,0 +1,6 @@
+---
+
+# Oefenweb.nfs_client
+nfs_client_mounts:
+  - src: test-server:/
+    path: /mnt/test-nfs
