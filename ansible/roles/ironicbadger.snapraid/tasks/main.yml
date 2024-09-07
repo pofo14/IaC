@@ -1,0 +1,14 @@
+---
+- name: Install snapraid
+  ansible.builtin.include_tasks: install-debian.yml
+  when: ansible_os_family == 'Debian' and snapraid_install
+
+- name: Configure snapraid
+  ansible.builtin.include_tasks: configure.yml
+- name: Install and configure snapraid-runner
+  ansible.builtin.include_tasks: snapraid-runner.yml
+  when: snapraid_runner
+
+- name: Schedule snapraid
+  ansible.builtin.include_tasks: cron.yml
+  when: not snapraid_runner
