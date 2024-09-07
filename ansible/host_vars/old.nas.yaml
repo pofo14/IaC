@@ -1,0 +1,87 @@
+---
+
+## disks
+parted:
+- device: /dev/sdb
+  number: 1
+  label: gpt
+  state: present
+
+- device: /dev/sdc
+  number: 1
+  label: gpt
+  state: present
+
+- device: /dev/sdd
+  number: 1
+  label: gpt
+  state: present
+
+- device: /dev/sde
+  number: 1
+  label: gpt
+  state: present
+
+filesystem:
+- fstype: ext4
+  dev: /dev/sdb1
+
+- fstype: ext4
+  dev: /dev/sdc1
+
+- fstype: ext4
+  dev: /dev/sdd1
+
+- fstype: ext4
+  dev: /dev/sde1
+
+mount:
+- path: /mnt/disk1
+  src: /dev/sdb1
+  fstype: ext4
+  opts: defaults
+
+- path: /mnt/disk2
+  src: /dev/sdc1
+  fstype: ext4
+  opts: defaults
+
+- path: /mnt/disk3
+  src: /dev/sdd1
+  fstype: ext4
+  opts: defaults
+
+- path: /mnt/parity1
+  src: /dev/sde1
+  fstype: ext4
+  opts: defaults
+
+## snapraid
+snapraid_config_excludes:
+  - "*.unrecoverable"
+  - "/tmp/"
+  - "/lost+found/"
+  - "lost+found/"
+  - ".nfo"
+  - "*.!sync"
+
+snapraid_install: true
+snapraid_runner: true
+
+snapraid_data_disks:
+  - path: /mnt/disk1
+    content: true
+  - path: /mnt/disk2
+    content: true
+  - path: /mnt/disk3
+
+snapraid_parity_disks:
+  - path: /mnt/parity1
+    content: true
+
+snapraid_content_files:
+  - /var/snapraid.content
+
+snapraid_scrub_schedule:
+  hour: 5
+  weekday: 4  

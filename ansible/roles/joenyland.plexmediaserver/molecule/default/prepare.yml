@@ -1,0 +1,25 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    # The plexmediaserver package detects if it's being installed in a Docker container and
+    # opts not to install the systemd service file or user. The following works around this.
+    - name: Install plexmediaserver service file
+      copy:
+        src: plexmediaserver.service
+        dest: /lib/systemd/system/plexmediaserver.service
+        mode: '0644'
+    - name: Create system user
+      user:
+        name: plex
+        system: true
+        shell: /usr/sbin/nologin
+        create_home: false
+        home: /var/lib/plexmediaserver
+    - name: Create system user home
+      file:
+        name: /var/lib/plexmediaserver
+        state: directory
+        mode: '0755'
+        owner: plex
+        group: plex
