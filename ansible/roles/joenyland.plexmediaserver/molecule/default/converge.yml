@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include joenyland.plexmediaserver"
-      include_role:
-        name: "joenyland.plexmediaserver"
