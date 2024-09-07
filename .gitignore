@@ -45,3 +45,6 @@ ansible_env/
 
 # Ignore Ansible roles installed by requirements
 /roles/
+
+# generated files
+node_exporter_hosts.json
