@@ -1,27 +1,23 @@
-- name: Update Prometheus configuration
-  hosts: prometheus_server
-  become: yes
+# update_prometheus_targets.yml
+---
+- name: Update Prometheus node_exporter targets
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - node_exporters.yml
   vars:
+    prometheus_server: prometheus.flopo.retropetro.net
     prometheus_targets_file: "/etc/prometheus/file_sd/node_exporter_targets.json"
 
   tasks:
-    - name: Read node_exporter hosts file
-      slurp:
-        src: "/tmp/node_exporter_hosts.json"
-      register: node_exporter_hosts_content
-
-    - name: Parse node_exporter hosts content
-      set_fact:
-        node_exporter_hosts: "{{ node_exporter_hosts_content['content'] | b64decode | from_json }}"
-
-    - name: Generate Prometheus targets JSON file
-      copy:
-        content: |
+    - name: Generate Prometheus targets JSON content
+      ansible.builtin.set_fact:
+        prometheus_targets: |
           [
             {
               "targets": [
-                {% for host in node_exporter_hosts.node_exporter_hosts %}
-                "{{ host.ip }}:{{ host.port }}"{% if not loop.last %},{% endif %}
+                {% for exporter in node_exporters %}
+                "{{ exporter.ip }}:{{ exporter.port }}"{% if not loop.last %},{% endif %}
                 {% endfor %}
               ],
               "labels": {
@@ -29,11 +25,27 @@
               }
             }
           ]
-        dest: "{{ prometheus_targets_file }}"
-      notify: Reload Prometheus
 
-  handlers:
-    - name: Reload Prometheus
-      systemd:
-        name: prometheus
-        state: reloaded
+    - name: Create temporary JSON file
+      ansible.builtin.copy:
+        content: "{{ prometheus_targets | to_nice_json }}"
+        dest: "/tmp/node_exporter_targets.json"
+        mode: "0600"
+
+    - name: Copy JSON file to Prometheus server
+      ansible.builtin.copy:
+        src: "/tmp/node_exporter_targets.json"
+        dest: "{{ prometheus_targets_file }}"
+        mode: "0600"
+      delegate_to: "{{ prometheus_server }}"
+
+    - name: Remove temporary JSON file
+      ansible.builtin.file:
+        path: "/tmp/node_exporter_targets.json"
+        state: absent
+
+#    - name: Reload Prometheus
+#      ansible.builtin.systemd:
+#        name: prometheus
+#        state: restarted
+#      delegate_to: "{{ prometheus_server }}"
