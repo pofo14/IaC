@@ -1,5 +1,6 @@
 ---
-- hosts: starlord
+- name: Configure Plex Server
+  hosts: plex
   become: true
   pre_tasks:
     - name: Create Media User
@@ -15,12 +16,11 @@
         append: true
         groups: media
 
-    - name: Create node_exporter cert dir
-      ansible.builtin.file:
-        path: /etc/node_exporter
-        state: directory
-        owner: root
-        group: root
+  tasks:
+    - name: Install and configure node_exporter
+      ansible.builtin.include_tasks: tasks/install_node_exporter.yml
+      tags:
+        - node_exporter
 
     - name: Create NFS Mount Directory
       ansible.builtin.file:
@@ -28,11 +28,11 @@
         state: directory
         owner: pofo14
         group: media
+        mode: "0775"
 
   roles:
     - role: joenyland.plexmediaserver
-    - role: Oefenweb.nfs_client
-    - role: geerlingguy.node_exporter
+#    - role: Oefenweb.nfs_client
 
   post_tasks:
     - name: Add plex user to Media Groups
@@ -41,7 +41,8 @@
         append: true
         groups: media
 
-- hosts: nas
+- name: Configure NAS server
+  hosts: nas
   become: true
 
   pre_tasks:
