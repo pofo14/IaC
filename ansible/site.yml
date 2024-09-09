@@ -117,8 +117,5 @@
 
   roles:
     - role: kevincoakley.disk
-#    - role: ironicbadger.snapraid
-#    - role: geerlingguy.nfs
     - role: geerlingguy.docker
     - role: ironicbadger.docker_compose_generator
-      tags: compose
