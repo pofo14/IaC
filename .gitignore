@@ -42,6 +42,7 @@ terraform.rc
 
 ## Ignore the python virtual environment
 ansible_env/
+.venv/
 
 # Ignore Ansible roles installed by requirements
 roles/

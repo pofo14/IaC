@@ -1,1 +1,27 @@
 TODO: Create Terraform Main.tf to create test-nas from scratch with 6-8 disks, as I created new.  Have backup, but a fresh install would be good as well.
+
+
+##### git workflor
+
+# On Workstation A
+git checkout main
+git pull origin main
+git checkout -b new-feature
+# Work on your feature
+git add .
+git commit -m "Describe your changes"
+git push origin new-feature
+
+# On Workstation B
+git fetch origin
+git checkout new-feature
+git pull origin new-feature
+# Continue working on your feature
+
+### when completed
+git checkout main
+git pull origin main
+git merge new-feature
+git push origin main
+
+
