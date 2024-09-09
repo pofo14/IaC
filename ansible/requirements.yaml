@@ -1,7 +1,6 @@
 roles:
 - src: joenyland.plexmediaserver
-- src: Oefenweb.nfs_client
-- src: geerlingguy.node_exporter 
+- src: Oefenweb.nfs_client 
 - src: geerlingguy.docker
 - src: geerlingguy.nfs
 - src: ironicbadger.snapraid

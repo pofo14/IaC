@@ -1,17 +1,32 @@
+##geerlingguy.docker
+docker_edition: 'ce'
+docker_packages_state: present
+docker_service_manage: true
+docker_service_state: started
+docker_service_enabled: true
+docker_restart_handler_state: restarted
+docker_install_compose_plugin: true
+docker_compose_package: docker-compose-plugin
+docker_compose_package_state: present
+docker_add_repo: false
+docker_users:
+  - pofo14
+  
 # ironicbadger.docker-compose-generator
-
 # global vars
 global_env_vars:
   - "PUID=1000"
   - "PGID=1001"
   - "TZ=America/New_York"
+
+docker_compose_generator_output_path: "/opt/appdata"
 appdata_path: /opt/appdata
 storage_path: /mnt/data
 container_config_path: /config
 container_data_path: /data
 
 containers:
-  ### Arrs 
+  ### Arrs
   ###
   - service_name: radarr
     active: true
@@ -28,7 +43,7 @@ containers:
     image: lscr.io/linuxserver/sonarr:latest
     volumes:
       - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
-      - "{{ storage_path }}:{{ container_data_path }}"    
+      - "{{ storage_path }}:{{ container_data_path }}"
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -37,19 +52,19 @@ containers:
     active: true
     image: lscr.io/linuxserver/prowlarr:latest
     volumes:
-      - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}" 
+      - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}"
     ports:
       - 9696:9696
     restart: unless-stopped
 
-  ### Download Apps 
+  ### Download Apps
   ###
   - service_name: deluge
     active: true
     image: lscr.io/linuxserver/deluge:latest
     volumes:
       - "{{ appdata_path }}/downloaders/deluge:{{ container_config_path }}"
-      - "{{ storage_path }}:{{ container_data_path }}"    
+      - /tank:/roms
     ports:
       - 8112:8112
       - 6881:6881
@@ -61,7 +76,8 @@ containers:
     image: cr.hotio.dev/hotio/qbittorrent
     volumes:
       - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
-      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"    
+      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
+      - /tank:/roms
     ports:
       - "8080:8080"
     environment:
@@ -76,7 +92,7 @@ containers:
     image: cr.hotio.dev/hotio/sabnzbd
     volumes:
       - "{{ appdata_path }}/downloaders/sabnzb:{{ container_config_path }}"
-      - "{{ storage_path }}/usenet:{{ container_data_path }}/usenet"    
+      - "{{ storage_path }}/usenet:{{ container_data_path }}/usenet"
     ports:
       - "8080:8080"
     environment:

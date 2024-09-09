@@ -46,19 +46,47 @@
   become: true
 
   pre_tasks:
-    - name: Create plex User
+
+    - name: Ensure plex user exists
       ansible.builtin.user:
         name: plex
         comment: Plex User-MatchID on Plex server
-        uid: 997
         create_home: false
-        password:
+        state: present
+
+    # - name: Handle plex user creation
+    #   block:
+    #     - name: Check existing plex user
+    #       ansible.builtin.getent:
+    #         database: passwd
+    #         key: plex
+    #       register: existing_plex_user
+
+    #     - name: Display existing plex user info
+    #       ansible.builtin.debug:
+    #         msg: "Existing plex user: {{ existing_plex_user.ansible_facts.getent_passwd.plex | default('Not found') }}"
+
+    #     - name: Create plex user without specifying UID
+    #       ansible.builtin.user:
+    #         name: plex
+    #         comment: Plex User-MatchID on Plex server
+    #         create_home: false
+    #         state: present
+    #       when: existing_plex_user.ansible_facts.getent_passwd.plex is not defined
+
+    #     - name: Warn about UID mismatch
+    #       ansible.builtin.debug:
+    #         msg: "Warning: plex user exists but with a different UID. Current UID: {{ existing_plex_user.ansible_facts.getent_passwd.plex[1] }}"
+    #       when: 
+    #         - existing_plex_user.ansible_facts.getent_passwd.plex is defined
+    #         - existing_plex_user.ansible_facts.getent_passwd.plex[1] != '997'
+
+    #   when: plex_user_result is failed
 
     - name: Ensure group "plex" exists with correct gid
       ansible.builtin.group:
         name: plex
         state: present
-        gid: 997
 
     - name: Create Media User
       ansible.builtin.user:
@@ -72,6 +100,7 @@
         name: pofo14
         append: true
         groups: media
+        state: present
 
     - name: Create Mount Data Directories
       ansible.builtin.file:
@@ -88,8 +117,8 @@
 
   roles:
     - role: kevincoakley.disk
-    - role: ironicbadger.snapraid
-    - role: geerlingguy.nfs
+#    - role: ironicbadger.snapraid
+#    - role: geerlingguy.nfs
     - role: geerlingguy.docker
     - role: ironicbadger.docker_compose_generator
       tags: compose
