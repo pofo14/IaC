@@ -19,7 +19,7 @@ global_env_vars:
   - "PGID=1001"
   - "TZ=America/New_York"
 
-docker_compose_generator_output_path: "/opt/appdata"
+docker_compose_generator_output_path: "/home/pofo14"
 appdata_path: /opt/appdata
 storage_path: /mnt/data
 container_config_path: /config
@@ -73,7 +73,7 @@ containers:
 
   - service_name: qbittorrent
     active: true
-    image: cr.hotio.dev/hotio/qbittorrent
+    image: ghcr.io/hotio/qbittorrent
     volumes:
       - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
       - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
@@ -89,12 +89,12 @@ containers:
 
   - service_name: sabnzbd
     active: true
-    image: cr.hotio.dev/hotio/sabnzbd
+    image: ghcr.io/hotio/sabnzbd
     volumes:
       - "{{ appdata_path }}/downloaders/sabnzb:{{ container_config_path }}"
       - "{{ storage_path }}/usenet:{{ container_data_path }}/usenet"
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       - PUID=1000
       - PGID=1001
