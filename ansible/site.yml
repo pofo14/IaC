@@ -77,7 +77,7 @@
     #     - name: Warn about UID mismatch
     #       ansible.builtin.debug:
     #         msg: "Warning: plex user exists but with a different UID. Current UID: {{ existing_plex_user.ansible_facts.getent_passwd.plex[1] }}"
-    #       when: 
+    #       when:
     #         - existing_plex_user.ansible_facts.getent_passwd.plex is defined
     #         - existing_plex_user.ansible_facts.getent_passwd.plex[1] != '997'
 
@@ -113,9 +113,14 @@
         - /mnt/disk1
         - /mnt/disk2
         - /mnt/disk3
+        - /mnt/disk1/array
+        - /mnt/disk2/array
+        - /mnt/disk3/array
         - /mnt/parity1
 
   roles:
     - role: kevincoakley.disk
     - role: geerlingguy.docker
     - role: ironicbadger.docker_compose_generator
+    - role: ironicbadger.snapraid
+      tags: snapraid
