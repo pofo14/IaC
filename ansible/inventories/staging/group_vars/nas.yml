@@ -1,4 +1,4 @@
-##geerlingguy.docker
+# geerlingguy.docker
 docker_edition: 'ce'
 docker_packages_state: present
 docker_service_manage: true
@@ -11,7 +11,7 @@ docker_compose_package_state: present
 docker_add_repo: false
 docker_users:
   - pofo14
-  
+
 # ironicbadger.docker-compose-generator
 # global vars
 global_env_vars:
@@ -101,3 +101,45 @@ containers:
       - UMASK=002
       - TZ=America/New_York
     restart: always
+
+
+## Snapraid settings
+
+snapraid_config_excludes:
+  - '*.unrecoverable'
+  - /tmp/
+  - /lost+found/
+  - lost+found/
+  - .nfo
+  - '*.!sync'
+
+snapraid_content_files:
+  - /var/snapraid.content
+  - /mnt/disk1/array/snapraid.content
+  - /mnt/disk2/array/snapraid.content
+
+snapraid_data_disks:
+  - content: true
+    path: /mnt/disk1
+  - content: true
+    path: /mnt/disk2
+  - content: false
+    path: /mnt/disk3
+
+snapraid_install: true
+snapraid_parity_disks:
+  - content: true
+    path: /mnt/parity1
+
+snapraid_runner: true
+snapraid_runner_email_address: petroplex56@gmail.com
+snapraid_runner_email_pass: nXo#q28*uNzv
+snapraid_runner_healthcheck_io_uuid: ''
+
+snapraid_scrub_schedule:
+  hour: 5
+  weekday: 4
+
+snapraid_sync_schedule:
+  hour: 2
+  minute: 30
