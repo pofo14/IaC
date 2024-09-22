@@ -1,7 +1,3 @@
-# grog.package
-# package_list:
-#  - name: webmin
-
 # geerlingguy.docker
 docker_edition: 'ce'
 docker_packages_state: present
@@ -11,7 +7,8 @@ docker_service_enabled: true
 docker_restart_handler_state: restarted
 docker_install_compose_plugin: true
 docker_compose_package: docker-compose-plugin
-docker_compose_package_state: present
+docker_compose_package_state: present 
+docker_users_manage: true
 docker_add_repo: false
 docker_users:
   - pofo14
@@ -44,7 +41,7 @@ containers:
 
   - service_name: sonarr
     active: true
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:develop
     volumes:
       - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
       - "{{ storage_path }}:{{ container_data_path }}"
@@ -69,6 +66,12 @@ containers:
     volumes:
       - "{{ appdata_path }}/downloaders/deluge:{{ container_config_path }}"
       - /tank:/roms
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+      - DELUGE_LOGLEVEL=error      
     ports:
       - 8112:8112
       - 6881:6881
@@ -106,9 +109,7 @@ containers:
       - TZ=America/New_York
     restart: always
 
-
 ## Snapraid settings
-
 snapraid_config_excludes:
   - '*.unrecoverable'
   - /tmp/
@@ -121,29 +122,48 @@ snapraid_content_files:
   - /var/snapraid.content
   - /mnt/disk1/array/snapraid.content
   - /mnt/disk2/array/snapraid.content
+  - /mnt/parity1/snapraid.content   
 
 snapraid_data_disks:
-  - content: true
-    path: /mnt/disk1
-  - content: true
-    path: /mnt/disk2
   - content: false
-    path: /mnt/disk3
+    path: /mnt/disk0/media/
+  - content: false
+    path: /mnt/disk1/media/
+  - content: false
+    path: /mnt/disk2/media/
+  - content: false
+    path: /mnt/disk3/media/
+  - content: false
+    path: /mnt/disk4/media/
+  - content: false
+    path: /mnt/disk5/media/
+  - content: false
+    path: /mnt/disk6/media/
+  - content: false
+    path: /mnt/disk7/media/    
+  - content: false
+    path: /mnt/disk8/media/    
+  - content: false
+    path: /mnt/disk9/media/    
+  - content: false
+    path: /mnt/disk10/media/    
+  - content: false
+    path: /mnt/disk11/media/    
+  - content: false
+    path: /mnt/disk12/media/    
+
 
 snapraid_install: true
 snapraid_parity_disks:
-  - content: true
-    path: /mnt/parity1
+   - content: false
+     path: /mnt/parity1
+   - content: false
+     path: /mnt/parity2
 
 snapraid_runner: true
 snapraid_runner_email_address: petroplex56@gmail.com
 snapraid_runner_email_pass: nXo#q28*uNzv
 snapraid_runner_healthcheck_io_uuid: ''
-
-snapraid_scrub_schedule:
-  hour: 5
-  weekday: 4
-
-snapraid_sync_schedule:
-  hour: 2
-  minute: 30
+snapraid_runner_scrub: false
+snapraid_scrub_percent: 5
+snapraid_scrub_age: 30
