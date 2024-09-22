@@ -5,13 +5,14 @@ variable "proxmox_api_var" {
 variable "proxmox_host" {
     default = "pve"
 } 
+# 5b9r^@5$aUsCWR3%
 
 variable "proxmox_api_token_var" {
-    default = "tf@pve!tftoken"
+    default = "terraform-user@pve!tfe-token"
 }
 
 variable "proxmox_api_token_secret_var" {
-    default = "c57e0deb-862a-4126-b2c7-291170c066cd"
+    default = "cb3e862a-c126-46f1-963d-ef8b8e0ab7ce"
 }
 
 variable "template_name" {

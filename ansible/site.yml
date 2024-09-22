@@ -47,79 +47,80 @@
 
   pre_tasks:
 
-    - name: Ensure plex user exists
-      ansible.builtin.user:
-        name: plex
-        comment: Plex User-MatchID on Plex server
-        create_home: false
-        state: present
+    # # - name: Ensure plex user exists
+    # #   ansible.builtin.user:
+    # #     name: plex
+    # #     comment: Plex User-MatchID on Plex server
+    # #     create_home: false
+    # #     state: present
 
-    # - name: Handle plex user creation
-    #   block:
-    #     - name: Check existing plex user
-    #       ansible.builtin.getent:
-    #         database: passwd
-    #         key: plex
-    #       register: existing_plex_user
+    # # - name: Handle plex user creation
+    # #   block:
+    # #     - name: Check existing plex user
+    # #       ansible.builtin.getent:
+    # #         database: passwd
+    # #         key: plex
+    # #       register: existing_plex_user
 
-    #     - name: Display existing plex user info
-    #       ansible.builtin.debug:
-    #         msg: "Existing plex user: {{ existing_plex_user.ansible_facts.getent_passwd.plex | default('Not found') }}"
+    # #     - name: Display existing plex user info
+    # #       ansible.builtin.debug:
+    # #         msg: "Existing plex user: {{ existing_plex_user.ansible_facts.getent_passwd.plex | default('Not found') }}"
 
-    #     - name: Create plex user without specifying UID
-    #       ansible.builtin.user:
-    #         name: plex
-    #         comment: Plex User-MatchID on Plex server
-    #         create_home: false
-    #         state: present
-    #       when: existing_plex_user.ansible_facts.getent_passwd.plex is not defined
+    # #     - name: Create plex user without specifying UID
+    # #       ansible.builtin.user:
+    # #         name: plex
+    # #         comment: Plex User-MatchID on Plex server
+    # #         create_home: false
+    # #         state: present
+    # #       when: existing_plex_user.ansible_facts.getent_passwd.plex is not defined
 
-    #     - name: Warn about UID mismatch
-    #       ansible.builtin.debug:
-    #         msg: "Warning: plex user exists but with a different UID. Current UID: {{ existing_plex_user.ansible_facts.getent_passwd.plex[1] }}"
-    #       when:
-    #         - existing_plex_user.ansible_facts.getent_passwd.plex is defined
-    #         - existing_plex_user.ansible_facts.getent_passwd.plex[1] != '997'
+    # #     - name: Warn about UID mismatch
+    # #       ansible.builtin.debug:
+    # #         msg: "Warning: plex user exists but with a different UID. Current UID: {{ existing_plex_user.ansible_facts.getent_passwd.plex[1] }}"
+    # #       when:
+    # #         - existing_plex_user.ansible_facts.getent_passwd.plex is defined
+    # #         - existing_plex_user.ansible_facts.getent_passwd.plex[1] != '997'
 
-    #   when: plex_user_result is failed
+    # #   when: plex_user_result is failed
 
-    - name: Ensure group "plex" exists with correct gid
-      ansible.builtin.group:
-        name: plex
-        state: present
+    # - name: Ensure group "plex" exists with correct gid
+    #   ansible.builtin.group:
+    #     name: plex
+    #     state: present
 
-    - name: Create Media User
-      ansible.builtin.user:
-        name: media
-        comment: Media User
-        create_home: false
-        password: $6$moRTU8CvTEUDwaPF$JB6sqi.gAvBWytOBZYw7nDbRH220.ar.Hi9Y61ET4GSB3WQ4TBDUrVsg5bTp/Bjmw1oa8OAn1kNhF3Xwh4lcE1
+    # - name: Create Media User
+    #   ansible.builtin.user:
+    #     name: media
+    #     comment: Media User
+    #     create_home: false
+    #     password: $6$moRTU8CvTEUDwaPF$JB6sqi.gAvBWytOBZYw7nDbRH220.ar.Hi9Y61ET4GSB3WQ4TBDUrVsg5bTp/Bjmw1oa8OAn1kNhF3Xwh4lcE1
 
-    - name: Add pofo14 to Media Groups (need to add docker and rom users later)
-      ansible.builtin.user:
-        name: pofo14
-        append: true
-        groups: media
-        state: present
+    # - name: Add pofo14 to Media Groups (need to add docker and rom users later)
+    #   ansible.builtin.user:
+    #     name: pofo14
+    #     append: true
+    #     groups: media
+    #     state: present
 
-    - name: Create Mount Data Directories
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        group: media
-        owner: pofo14
-        mode: "0775"
-      loop:
-        - /mnt/disk1
-        - /mnt/disk2
-        - /mnt/disk3
-        - /mnt/disk1/array
-        - /mnt/disk2/array
-        - /mnt/disk3/array
-        - /mnt/parity1
+    # - name: Create Mount Data Directories
+    #   ansible.builtin.file:
+    #     path: "{{ item }}"
+    #     state: directory
+    #     group: media
+    #     owner: pofo14
+    #     mode: "0775"
+    #   loop:
+    #     - /mnt/disk1
+    #     - /mnt/disk2
+    #     - /mnt/disk3
+    #     - /mnt/disk1/array
+    #     - /mnt/disk2/array
+    #     - /mnt/disk3/array
+    #     - /mnt/parity1
 
   roles:
-    - role: kevincoakley.disk
+#    - role: grog.package
+#    - role: kevincoakley.disk
     - role: geerlingguy.docker
     - role: ironicbadger.docker_compose_generator
     - role: ironicbadger.snapraid

@@ -1,6 +1,9 @@
 test-nas:
 	ansible-playbook site.yml -v -i ./inventories/staging --limit nas --ask-become-pass
 
+prod-nas:
+	ansible-playbook site.yml -v -i ./inventories/production --limit nas --ask-become-pass
+
 test-nas-snapraid:
 	ansible-playbook site.yml -v -i ./inventories/staging --limit nas --ask-become-pass --tags snapraid
 
