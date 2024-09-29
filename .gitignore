@@ -49,3 +49,9 @@ roles/
 
 # generated files
 node_exporter_hosts.json
+
+# tmp / log files
+tmp/
+
+# config files for servers, ignore for now
+config/
