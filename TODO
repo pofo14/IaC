@@ -25,3 +25,8 @@ git merge new-feature
 git push origin main
 
 
+###### Progress #####
+working on nas - 
+
+just completed node exporter change.  Have utility script to update promethues, just need to manually add servers that have node exporter to yml file.  pretty easy
+
