@@ -32,6 +32,10 @@ containers:
   - service_name: radarr
     active: true
     image: lscr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York    
     volumes:
       - "{{ appdata_path }}/arrs/radarr:{{ container_config_path }}"
       - "{{ storage_path }}:{{ container_data_path }}"
@@ -42,6 +46,10 @@ containers:
   - service_name: sonarr
     active: true
     image: lscr.io/linuxserver/sonarr:develop
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York    
     volumes:
       - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
       - "{{ storage_path }}:{{ container_data_path }}"
@@ -52,6 +60,10 @@ containers:
   - service_name: prowlarr
     active: true
     image: lscr.io/linuxserver/prowlarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York    
     volumes:
       - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}"
     ports:
