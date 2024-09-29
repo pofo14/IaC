@@ -65,26 +65,27 @@ containers:
     image: lscr.io/linuxserver/deluge:latest
     volumes:
       - "{{ appdata_path }}/downloaders/deluge:{{ container_config_path }}"
-      - /tank:/roms
+      - /tank:/downloads
     environment:
-      - PUID=1000
-      - PGID=1001
+      - PUID=1002
+      - PGID=1002
       - UMASK=002
       - TZ=America/New_York
-      - DELUGE_LOGLEVEL=error      
+      - DELUGE_LOGLEVEL=error  
+    network_mode: host    
     ports:
       - 8112:8112
       - 6881:6881
       - 6881:6881/udp
+      - 58846:58846
     restart: always
 
   - service_name: qbittorrent
     active: true
-    image: ghcr.io/hotio/qbittorrent
+    image: ghcr.io/hotio/qbittorrent:release-4.6.6
     volumes:
       - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
       - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
-      - /tank:/roms
     ports:
       - "8080:8080"
     environment:
@@ -108,6 +109,54 @@ containers:
       - UMASK=002
       - TZ=America/New_York
     restart: always
+
+  - service_name: qbitmanage
+    active: true
+    image: ghcr.io/hotio/qbitmanage
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+      - QBT_RUN=true
+      - QBT_SCHEDULE=1440
+      - QBT_CONFIG=config.yml
+      - QBT_LOGFILE=activity.log
+      - QBT_CROSS_SEED=false
+      - QBT_RECHECK=false
+      - QBT_CAT_UPDATE=false
+      - QBT_TAG_UPDATE=false
+      - QBT_REM_UNREGISTERED=true
+      - QBT_REM_ORPHANED=true
+      - QBT_TAG_TRACKER_ERROR=false
+      - QBT_TAG_NOHARDLINKS=true
+      - QBT_SHARE_LIMITS=false
+      - QBT_SKIP_CLEANUP=false
+      - QBT_DRY_RUN=true
+      - QBT_LOG_LEVEL=INFO
+      - QBT_DIVIDER==
+      - QBT_WIDTH=100     
+      - QBITTORRENTAPI_DO_NOT_VERIFY_WEBUI_CERTIFICATE=true 
+    volumes:
+      - "{{ appdata_path }}/downloaders/qbitmanage:{{ container_config_path }}"
+      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
+      - "{{ appdata_path }}/downloaders/qbittorrent/data/BT_backup:/BT_backup"
+
+  - service_name: rflood
+    active: true
+    image: ghcr.io/hotio/rflood
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+      - FLOOD_AUTH=false
+    volumes:
+      - "{{ appdata_path }}/downloaders/rflood:{{ container_config_path }}"
+      - /tank:/data
 
 ## Snapraid settings
 snapraid_config_excludes:

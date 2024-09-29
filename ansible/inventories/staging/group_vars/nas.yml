@@ -44,7 +44,7 @@ containers:
 
   - service_name: sonarr
     active: true
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:develop
     volumes:
       - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
       - "{{ storage_path }}:{{ container_data_path }}"
@@ -68,7 +68,12 @@ containers:
     image: lscr.io/linuxserver/deluge:latest
     volumes:
       - "{{ appdata_path }}/downloaders/deluge:{{ container_config_path }}"
-      - /tank:/roms
+      - /tank:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
     ports:
       - 8112:8112
       - 6881:6881
@@ -106,6 +111,36 @@ containers:
       - TZ=America/New_York
     restart: always
 
+  - service_name: qbitmanage
+    active: true
+    image: ghcr.io/hotio/qbitmanage
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+      - QBT_RUN=true
+#      - QBT_SCHEDULE=1440
+      - QBT_CONFIG=config.yml
+      - QBT_LOGFILE=activity.log
+      - QBT_CROSS_SEED=false
+      - QBT_RECHECK=false
+      - QBT_CAT_UPDATE=true
+      - QBT_TAG_UPDATE=true
+      - QBT_REM_UNREGISTERED=true
+      - QBT_REM_ORPHANED=true
+      - QBT_TAG_TRACKER_ERROR=false
+      - QBT_TAG_NOHARDLINKS=true
+      - QBT_SHARE_LIMITS=false
+      - QBT_SKIP_CLEANUP=true
+      - QBT_DRY_RUN=true
+      - QBT_LOG_LEVEL=INFO
+      - QBT_DIVIDER==
+      - QBT_WIDTH=100      
+    volumes:
+      - "{{ appdata_path }}/downloaders/qbitmanage:{{ container_config_path }}"
+      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
+      - "{{ appdata_path }}/downloaders/qbittorrent/data/BT_Backup }}:/BT_backup"
 
 ## Snapraid settings
 
