@@ -3,3 +3,5 @@ node_exporters:
     port: 9100
 -   ip: test-ubuntu.flopo.retropetro.net
     port: 9100
+-   ip: nas.flopo.retropetro.net
+    port: 9100    

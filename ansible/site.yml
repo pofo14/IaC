@@ -125,3 +125,4 @@
     - role: ironicbadger.docker_compose_generator
     - role: ironicbadger.snapraid
       tags: snapraid
+    - role: geerlingguy.node_exporter  

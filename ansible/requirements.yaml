@@ -3,6 +3,7 @@ roles:
 - src: Oefenweb.nfs_client 
 - src: geerlingguy.docker
 - src: geerlingguy.nfs
+- src: geerlingguy.node_exporter
 - src: ironicbadger.snapraid
 - src: ironicbadger.docker_compose_generator
 - src: grog.package
