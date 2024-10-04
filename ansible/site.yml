@@ -32,7 +32,7 @@
 
   roles:
     - role: joenyland.plexmediaserver
-#    - role: Oefenweb.nfs_client
+    - role: Oefenweb.nfs_client
 
   post_tasks:
     - name: Add plex user to Media Groups
@@ -119,10 +119,11 @@
     #     - /mnt/parity1
 
   roles:
-#    - role: grog.package
-#    - role: kevincoakley.disk
+    - role: grog.package
     - role: geerlingguy.docker
+    - role: geerlingguy.sanoid
     - role: ironicbadger.docker_compose_generator
     - role: ironicbadger.snapraid
       tags: snapraid
-    - role: geerlingguy.node_exporter  
+    - role: geerlingguy.node_exporter
+    - role: prometheus.prometheus.smartctl_exporter
