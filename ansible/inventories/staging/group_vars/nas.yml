@@ -1,6 +1,8 @@
 # grog.package
-# package_list:
-#  - name: webmin
+package_list:
+  - name: nfs-kernel-server
+  - name: samba
+  - name: smartmontools
 
 # geerlingguy.docker
 docker_edition: 'ce'
@@ -30,6 +32,9 @@ container_config_path: /config
 container_data_path: /data
 
 containers:
+  ### Utility Containers
+  ###
+
   ### Arrs
   ###
   - service_name: radarr
@@ -38,6 +43,10 @@ containers:
     volumes:
       - "{{ appdata_path }}/arrs/radarr:{{ container_config_path }}"
       - "{{ storage_path }}:{{ container_data_path }}"
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York        
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -48,6 +57,10 @@ containers:
     volumes:
       - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
       - "{{ storage_path }}:{{ container_data_path }}"
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York        
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -57,6 +70,10 @@ containers:
     image: lscr.io/linuxserver/prowlarr:latest
     volumes:
       - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}"
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York        
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -70,10 +87,11 @@ containers:
       - "{{ appdata_path }}/downloaders/deluge:{{ container_config_path }}"
       - /tank:/downloads
     environment:
-      - PUID=1000
-      - PGID=1001
+      - PUID=1002
+      - PGID=1002
       - UMASK=002
       - TZ=America/New_York
+      - DELUGE_LOGLEVEL=error  
     ports:
       - 8112:8112
       - 6881:6881
@@ -120,27 +138,28 @@ containers:
       - UMASK=002
       - TZ=America/New_York
       - QBT_RUN=true
-#      - QBT_SCHEDULE=1440
+      - QBT_SCHEDULE=1440
       - QBT_CONFIG=config.yml
       - QBT_LOGFILE=activity.log
       - QBT_CROSS_SEED=false
       - QBT_RECHECK=false
-      - QBT_CAT_UPDATE=true
-      - QBT_TAG_UPDATE=true
+      - QBT_CAT_UPDATE=false
+      - QBT_TAG_UPDATE=false
       - QBT_REM_UNREGISTERED=true
       - QBT_REM_ORPHANED=true
       - QBT_TAG_TRACKER_ERROR=false
       - QBT_TAG_NOHARDLINKS=true
       - QBT_SHARE_LIMITS=false
-      - QBT_SKIP_CLEANUP=true
+      - QBT_SKIP_CLEANUP=false
       - QBT_DRY_RUN=true
       - QBT_LOG_LEVEL=INFO
       - QBT_DIVIDER==
-      - QBT_WIDTH=100      
+      - QBT_WIDTH=100     
+      - QBITTORRENTAPI_DO_NOT_VERIFY_WEBUI_CERTIFICATE=true 
     volumes:
       - "{{ appdata_path }}/downloaders/qbitmanage:{{ container_config_path }}"
       - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
-      - "{{ appdata_path }}/downloaders/qbittorrent/data/BT_Backup }}:/BT_backup"
+      - "{{ appdata_path }}/downloaders/qbittorrent/data/BT_backup:/BT_backup"
 
 ## Snapraid settings
 
@@ -182,3 +201,12 @@ snapraid_scrub_schedule:
 snapraid_sync_schedule:
   hour: 2
   minute: 30
+
+## geerlingguy.node_exporter
+node_exporter_options: --collector.textfile.directory /var/lib/node_exporter/textfile_collector/
+
+## prometheus.smartctl_exporter
+smartctl_exporter_system_group: root
+smartctl_exporter_system_user: root
+smartctl_exporter_smartctl_interval: 10m
+smartctl_exporter_smartctl_rescan: 60m

@@ -55,3 +55,6 @@ tmp/
 
 # config files for servers, ignore for now
 config/
+
+# TODO file
+TODO

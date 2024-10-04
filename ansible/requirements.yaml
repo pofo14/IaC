@@ -4,6 +4,7 @@ roles:
 - src: geerlingguy.docker
 - src: geerlingguy.nfs
 - src: geerlingguy.node_exporter
+- src: geerlingguy.sanoid
 - src: ironicbadger.snapraid
 - src: ironicbadger.docker_compose_generator
 - src: grog.package

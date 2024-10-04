@@ -1,3 +1,9 @@
+# grog.package
+package_list:
+  - name: nfs-kernel-server
+  - name: samba
+  - name: smartmontools
+
 # geerlingguy.docker
 docker_edition: 'ce'
 docker_packages_state: present
@@ -27,6 +33,9 @@ container_config_path: /config
 container_data_path: /data
 
 containers:
+  ### Utility Containers
+  ###
+
   ### Arrs
   ###
   - service_name: radarr
@@ -228,3 +237,12 @@ snapraid_runner_healthcheck_io_uuid: ''
 snapraid_runner_scrub: false
 snapraid_scrub_percent: 5
 snapraid_scrub_age: 30
+
+## geerlingguy.node_exporter
+node_exporter_options: --collector.textfile.directory /var/lib/node_exporter/textfile_collector/
+
+## prometheus.smartctl_exporter
+smartctl_exporter_system_group: root
+smartctl_exporter_system_user: root
+smartctl_exporter_smartctl_interval: 10m
+smartctl_exporter_smartctl_rescan: 60m
