@@ -30,3 +30,6 @@ working on nas -
 
 just completed node exporter change.  Have utility script to update promethues, just need to manually add servers that have node exporter to yml file.  pretty easy
 
+Users for Plex and NAS Working
+
+Move to setting up Plex Server and aligning user ids across NAS & PLEX

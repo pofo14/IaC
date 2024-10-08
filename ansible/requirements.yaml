@@ -9,6 +9,8 @@ roles:
 - src: ironicbadger.docker_compose_generator
 - src: grog.package
 - src: kevincoakley.disk
+- src: ryandaniels.create_users
+- src: tigattack.mergerfs
 
 collections:
 - prometheus.prometheus

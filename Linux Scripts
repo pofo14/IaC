@@ -15,3 +15,5 @@ qm template 999
 ssh-copy-id -i ~/.ssh/mykey user@host
 
 lscr.io/linuxserver/sonarr:latest
+
+ansible all -i localhost, -m debug -a "msg={{ 'mypassword' | password_hash('sha512', 'media') }}"
