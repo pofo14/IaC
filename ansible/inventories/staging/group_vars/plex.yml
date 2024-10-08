@@ -1,0 +1,4 @@
+## NFS Client Mount
+nfs_client_mounts:
+  - src: nas.flopo.retropetro.net:/mnt/data/media
+    path: /mnt/media

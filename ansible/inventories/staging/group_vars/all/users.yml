@@ -1,0 +1,13 @@
+# users:
+#   - name: media
+#     comment: Media User
+#     create_home: false
+#     password: "{{ vault_media_user_password }}"
+#     groups:
+#       - media
+
+#   - name: pofo14
+#     append: true
+#     groups:
+#       - media
+#       - sudo

@@ -162,6 +162,44 @@ containers:
       - "{{ appdata_path }}/downloaders/qbittorrent/data/BT_backup:/BT_backup"
 
 ## Snapraid settings
+snapraid_install: false
+snapraid_runner: true
+
+snapraid_apt_package_name: snapraid
+snapraid_bin_path: /usr/bin/snapraid
+snapraid_force_install: false
+
+snapraid_runner_healthcheck_io_uuid: "c1a9ad37-e308-44a0-831b-7dab804e773e"
+snapraid_healthcheck_io_host: https://hc-ping.com
+
+snapraid_runner_email_address: "petroplex56@gmail.com"
+snapraid_runner_email_pass: "nXo#q28*uNzv"
+snapraid_runner_email_address_from: "{{ snapraid_runner_email_address }}"
+snapraid_runner_email_address_to: "{{ snapraid_runner_email_address }}"
+snapraid_runner_email_sendon: "error"
+snapraid_runner_email_subject: "[SnapRAID] Status Report:"
+
+snapraid_runner_smtp_host: smtp.gmail.com
+snapraid_runner_smtp_port: 465
+snapraid_runner_use_ssl: true
+
+snapraid_config_path: /etc/snapraid.conf
+
+snapraid_runner_path: /opt/snapraid-runner/snapraid-runner
+snapraid_runner_conf: "{{ snapraid_runner_path }}.conf"
+snapraid_runner_bin: "{{ snapraid_runner_path }}.py"
+snapraid_runner_command_ns: "python3 {{ snapraid_runner_bin }} -c {{ snapraid_runner_conf }} --no-scrub {% if snapraid_runner_healthcheck_io_uuid %}&& curl -fsS -m 10 --retry 5 -o /dev/null {{ snapraid_healthcheck_io_host }}/{{ snapraid_runner_healthcheck_io_uuid }} > /dev/null{% endif %}"
+snapraid_runner_command_scrub: "python3 {{ snapraid_runner_bin }} -c {{ snapraid_runner_conf }} {% if snapraid_runner_healthcheck_io_uuid %}&& curl -fsS -m 10 --retry 5 -o /dev/null {{ snapraid_healthcheck_io_host }}/{{ snapraid_runner_healthcheck_io_uuid }} > /dev/null{% endif %}"
+snapraid_runner_scrub: true
+snapraid_scrub_percent: 22
+snapraid_scrub_age: 8
+snapraid_runner_touch: true
+snapraid_runner_delete_threshold: 250
+
+snapraid_runner_cron_jobs:
+  - { job: '{{ snapraid_runner_command_ns }}', name: 'snapraid_runner', weekday: '1-6', hour: '03' }
+  - { job: '{{ snapraid_runner_command_scrub }}', name: 'snapraid_runner', weekday: '0', hour: '03' }
+
 
 snapraid_config_excludes:
   - '*.unrecoverable'
@@ -184,23 +222,11 @@ snapraid_data_disks:
   - content: false
     path: /mnt/disk3
 
-snapraid_install: true
 snapraid_parity_disks:
   - content: true
     path: /mnt/parity1
 
-snapraid_runner: true
-snapraid_runner_email_address: petroplex56@gmail.com
-snapraid_runner_email_pass: nXo#q28*uNzv
-snapraid_runner_healthcheck_io_uuid: ''
-
-snapraid_scrub_schedule:
-  hour: 5
-  weekday: 4
-
-snapraid_sync_schedule:
-  hour: 2
-  minute: 30
+## end snapraid
 
 ## geerlingguy.node_exporter
 node_exporter_options: --collector.textfile.directory /var/lib/node_exporter/textfile_collector/
@@ -210,3 +236,11 @@ smartctl_exporter_system_group: root
 smartctl_exporter_system_user: root
 smartctl_exporter_smartctl_interval: 10m
 smartctl_exporter_smartctl_rescan: 60m
+
+## MergerFS tigattack.mergerfs
+mergerfs_install_mode: package_manager
+mergerfs_mounts:
+  - path: /mnt/data
+    branches:
+      - /mnt/disk*
+    options: defaults,nonempty,allow_other,use_ino,cache.files=partial,ignorepponrename=true,moveonenospc=true,dropcacheonclose=true,minfreespace=100G,func.getattr=newest,category.create=mfs,fsname=mergerfs

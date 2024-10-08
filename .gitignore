@@ -58,3 +58,8 @@ config/
 
 # TODO file
 TODO
+
+# vault files
+.vaultpass
+secret
+*.secret
