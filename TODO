@@ -26,10 +26,20 @@ git push origin main
 
 
 ###### Progress #####
-working on nas - 
+NAS TODO:
+- Fork Ironic Badger snapraid role and take pull request for log file path
+- Test ansible-galaxy-begone to manage requirements
+DONE - remove gmail email from variable file and add to vault
 
-just completed node exporter change.  Have utility script to update promethues, just need to manually add servers that have node exporter to yml file.  pretty easy
+PLEX TODO:
+DONE - Add Node Exporter
+- Determine if I want to add Plex-Exporter
+- get Install from Plex Role working, after vacation
+- Plex needs to be updated to Ubuntu 24 - could use this as a fresh install test + plex restore
 
+##### Maintenance Notes
+
+### Complete Work
 Users for Plex and NAS Working
 
-Move to setting up Plex Server and aligning user ids across NAS & PLEX
+Move to setting up Plex Server and aligning user ids across NAS & PLEX 

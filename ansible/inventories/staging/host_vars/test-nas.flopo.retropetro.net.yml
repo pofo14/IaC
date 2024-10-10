@@ -37,15 +37,17 @@ mount:
     - path: "/mnt/data"
       src: "/mnt/disk*"
       fstype: fuse.mergerfs
-      opts: "defaults,nonempty,allow_other,use_ino,cache.files=partial,ignorepponrename=true,moveonenospc=true,dropcacheonclose=true,minfreespace=25M,func.getattr=newest,category.create=mfs,fsname=mergerfs"
+      opts: "defaults,nonempty,allow_other,use_ino,cache.files=partial,ignorepponrename=true,\
+        moveonenospc=true,dropcacheonclose=true,minfreespace=25M,func.getattr=newest,category.create=mfs,\
+        fsname=mergerfs"
       state: "mounted"
 
 
 package_list:
     - name: mergerfs
 
-##new_disk_ids:
-##- scsi-0QEMU_QEMU_HARDDISK_drive-scsi10
+# #new_disk_ids:
+# #- scsi-0QEMU_QEMU_HARDDISK_drive-scsi10
 
 nfs_exports:
     - /mnt/data/ *(fsid=0,rw,no_subtree_check)

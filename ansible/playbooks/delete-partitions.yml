@@ -1,7 +1,7 @@
 ---
 - name: Partition, format disks, and update host vars
   hosts: all
-  become: yes
+  become: true
 
   tasks:
     - name: Create GPT partition

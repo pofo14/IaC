@@ -1,3 +1,5 @@
+# code: language=ansible
+
 ---
 - name: Set node_exporter variables
   ansible.builtin.set_fact:
@@ -41,7 +43,9 @@
 
 - name: Update node_exporters list
   ansible.builtin.set_fact:
-    updated_node_exporters: "{{ current_node_exporters | default({'node_exporters': []}) | combine({'node_exporters': current_node_exporters.node_exporters + [{'ip': inventory_hostname, 'port': node_exporter_port}]}, recursive=true) }}"
+    updated_node_exporters: "{{ current_node_exporters | default({'node_exporters': []}) | \
+      combine({'node_exporters': current_node_exporters.node_exporters + [{'ip': inventory_hostname, \
+      'port': node_exporter_port}]}, recursive=true) }}"
   run_once: true # noqa: run-once[task]
   delegate_to: localhost
 
@@ -49,5 +53,6 @@
   ansible.builtin.copy:
     content: "{{ updated_node_exporters | to_nice_yaml }}"
     dest: "{{ node_exporters_file }}"
+    mode: "0600"
   run_once: true # noqa: run-once[task]
   delegate_to: localhost

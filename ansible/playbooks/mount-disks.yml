@@ -14,7 +14,6 @@
         var: mount
 
   roles:
-    - role: grog.package
     - role: kevincoakley.disk
       disk_additional_packages:
         - xfsprogs

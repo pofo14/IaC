@@ -1,4 +1,4 @@
-# update_prometheus_targets.yml
+# code: language=ansible
 ---
 - name: Update Prometheus node_exporter targets
   hosts: localhost

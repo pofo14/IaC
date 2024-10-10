@@ -1,7 +1,7 @@
 ---
 - name: Partition, format disks, and update host vars
   hosts: all
-  become: yes
+  become: true
 
   tasks:
     - name: Create GPT partition
@@ -26,74 +26,75 @@
       changed_when: false
 
     - name: Debug disk UUID
-      debug:
+      ansible.builtin.debug:
         var: uuid_result
 
     - name: Prepare new_formatted_disks variable
-      set_fact:
+      ansible.builtin.set_fact:
         new_formatted_disks: "{{ uuid_result.results | map(attribute='stdout') | list }}"
 
     - name: Display new_formatted_disks variable
-      debug:
+      ansible.builtin.debug:
         var: new_formatted_disks
 
     - name: Update host_vars locally
       delegate_to: localhost
-      become: no
+      become: false
       block:
         - name: Ensure host_vars directory exists
-          file:
+          ansible.builtin.file:
             path: "{{ playbook_dir }}/../host_vars"
             state: directory
-          run_once: true
+            mode: '0755'
 
         - name: Read existing host_vars file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}.yml"
           register: existing_host_vars
-          ignore_errors: yes
+          ignore_errors: false
 
         - name: Parse existing formatted_disks
-          set_fact:
+          ansible.builtin.set_fact:
             existing_formatted_disks: "{{ (existing_host_vars.content | b64decode | from_yaml).formatted_disks | default([]) }}"
           when: existing_host_vars is succeeded
 
         - name: Combine existing and new formatted_disks
-          set_fact:
+          ansible.builtin.set_fact:
             combined_formatted_disks: "{{ (existing_formatted_disks | default([])) + new_formatted_disks | unique }}"
 
         - name: Read existing host_vars file
-          slurp:
+          ansible.builtin.slurp:
             src: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}.yml"
           register: existing_host_vars
-          ignore_errors: yes
+          ignore_errors: false
 
         - name: Parse existing host_vars
-          set_fact:
+          ansible.builtin.set_fact:
             existing_vars: "{{ (existing_host_vars.content | b64decode | from_yaml) if existing_host_vars is succeeded else {} }}"
 
         - name: Update host_vars file
-          copy:
+          ansible.builtin.copy:
             content: "{{ existing_vars | combine({'formatted_disks': combined_formatted_disks}) | to_nice_yaml }}"
             dest: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}.yml"
+            mode: "0600"
 
         - name: Check if host_vars file exists
-          stat:
+          ansible.builtin.stat:
             path: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}.yml"
           register: host_vars_file
 
         - name: Debug host_vars file existence
-          debug:
+          ansible.builtin.debug:
             msg: "Host vars file exists: {{ host_vars_file.stat.exists }}"
 
         - name: Debug host_vars file content
-          command: cat "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}.yml"
+          ansible.builtin.command: cat "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}.yml"
           register: host_vars_content
           changed_when: false
           when: host_vars_file.stat.exists
 
         - name: Display host_vars file content
-          debug:
+          ansible.builtin.debug:
             var: host_vars_content.stdout_lines
           when: host_vars_file.stat.exists
 

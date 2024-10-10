@@ -1,3 +1,5 @@
+# code: language=ansible
+
 ---
 - name: Create Media User
   ansible.builtin.user:
