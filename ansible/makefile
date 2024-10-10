@@ -10,7 +10,12 @@ test-nas-snapraid:
 test-plex:
 	ansible-playbook site.yml -v -i ./inventories/staging --limit plex --ask-become-pass
 
+prod-plex:
+	ansible-playbook site.yml -v -i ./inventories/production --limit plex --ask-become-pass
+
 ######### Utility Calls #######
+
+# Updates prometheus target json file
 update_prometheus:
 	ansible-playbook -i ./inventories/staging ./playbooks/update_prometheus_targets.yml --ask-become-pass
 

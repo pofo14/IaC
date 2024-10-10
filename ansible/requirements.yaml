@@ -1,16 +1,18 @@
+# code: language=ansible
+
 roles:
-- src: joenyland.plexmediaserver
-- src: Oefenweb.nfs_client 
-- src: geerlingguy.docker
-- src: geerlingguy.nfs
-- src: geerlingguy.node_exporter
-- src: geerlingguy.sanoid
-- src: ironicbadger.snapraid
-- src: ironicbadger.docker_compose_generator
-- src: grog.package
-- src: kevincoakley.disk
-- src: ryandaniels.create_users
-- src: tigattack.mergerfs
+  - src: joenyland.plexmediaserver
+  - src: Oefenweb.nfs_client
+  - src: geerlingguy.docker
+  - src: geerlingguy.nfs
+  - src: geerlingguy.node_exporter
+  - src: geerlingguy.sanoid
+  - src: ironicbadger.snapraid
+  - src: ironicbadger.docker_compose_generator
+  - src: grog.package
+  - src: kevincoakley.disk
+  - src: ryandaniels.create_users
+  - src: tigattack.mergerfs
 
 collections:
-- prometheus.prometheus
+  - prometheus.prometheus

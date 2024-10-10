@@ -1,3 +1,5 @@
+# code: language=ansible
+
 ---
 - name: Create Media User
   ansible.builtin.user:
@@ -13,7 +15,7 @@
     append: true
     group: pofo14
     password: "{{ vault_pofo14_user_password | password_hash('sha512') }}"
-    groups: 
+    groups:
       - media
       - sudo
 

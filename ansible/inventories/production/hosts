@@ -1,2 +1,5 @@
 [nas]
 nas.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible 
+
+[plex]
+plex.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible 

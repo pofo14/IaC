@@ -1,11 +1,13 @@
+# code: language=ansible
 ---
 - name: Configure Plex Server
   hosts: plex
   become: true
 
   roles:
-    - role: joenyland.plexmediaserver
+  #  - role: joenyland.plexmediaserver
     - role: Oefenweb.nfs_client
+    - role: geerlingguy.node_exporter
 
   tasks:
     - name: Include create_users tasks
@@ -16,16 +18,16 @@
   become: true
 
   pre_tasks:
-    # - name: Include create_users tasks
-    #  ansible.builtin.include_tasks: tasks/create_users_nas.yml
+    - name: Include create_users tasks
+      ansible.builtin.include_tasks: tasks/create_users_nas.yml
 
   roles:
-    # - role: grog.package
+    - role: grog.package
     - role: ironicbadger.snapraid
       tags: snapraid
     - role: tigattack.mergerfs
-    # - role: geerlingguy.docker
-    # - role: geerlingguy.sanoid
-    # - role: ironicbadger.docker_compose_generator
-    # - role: geerlingguy.node_exporter
-    # - role: prometheus.prometheus.smartctl_exporter
+    - role: geerlingguy.docker
+    - role: geerlingguy.sanoid
+    - role: ironicbadger.docker_compose_generator
+    - role: geerlingguy.node_exporter
+    - role: prometheus.prometheus.smartctl_exporter
