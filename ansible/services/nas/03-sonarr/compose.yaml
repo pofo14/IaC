@@ -1,0 +1,15 @@
+---
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:develop
+    container_name: sonarr
+    volumes:
+      - "{{ appdata_path }}/arrs/sonarr:{{ container_config_path }}"
+      - "{{ storage_path }}:{{ container_data_path }}"
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York
+    restart: unless-stopped

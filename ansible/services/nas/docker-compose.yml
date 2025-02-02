@@ -1,0 +1,146 @@
+#
+# Ansible managed
+#
+---
+services:
+  portainer_agent:
+    image: portainer/agent:2.21.3
+    container_name: portainer_agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host
+    ports:
+      - 9001:9001
+    restart: always
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    volumes:
+      - /opt/appdata/arrs/radarr:/config
+      - /mnt/data:/data
+    ports:
+      - 7878:7878
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:develop
+    container_name: sonarr
+    volumes:
+      - /opt/appdata/arrs/sonarr:/config
+      - /mnt/data:/data
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    volumes:
+      - /opt/appdata/arrs/prowlarr:/config
+    ports:
+      - 9696:9696
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York
+    restart: unless-stopped
+  deluge:
+    image: lscr.io/linuxserver/deluge:latest
+    container_name: deluge
+    network_mode: host
+    volumes:
+      - /opt/appdata/downloaders/deluge:/config
+      - /tank:/downloads
+    ports:
+      - 8112:8112
+      - 6881:6881
+      - 6881:6881/udp
+      - 58846:58846
+    environment:
+      - PUID=1002
+      - PGID=1002
+      - UMASK=002
+      - TZ=America/New_York
+      - DELUGE_LOGLEVEL=error
+    restart: always
+  qbittorrent:
+    image: ghcr.io/hotio/qbittorrent:release-4.6.6
+    container_name: qbittorrent
+    volumes:
+      - /opt/appdata/downloaders/qbittorrent:/config
+      - /mnt/data/torrents:/data/torrents
+    ports:
+      - 8080:8080
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+    restart: always
+  sabnzbd:
+    image: ghcr.io/hotio/sabnzbd
+    container_name: sabnzbd
+    volumes:
+      - /opt/appdata/downloaders/sabnzb:/config
+      - /mnt/data/usenet:/data/usenet
+    ports:
+      - 8081:8080
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+    restart: always
+  qbitmanage:
+    image: ghcr.io/hotio/qbitmanage
+    container_name: qbitmanage
+    volumes:
+      - /opt/appdata/downloaders/qbitmanage:/config
+      - /mnt/data/torrents:/data/torrents
+      - /opt/appdata/downloaders/qbittorrent/data/BT_backup:/BT_backup
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+      - QBT_RUN=true
+      - QBT_SCHEDULE=1440
+      - QBT_CONFIG=config.yml
+      - QBT_LOGFILE=activity.log
+      - QBT_CROSS_SEED=false
+      - QBT_RECHECK=false
+      - QBT_CAT_UPDATE=false
+      - QBT_TAG_UPDATE=false
+      - QBT_REM_UNREGISTERED=true
+      - QBT_REM_ORPHANED=true
+      - QBT_TAG_TRACKER_ERROR=false
+      - QBT_TAG_NOHARDLINKS=true
+      - QBT_SHARE_LIMITS=false
+      - QBT_SKIP_CLEANUP=false
+      - QBT_DRY_RUN=true
+      - QBT_LOG_LEVEL=INFO
+      - QBT_DIVIDER==
+      - QBT_WIDTH=100
+      - QBITTORRENTAPI_DO_NOT_VERIFY_WEBUI_CERTIFICATE=true
+  rflood:
+    image: ghcr.io/hotio/rflood
+    container_name: rflood
+    volumes:
+      - /opt/appdata/downloaders/rflood:/config
+      - /tank:/data
+    ports:
+      - 3000:3000
+      - 5000:5000
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+      - FLOOD_AUTH=false

@@ -7,12 +7,16 @@ roles:
   - src: geerlingguy.nfs
   - src: geerlingguy.node_exporter
   - src: geerlingguy.sanoid
+  - src: geerlingguy.mysql
+  - src: geerlingguy.php-versions
+  - src: geerlingguy.nginx
   - src: ironicbadger.snapraid
   - src: ironicbadger.docker_compose_generator
   - src: grog.package
   - src: kevincoakley.disk
   - src: ryandaniels.create_users
   - src: tigattack.mergerfs
+  - src: nierdz.nextcloud
 
 collections:
   - prometheus.prometheus

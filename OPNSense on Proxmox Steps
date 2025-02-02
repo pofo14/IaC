@@ -1,0 +1,32 @@
+# Sources for instructions
+https://www.zenarmor.com/docs/network-security-tutorials/opnsense-installation
+https://homenetworkguy.com/how-to/virtualize-opnsense-on-proxmox-as-your-primary-router/
+
+# Install Proxmox on new host using netboot.xyz
+    #### TODO: FInd out hot to host netboot.xyz on my network
+
+#SSH onto Proxmox host
+ssh root@192.168.2.10
+
+# CD into vairable directory
+cd /var/lib/vz/template/iso
+
+# Download OPNSense
+wget https://download.opnsense.org/download/24.7/OPNsense-24.7-dvd-amd64.iso.bz2
+
+# Uncompress
+bzip2 -d OPNsense-24.7-dvd-amd64.iso.bz2
+
+# Create VM From OPN Sense ISO
+Use terraform or UI
+
+# Create LinuxBridges in Proxmox
+TODO:: Need to figure out how to do this via terraform or ansible
+
+# Add NICs to OPensense VM
+
+# Copy Mac Addresses of LinxBridge NICs
+BC:24:11:E7:A4:BC
+BC:24:11:5B:33:F2
+
+# Start VM and install OPNSense

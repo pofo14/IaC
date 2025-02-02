@@ -1,0 +1,60 @@
+# code: language=ansible
+
+---
+- name: Create new databases with names 'nextcloud'
+  community.mysql.mysql_db:
+    name: nextcloud
+    encoding: utf8mb4
+    collation: utf8mb4_general_ci
+    login_host: localhost
+    check_implicit_admin: true
+    state: present
+
+- name: Create database user with name 'ncadmin' and password with all database privileges
+  community.mysql.mysql_user:
+    name: ncadmin
+    password: ncadmin
+    priv: 'nextcloud.*'
+    check_implicit_admin: true
+    state: present
+
+- name: Execute SQL command to set collation
+  community.mysql.mysql_query:
+    login_host: localhost
+    login_user: root
+    login_password: 
+    login_db: your_database_name
+    query: "ALTER DATABASE `{{ your_database_name }}` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+
+
+- name: Create romuser
+  ansible.builtin.user:
+    name: romuser
+    create_home: false
+    append: true
+    group: romuser
+    update_password: on_create
+    password: "{{ vault_romuser_user_password | password_hash('sha512') }}"
+    groups:
+      - romusers
+
+- name: Add pofo14 to Media Groups
+  ansible.builtin.user:
+    name: pofo14
+    append: true
+    group: pofo14
+    update_password: on_create
+    password: "{{ vault_pofo14_user_password | password_hash('sha512') }}"
+    groups:
+      - media
+      - sudo
+      - romusers
+
+# - name: Create users
+#   ansible.builtin.user:
+#     name: "{{ item.name }}"
+#     comment: "{{ item.comment | default(omit) }}"
+#     create_home: "{{ item.create_home | default(true) }}"
+#     groups: "{{ item.groups | default(omit) }}"
+#     password: "{{ item.password | password_hash('sha512') }}"
+#   loop: "{{ users }}"
