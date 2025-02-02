@@ -1,0 +1,16 @@
+---
+services:
+  qbittorrent:
+    image: ghcr.io/hotio/qbittorrent:release-4.6.6
+    container_name: qbittorrent
+    volumes:
+      - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
+      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
+    ports:
+      - 8080:8080
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=America/New_York
+    restart: always

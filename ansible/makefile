@@ -13,6 +13,19 @@ test-plex:
 prod-plex:
 	ansible-playbook site.yml -v -i ./inventories/production --limit plex --ask-become-pass
 
+prod-docker:
+	ansible-playbook site.yml -v -i ./inventories/production --limit docker --ask-become-pass
+
+prod-nextcloud:
+	ansible-playbook site.yml -v -i ./inventories/production --limit nextcloud --ask-become-pass
+
+prod-utils:
+	ansible-playbook site.yml -v -i ./inventories/production --limit utils --ask-become-pass
+
+### Vault Commands ####
+check-vault:
+	ansible-vault view inventories/production/group_vars/all/vault.yml
+
 ######### Utility Calls #######
 
 # Updates prometheus target json file
@@ -36,3 +49,6 @@ reqs:
 
 forcereqs:
 	ansible-galaxy install -r requirements.yaml --force
+
+
+##### TERRAFORM COMMANDS ######

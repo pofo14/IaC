@@ -8,4 +8,5 @@ node_exporters:
  - ip: nas.flopo.retropetro.net
    port: 9100
  - ip: plex.flopo.retropetro.net
-   port: 9100   
+   port: 9100
+

@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: .*\.yml
+    age: age1d5eqgled05h4jgkfacvdamy7ys4hry740au8prqgvykx3l0apfzq85gr7y

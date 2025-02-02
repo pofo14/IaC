@@ -17,3 +17,18 @@ ssh-copy-id -i ~/.ssh/mykey user@host
 lscr.io/linuxserver/sonarr:latest
 
 ansible all -i localhost, -m debug -a "msg={{ 'mypassword' | password_hash('sha512', 'media') }}"
+
+
+### nas setup tasks
+sudo zfs create tank/mydata
+sudo zfs set sharenfs=on tank/nextcloud
+sudo nano /etc/exports
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server
+sudo useradd -M -s /usr/sbin/nologin -u 1099 nextcloud
+
+## nextcloud box setup
+sudo apt update && sudo apt install nfs-common
+sudo mkdir -p /mnt/nextcloud
+add to fstab nas.flopo.retropetro.net:/nextcloud /mnt/nextcloud nfs defaults 0 0
+sudo useradd -M -s /usr/sbin/nologin -u 1099 nextcloud

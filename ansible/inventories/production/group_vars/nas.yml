@@ -36,6 +36,19 @@ container_config_path: /config
 container_data_path: /data
 
 containers:
+  ### Management
+  ###
+  - service_name: portainer_agent
+    active: true
+    image: portainer/agent:2.21.3
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host
+    ports:
+      - 9001:9001
+
   ### Arrs
   ###
   - service_name: radarr

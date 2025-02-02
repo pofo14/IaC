@@ -1,0 +1,15 @@
+# code: language=ansible
+
+---
+- name: Add PHP 8.2 PPA GPG key
+  ansible.builtin.apt_key:
+    url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x14aa40ec0831756756d7f66c4f4ea0aae5267a6c"
+    state: present
+  become: true
+
+- name: Add PHP 8.2 PPA repository
+  ansible.builtin.apt_repository:
+    repo: "ppa:ondrej/php"
+    state: present
+    update_cache: true
+  become: true
