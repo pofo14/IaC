@@ -1,0 +1,85 @@
+services:
+  traefik:
+    depends_on:
+      stepca:
+        condition: service_healthy  
+
+    image: traefik:latest
+    container_name: traefik
+    security_opt:
+      - no-new-privileges:true    
+    labels:
+      - "traefik.enable=true"
+      # Dashboard router
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.flopo.retropetro.net`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.tls.certresolver=stepca"
+
+      # Global redirect to HTTPS
+      # - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`) && !PathPrefix(`/.well-known/acme-challenge/`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https" 
+    command: 
+      # Docker provider
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      # Entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Dashboard
+      - "--api.dashboard=true"
+      - "--api.insecure=false"  # Don't expose dashboard without auth
+      # Logging
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
+      # ACME
+      - "--serversTransport.insecureSkipVerify=true"
+      - "--certificatesresolvers.stepca.acme.email=petroplex56@gmail.com"
+      - "--certificatesresolvers.stepca.acme.caserver=https://stepca:9000/acme/acme/directory"
+      - "--certificatesresolvers.stepca.acme.tlschallenge=false"
+      - "--certificatesresolvers.stepca.acme.dnschallenge=false"
+      - "--certificatesresolvers.stepca.acme.httpchallenge=true"
+      - "--certificatesresolvers.stepca.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.stepca.acme.storage=/etc/traefik/acme/stepca-acme.json"
+      - "--certificatesresolvers.stepca.acme.certificatesduration=24"  
+
+      # Make sure the ACME challenge path is accessible
+      # - "--entrypoints.web.http.middlewares=acme-redirect@internal"      
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme-storage:/etc/traefik/acme
+      - /etc/ssl:/etc/ssl:ro
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
+
+      # - "{{ appdata_path }}/management/traefik/config:/etc/traefik"
+      # - "{{ appdata_path }}/management/traefik/data:/data"
+      # - "{{ appdata_path }}/management/step-ca/config:/etc/traefik/certs"      
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8081:8080" 
+    networks:
+      proxy:
+        aliases:
+          - traefik.flopo.retropetro.net
+          - radarr.flopo.retropetro.net
+          - prowlarr.flopo.retropetro.net
+          - qbittorrent.flopo.retropetro.net
+          - portainer.flopo.retropetro.net
+    environment:
+      - TZ=America/New_York
+      - SSL_CERT_FILE=/etc/ssl/certs/stepca_root.pem      
+    restart: unless-stopped
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.flopo.retropetro.net`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+    networks:
+      - proxy   

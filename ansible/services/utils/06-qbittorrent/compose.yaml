@@ -1,0 +1,43 @@
+services:
+  qbittorrent:
+    image: ghcr.io/hotio/qbittorrent:latest
+    container_name: qbittorrent
+    labels:
+      
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.flopo.retropetro.net`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=websecure"
+      - "traefik.http.routers.qbittorrent.tls=true"  
+      - "traefik.http.routers.qbittorrent.tls.certresolver=stepca"
+
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
+
+        # Add these for proper WebUI routing
+      - "traefik.http.middlewares.qbit-prefix.stripprefix.prefixes=/qbittorrent"
+      - "traefik.http.routers.qbittorrent.middlewares=qbit-prefix"
+    volumes:
+      - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
+      - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
+      
+    networks:
+      proxy:
+        aliases:
+          - qbittorrent
+               
+    environment:
+      - PUID={{ arrs_uid }}
+      - PGID={{ arrs_gid }}
+      - UMASK=002
+      - TZ=America/New_York
+    restart: always
+
+networks:
+  proxy:
+    name: proxy
+
+volumes:
+  step:
+  portainer_data:
+  acme-storage:  
+
+

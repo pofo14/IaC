@@ -1,0 +1,29 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      proxy:
+        aliases:
+          - portainer  
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.flopo.retropetro.net`)"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.tls=true"
+      - "traefik.http.routers.portainer.tls.certresolver=stepca"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+      # Add these for Portainer Edge and websocket support
+      - "traefik.http.routers.portainer-edge.rule=Host(`portainer.flopo.retropetro.net`) && PathPrefix(`/api/websocket/`)"
+      - "traefik.http.routers.portainer-edge.entrypoints=websecure"
+      - "traefik.http.routers.portainer-edge.tls=true"
+      - "traefik.http.routers.portainer-edge.tls.certresolver=stepca"
+      - "traefik.http.routers.portainer-edge.service=portainer"      
+    restart: unless-stopped

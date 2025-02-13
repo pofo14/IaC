@@ -1,0 +1,27 @@
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    labels:
+      - "traefik.enable=true"
+
+      # HTTPS Router
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.flopo.retropetro.net`)"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.tls.certresolver=stepca"
+      - "traefik.http.routers.prowlarr.service=prowlarr"
+
+      # service config
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+    networks:
+      proxy:
+        aliases:
+          - prowlarr
+    volumes:
+      - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}"
+    environment:
+      - PUID={{ arrs_uid }}
+      - PGID={{ arrs_gid }}
+      - TZ=America/New_York
+    restart: unless-stopped

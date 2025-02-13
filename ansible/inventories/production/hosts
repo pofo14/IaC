@@ -11,4 +11,7 @@ docker.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.
 192.168.2.6  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
 
 [utils]
-192.168.2.79  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+utils.flopo.retropetro.net  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+
+[truenas]
+truenas.flopo.retropetro.net  ansible_user=truenas_admin

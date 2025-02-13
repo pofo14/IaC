@@ -22,6 +22,13 @@ prod-nextcloud:
 prod-utils:
 	ansible-playbook site.yml -v -i ./inventories/production --limit utils --ask-become-pass
 
+prod-utils-tags:
+	ansible-playbook site.yml -v -i ./inventories/production --limit utils --tags compose --ask-become-pass
+
+
+prod-truenas:
+	ansible-playbook site.yml -v -i ./inventories/production --limit truenas --ask-become-pass
+
 ### Vault Commands ####
 check-vault:
 	ansible-vault view inventories/production/group_vars/all/vault.yml
