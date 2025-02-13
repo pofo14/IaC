@@ -1,0 +1,26 @@
+services:
+  stepca:
+    image: smallstep/step-ca
+    container_name: stepca
+    networks:
+      proxy:
+        aliases:
+          - stepca.flopo.retropetro.net
+          - stepca
+    volumes:
+      - step:/home/step
+    environment:
+      - "DOCKER_STEPCA_INIT_NAME=RetroPetro-Homelab"
+      - "DOCKER_STEPCA_INIT_DNS_NAMES=stepca.flopo.retropetro.net,localhost,stepca,stepca.proxy"
+      - "DOCKER_STEPCA_INIT_ADDRESS=:9000"
+      - "DOCKER_STEPCA_INIT_ACME=true"          # Enable ACME provisioner during initialization
+      - "DOCKER_STEPCA_INIT_ACME_NAME=acme"      # Name for the ACME provisioner      
+    
+    healthcheck:
+      test: ["CMD", "curl", "-k", "https://stepca:9000/acme/acme/directory"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    restart: unless-stopped

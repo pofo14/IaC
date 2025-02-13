@@ -70,26 +70,99 @@
     # - {role: nierdz.nextcloud, tags: ['nextcloud']}
     # - role: Oefenweb.nfs_client
 
+# TODO: --utils-- Need to add code to create users for utils server, gid:3000 uid:3000
 - name: Configure Utils Server on VM
   hosts: utils
+  gather_facts: true
   become: true
   pre_tasks:
-    - name: Ensure mealie config directory exists
+    - name: Install NFS client utilities
+      ansible.builtin.package:
+        name: nfs-common
+        state: present
+  tasks:
+    - name: Create groups
+      ansible.builtin.group:
+        name: "{{ item.name }}"
+        gid: "{{ item.gid | default(omit) }}"
+        system: "{{ item.system | default(false) }}"
+        state: present
+        # force: true
+      loop: "{{ create_groups }}"
+
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item.username }}"
+        uid: "{{ item.uid | default(omit) }}"
+        comment: "{{ item.comment | default(omit) }}"
+        password: "{{ item.password | password_hash('sha512') }}"
+        update_password: "{{ item.update_password }}"
+        group: "{{ item.group | default(omit) }}"
+        groups: "{{ item.groups | default(omit) }}"
+        append: "{{ item.append | default(false) }}"
+        create_home: "{{ item.create_home | default(omit) }}"
+        state: present
+      loop: "{{ create_users }}"
+
+    - name: Create a directory if it does not exist
       ansible.builtin.file:
-        path: /opt/appdata/mealie/config
+        path: "{{ item.path }}"
+        state: directory
+        mode: " {{ item.mode }} "
+        group: "{{ item.group }}"
+        owner: "{{ item.owner }}"
+      loop: "{{ create_directories }}"
+
+    - name: Ensure Traefik config directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
         state: directory
         mode: '0755'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+      with_items:
+        - "{{ appdata_path }}/management/traefik/config"
+        - "{{ appdata_path }}/management/traefik/data"
 
-    - name: Copy mealie.json configuration file
+    - name: Copy Traefik configuration files
       ansible.builtin.copy:
-        src: files/mealie.json
-        dest: /opt/appdata/ts-mealie/config/mealie.json
-        mode: '0644'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        src: "files/traefik/{{ item }}"
+        dest: "{{ appdata_path }}/management/traefik/config/{{ item }}"
+        mode: '0600'
+      with_items:
+        - traefik.yml
+        - acme.json
+
+    - name: Mount an NFS volume
+      ansible.posix.mount:
+        src: "{{ item.src }}"
+        path: "{{ item.path }}"
+        opts: rw,sync,hard
+        state: mounted
+        fstype: "{{ item.fstype }}"
+      loop: "{{ nfs_client_mounts }}"
+      tags: nfs
 
   roles:
     - role: geerlingguy.docker
+      tags: docker
     - role: ironicbadger.docker_compose_generator
+      tags: compose
+    - role: artis3n.tailscale
+      tags: tailscale
+
+# TODO: last clean run it doesn't look like pofo14 got added to docker group
+# TODO: Create plays for TrueNas to configuring NFS Shares, Users, and Groups
+# TODO: Create plays for proxmox host post install, creation of pci passthrough, etc
+
+- name: Configure Truenas Server
+  hosts: truenas
+  become: true
+
+  tasks:
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: " {{ item.mode }} "
+        group: "{{ item.group }}"
+        owner: "{{ item.owner }}"
+      loop: "{{ create_directories }}"

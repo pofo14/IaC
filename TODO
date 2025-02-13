@@ -141,6 +141,10 @@ Got AIO container working with compose file an tailsacle kinda working.  Can't d
 
 In the mix with Q trying to get this to work.  Got the initial setup working. Got past the initial domain check, can't get a subsequent login to work.
 
+2/2::
+
+Redo Terraform for Proxmox to use bgp provider, seems more up to date and comprehensive
+
 ##### Maintenance Notes
 
 ### Complete Work
@@ -173,3 +177,96 @@ AGE-SECRET-KEY-13UT4FLFME0076JMC8QH7X5ESQTRZFSFEYN53YZD5PX9EA8G5UDSQK7F298
 Dashy backup id
 nYDu-YnDd-eiSn-dnDe
 pwd: backup
+
+
+###### Terraform --> Static Host for Ansible #####
+#TODO: Need to implement this functionality
+# In your vm-clone-bgp/main.tf, add this at the end:
+
+resource "local_file" "static_dns_entries" {
+  count = var.ipaddress != "" ? 1 : 0  # Only create when static IP is used
+  
+  filename = "${path.root}/../ansible/inventory/group_vars/dns_servers/static_hosts.yml"
+  
+  content = yamlencode({
+    static_hosts = flatten([
+      data.yaml_list_of_strings.existing_hosts[0].output,
+      {
+        name = var.hostname
+        ip   = split("/", var.ipaddress)[0]  # Remove CIDR notation
+        domain = var.domain
+      }
+    ])
+  })
+}
+
+# Read existing entries to preserve them
+data "local_file" "existing_hosts" {
+  count    = var.ipaddress != "" ? 1 : 0
+  filename = "${path.root}/../ansible/inventory/group_vars/dns_servers/static_hosts.yml"
+
+  # If file doesn't exist, create empty default
+  default = yamlencode({
+    static_hosts = []
+  })
+}
+
+data "yaml_list_of_strings" "existing_hosts" {
+  count = var.ipaddress != "" ? 1 : 0
+  input = data.local_file.existing_hosts[0].content
+}
+
+# Example usage in your root terraform configuration
+module "static_vm" {
+  source = "./modules/vm-clone-bgp"
+  
+  hostname   = "webserver"
+  ipaddress  = "192.168.1.50/24"
+  domain     = "flopo.retropetro.net"
+  # ... other variables ...
+}
+
+# Ensure the ansible directory exists
+resource "local_file" "ensure_ansible_dir" {
+  filename = "${path.root}/../ansible/inventory/group_vars/dns_servers/.keep"
+  content  = ""
+
+  provisioner "local-exec" {
+    command = "mkdir -p ${path.root}/../ansible/inventory/group_vars/dns_servers"
+  }
+}
+
+# versions.tf or main.tf
+terraform {
+  required_providers {
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "0.70.1"
+    }
+    local = {
+      source = "hashicorp/local"
+      version = "~> 2.0"
+    }
+  }
+}
+
+To handle file permissions and ensure the directory exists:
+
+# In your vm-clone-bgp/variables.tf
+variable "ansible_dir" {
+  description = "Path to Ansible inventory directory"
+  type        = string
+  default     = "../ansible/inventory"
+}
+
+# In main.tf
+resource "local_file" "ensure_dirs" {
+  count = var.ipaddress != "" ? 1 : 0
+  
+  filename = "${var.ansible_dir}/group_vars/dns_servers/.keep"
+  content  = ""
+
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.ansible_dir}/group_vars/dns_servers"
+  }
+}

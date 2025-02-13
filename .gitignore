@@ -43,6 +43,7 @@ terraform.rc
 ## Ignore the python virtual environment
 ansible_env/
 .venv/
+venv/
 
 # Ignore Ansible roles installed by requirements
 roles/
@@ -55,6 +56,9 @@ tmp/
 
 # config files for servers, ignore for now
 config/
+
+# archive folder
+archive/
 
 # TODO file
 TODO

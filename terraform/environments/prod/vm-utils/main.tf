@@ -1,17 +1,16 @@
-module "nextcloud_vm" {
-  source = "../../../modules/vm-clone"
-  providers = {
-    proxmox = proxmox
-  }
+module "utils_vm" {
+  source = "../../../modules/vm-clone-bgp"
 
-  vm_name = var.vm_name
+  hostname = var.hostname
+  domain = var.domain
   proxmox_host = var.proxmox_host
-  template_name = var.ubuntu24_template_name
-  cores = 4
-  sockets = 2
-  memory = 8092  # 4GB
-  ssh_keys = var.ssh_key
-  ciuser = var.ciuser
+  template_id = var.ubuntu24_template_id
+  cores = var.cores
+  sockets = var.sockets
+  memory = var.memory  
+  tags = var.tags
+  description = var.description
   ipaddress = var.ipaddress
-  #cipassword = var.cipassword
+  gateway = var.gateway
+  ssh_keys = data.github_ssh_keys.pofo14_ssh_keys.keys
 }

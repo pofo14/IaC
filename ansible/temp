@@ -24,10 +24,6 @@ Long term:
  - will need to test (yuk) - see hw we can automate
  - need to setup healthcheck urls, but want to get that running locally first (galactus)
 
- TODO: 
- Look at Ironic Badgers Morpheus role, these are host specific roles.  That have special disk configurations.
-  This seems to be how he handles more "one time" config stuff
-
 ansible-playbook site.yaml -v -i staging --limit thanos --ask-become-pass 
 
 export ANSIBLE_CONFIG=./ansible.cfg

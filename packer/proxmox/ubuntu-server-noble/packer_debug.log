@@ -1,0 +1,361 @@
+2025/02/03 21:13:09 [INFO] Packer version: 1.12.0 [go1.22.9 linux amd64]
+2025/02/03 21:13:09 [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2025/02/03 21:13:09 [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/pofo14/.packerconfig
+2025/02/03 21:13:09 [WARN] Config file doesn't exist: /home/pofo14/.packerconfig
+2025/02/03 21:13:09 [INFO] Setting cache directory: /home/pofo14/.cache/packer
+2025/02/03 21:13:09 [TRACE] listing potential installations for <nil> that match "". plugingetter.ListInstallationsOptions{PluginDirectory:"/home/pofo14/.config/packer/plugins", BinaryInstallationOptions:plugingetter.BinaryInstallationOptions{APIVersionMajor:"5", APIVersionMinor:"0", OS:"linux", ARCH:"amd64", Ext:"", Checksummers:[]plugingetter.Checksummer{plugingetter.Checksummer{Type:"sha256", Hash:(*sha256.digest)(0xc000156580)}}, ReleasesOnly:false}}
+2025/02/03 21:13:09 [INFO] found external [-packer-default-plugin-name- clone iso] builders from proxmox plugin
+2025/02/03 21:13:09 plugin "/home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64" does not support Protobuf, forcing use of Gob
+2025/02/03 21:13:09 [TRACE] validateValue: not active for proxmox_api_token_id, so skipping
+2025/02/03 21:13:09 [TRACE] validateValue: not active for proxmox_api_token_secret, so skipping
+2025/02/03 21:13:09 [TRACE] validateValue: not active for proxmox_api_url, so skipping
+2025/02/03 21:13:09 [INFO] Starting external plugin /home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 start builder iso
+2025/02/03 21:13:09 Starting plugin: /home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 []string{"/home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64", "start", "builder", "iso"}
+2025/02/03 21:13:09 Waiting for RPC address for: /home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64
+2025/02/03 21:13:09 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:09 Plugin address: unix /tmp/packer-plugin2717318911
+2025/02/03 21:13:09 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:09 Waiting for connection...
+2025/02/03 21:13:09 Received unix RPC address for /home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64: addr is /tmp/packer-plugin2717318911
+2025/02/03 21:13:09 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:09 Serving a plugin connection...
+2025/02/03 21:13:09 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:09 [TRACE] starting builder iso
+2025/02/03 21:13:09 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 Number of sockets 0 is too small, using default: 1
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 CPU type not set, using default 'kvm64'
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 OS not set, using default 'other'
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 Disk 0 cache mode not set, using default 'none'
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 Cloud-Init disk type not set, using default 'ide'
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 boot_iso device type not set, using default type 'ide' and index '2'
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 [INFO] Starting external plugin /usr/bin/packer execute packer-provisioner-shell
+2025/02/03 21:13:10 Starting plugin: /usr/bin/packer []string{"/usr/bin/packer", "execute", "packer-provisioner-shell"}
+2025/02/03 21:13:10 Waiting for RPC address for: /usr/bin/packer
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] Packer version: 1.12.0 [go1.22.9 linux amd64]
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/pofo14/.packerconfig
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [WARN] Config file doesn't exist: /home/pofo14/.packerconfig
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] Setting cache directory: /home/pofo14/.cache/packer
+2025/02/03 21:13:10 packer-provisioner-shell plugin: Plugin address: unix /tmp/packer-plugin1982337413
+2025/02/03 21:13:10 packer-provisioner-shell plugin: Waiting for connection...
+2025/02/03 21:13:10 Received unix RPC address for /usr/bin/packer: addr is /tmp/packer-plugin1982337413
+2025/02/03 21:13:10 packer-provisioner-shell plugin: Serving a plugin connection...
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 [INFO] Starting external plugin /usr/bin/packer execute packer-provisioner-file
+2025/02/03 21:13:10 Starting plugin: /usr/bin/packer []string{"/usr/bin/packer", "execute", "packer-provisioner-file"}
+2025/02/03 21:13:10 Waiting for RPC address for: /usr/bin/packer
+2025/02/03 21:13:10 packer-provisioner-file plugin: [INFO] Packer version: 1.12.0 [go1.22.9 linux amd64]
+2025/02/03 21:13:10 packer-provisioner-file plugin: [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2025/02/03 21:13:10 packer-provisioner-file plugin: [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/pofo14/.packerconfig
+2025/02/03 21:13:10 packer-provisioner-file plugin: [WARN] Config file doesn't exist: /home/pofo14/.packerconfig
+2025/02/03 21:13:10 packer-provisioner-file plugin: [INFO] Setting cache directory: /home/pofo14/.cache/packer
+2025/02/03 21:13:10 packer-provisioner-file plugin: Plugin address: unix /tmp/packer-plugin2171459984
+2025/02/03 21:13:10 packer-provisioner-file plugin: Waiting for connection...
+2025/02/03 21:13:10 Received unix RPC address for /usr/bin/packer: addr is /tmp/packer-plugin2171459984
+2025/02/03 21:13:10 packer-provisioner-file plugin: Serving a plugin connection...
+2025/02/03 21:13:10 packer-provisioner-file plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 packer-provisioner-file plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 [INFO] Starting external plugin /usr/bin/packer execute packer-provisioner-shell
+2025/02/03 21:13:10 Starting plugin: /usr/bin/packer []string{"/usr/bin/packer", "execute", "packer-provisioner-shell"}
+2025/02/03 21:13:10 Waiting for RPC address for: /usr/bin/packer
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] Packer version: 1.12.0 [go1.22.9 linux amd64]
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/pofo14/.packerconfig
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [WARN] Config file doesn't exist: /home/pofo14/.packerconfig
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [INFO] Setting cache directory: /home/pofo14/.cache/packer
+2025/02/03 21:13:10 packer-provisioner-shell plugin: Plugin address: unix /tmp/packer-plugin1107474979
+2025/02/03 21:13:10 packer-provisioner-shell plugin: Waiting for connection...
+2025/02/03 21:13:10 Received unix RPC address for /usr/bin/packer: addr is /tmp/packer-plugin1107474979
+2025/02/03 21:13:10 packer-provisioner-shell plugin: Serving a plugin connection...
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 packer-provisioner-shell plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:13:10 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:13:10 ui: [1;32mubuntu-server-noble.proxmox-iso.ubuntu-server-noble: output will be in this color.[0m
+2025/02/03 21:13:10 ui: 
+2025/02/03 21:13:10 Build debug mode: false
+2025/02/03 21:13:10 Force build: false
+2025/02/03 21:13:10 On error: 
+2025/02/03 21:13:10 Waiting on builds to complete...
+2025/02/03 21:13:10 Starting build run: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble
+2025/02/03 21:13:10 Running builder: proxmox-iso
+2025/02/03 21:13:10 [INFO] (telemetry) Starting builder proxmox-iso.ubuntu-server-noble
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 using token auth
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 No CD files specified. CD disk will not be made.
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 No URLs were provided to Step Download. Continuing...
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 Mapping static assigned ISO to ide2
+2025/02/03 21:13:10 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:10 Mapping Disk to virtio0
+2025/02/03 21:13:10 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Creating VM[0m
+2025/02/03 21:13:12 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Starting VM[0m
+2025/02/03 21:13:14 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:14 Found available port: 8336 on IP: 0.0.0.0
+2025/02/03 21:13:14 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Starting HTTP server on port 8336[0m
+2025/02/03 21:13:14 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting 15s for boot[0m
+2025/02/03 21:13:29 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Typing the boot command[0m
+2025/02/03 21:13:29 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:29 [INFO] Waiting 1s
+2025/02/03 21:13:30 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:30 [INFO] Waiting 1s
+2025/02/03 21:13:31 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:31 [INFO] Waiting 1s
+2025/02/03 21:13:33 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:33 [INFO] Waiting 1s
+2025/02/03 21:13:34 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:34 [INFO] Waiting 1s
+2025/02/03 21:13:35 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:35 [INFO] Waiting 1s
+2025/02/03 21:13:39 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:39 [DEBUG] Unable to get address during connection step: 500 QEMU guest agent is not running
+2025/02/03 21:13:39 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:39 [INFO] Waiting for SSH, up to timeout: 30m0s
+2025/02/03 21:13:39 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for SSH to become available...[0m
+2025/02/03 21:13:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:41 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:13:49 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:49 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:13:57 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:13:57 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:05 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:05 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:12 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:12 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:20 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:20 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:28 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:28 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:36 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:36 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:43 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:43 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:51 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:51 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:14:59 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:14:59 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:07 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:07 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:14 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:14 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:22 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:22 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:30 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:30 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:38 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:38 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:45 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:45 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:15:53 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:15:53 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:01 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:01 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:09 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:09 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:16 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:16 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:24 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:24 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:32 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:32 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:41 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:47 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:47 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:16:55 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:16:55 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:03 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:03 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:12 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:12 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:18 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:18 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:26 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:26 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:34 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:34 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:43 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:43 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:49 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:49 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:17:57 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:17:57 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:18:05 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:05 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:18:14 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:14 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:18:20 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:20 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:18:28 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:28 [DEBUG] Error getting SSH address: 500 QEMU guest agent is not running
+2025/02/03 21:18:33 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:33 [INFO] Attempting SSH connection to 192.168.2.199:22...
+2025/02/03 21:18:33 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:33 [DEBUG] reconnecting to TCP connection for SSH
+2025/02/03 21:18:33 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:33 [DEBUG] handshaking with SSH
+2025/02/03 21:18:33 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:33 [DEBUG] SSH handshake err: ssh: handshake failed: EOF
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 [INFO] Attempting SSH connection to 192.168.2.199:22...
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 [DEBUG] reconnecting to TCP connection for SSH
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 [DEBUG] handshaking with SSH
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 [DEBUG] handshake complete!
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 [INFO] no local agent socket, will not connect agent
+2025/02/03 21:18:41 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Connected to SSH![0m
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 Running the provision hook
+2025/02/03 21:18:41 [INFO] (telemetry) Starting provisioner shell
+2025/02/03 21:18:41 packer-provisioner-shell plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:18:41 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:18:41 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Provisioning with shell script: /tmp/packer-shell2405795323[0m
+2025/02/03 21:18:41 packer-provisioner-shell plugin: Opening /tmp/packer-shell2405795323 for reading
+2025/02/03 21:18:41 packer-provisioner-shell plugin: [INFO] 487 bytes written for 'uploadData'
+2025/02/03 21:18:41 [INFO] 487 bytes written for 'uploadData'
+2025/02/03 21:18:41 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:41 [DEBUG] Opening new ssh session
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] Starting remote scp process:  scp -vt /tmp
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] Started SCP session, beginning transfers...
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] Copying input data into temporary file so we can read the length
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] scp: Uploading script_1604.sh: perms=C0644 size=487
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] SCP session complete, closing stdin pipe.
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] Waiting for SSH session to complete.
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] scp stderr (length 70): Sink: C0644 487 script_1604.sh
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: scp: debug1: fd 0 clearing O_NONBLOCK
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] Opening new ssh session
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] starting remote command: chmod 0755 /tmp/script_1604.sh
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:18:42 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:18:42 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:18:42 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] Opening new ssh session
+2025/02/03 21:18:42 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:18:42 [DEBUG] starting remote command: chmod +x /tmp/script_1604.sh; PACKER_BUILDER_TYPE='proxmox-iso' PACKER_BUILD_NAME='ubuntu-server-noble' PACKER_HTTP_ADDR='10.255.255.254:8336' PACKER_HTTP_IP='10.255.255.254' PACKER_HTTP_PORT='8336'  /tmp/script_1604.sh
+2025/02/03 21:18:42 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:43 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:44 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:44 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:45 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:46 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:47 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:48 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:49 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:50 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:51 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:52 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:53 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:54 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:55 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:56 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:57 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:18:58 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:00 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:01 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:02 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:03 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:04 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:05 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:06 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:07 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:08 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:09 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:10 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:11 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:12 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:13 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:14 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:15 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:15 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:16 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:17 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:18 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:19 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:20 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:21 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:22 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:23 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:24 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:25 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:26 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:27 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:28 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:29 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:30 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:31 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:33 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:34 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:35 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:36 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Waiting for cloud-init...[0m
+2025/02/03 21:19:37 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Reading package lists... Done[0m
+2025/02/03 21:19:37 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Building dependency tree... Done[0m
+2025/02/03 21:19:37 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Reading state information... Done[0m
+2025/02/03 21:19:37 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: 0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.[0m
+2025/02/03 21:19:38 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Reading package lists... Done[0m
+2025/02/03 21:19:38 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Building dependency tree... Done[0m
+2025/02/03 21:19:38 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Reading state information... Done[0m
+2025/02/03 21:19:39 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Synchronizing state of qemu-guest-agent.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.[0m
+2025/02/03 21:19:39 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Executing: /usr/lib/systemd/systemd-sysv-install enable qemu-guest-agent[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39mThe unit files have no installation config (WantedBy=, RequiredBy=, UpheldBy=,[0m[0m
+2025/02/03 21:19:40 [INFO] 5030 bytes written for 'stdout'
+2025/02/03 21:19:40 [INFO] 0 bytes written for 'stderr'
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39mAlso=, or Alias= settings in the [Install] section, and DefaultInstance= for[0m[0m
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] 5030 bytes written for 'stdout'
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] 0 bytes written for 'stderr'
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39mtemplate units). This means they are not meant to be enabled or disabled using systemctl.[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m [0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39mPossible reasons for having these kinds of units are:[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m• A unit may be statically enabled by being symlinked from another unit's[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m  .wants/, .requires/, or .upholds/ directory.[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m• A unit's purpose may be to act as a helper for some other unit which has[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m  a requirement dependency on it.[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m• A unit may be started when needed via activation (socket, path, timer,[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m  D-Bus, udev, scripted systemctl call, ...).[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m• In case of template units, the unit is meant to be enabled with some[0m[0m
+2025/02/03 21:19:40 ui: [0;32m    ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: [0;1;39m  instance name specified.[0m[0m
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] starting remote command: rm -f /tmp/script_1604.sh
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] starting remote command: rm -f
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] (telemetry) ending shell
+2025/02/03 21:19:40 [INFO] (telemetry) Starting provisioner file
+2025/02/03 21:19:40 packer-provisioner-file plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:19:40 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:19:40 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Uploading files/99-pve.cfg => /tmp/99-pve.cfg[0m
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-provisioner-file plugin: [INFO] 39 bytes written for 'uploadData'
+2025/02/03 21:19:40 [INFO] 39 bytes written for 'uploadData'
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Starting remote scp process:  scp -vt /tmp
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Started SCP session, beginning transfers...
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] scp: Uploading 99-pve.cfg: perms=C0644 size=39
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] SCP session complete, closing stdin pipe.
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Waiting for SSH session to complete.
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] scp stderr (length 65): Sink: C0644 39 99-pve.cfg
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: scp: debug1: fd 0 clearing O_NONBLOCK
+2025/02/03 21:19:40 packer-provisioner-file plugin: closing
+2025/02/03 21:19:40 closing
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 closing
+2025/02/03 21:19:40 [INFO] (telemetry) ending file
+2025/02/03 21:19:40 [INFO] (telemetry) Starting provisioner shell
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [DEBUG] - common: sending ConfigSpec as gob
+2025/02/03 21:19:40 [DEBUG] - common: receiving ConfigSpec as gob
+2025/02/03 21:19:40 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Provisioning with shell script: /tmp/packer-shell1355747567[0m
+2025/02/03 21:19:40 packer-provisioner-shell plugin: Opening /tmp/packer-shell1355747567 for reading
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] 71 bytes written for 'uploadData'
+2025/02/03 21:19:40 [INFO] 71 bytes written for 'uploadData'
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Starting remote scp process:  scp -vt /tmp
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Started SCP session, beginning transfers...
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Copying input data into temporary file so we can read the length
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] scp: Uploading script_2908.sh: perms=C0644 size=71
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] SCP session complete, closing stdin pipe.
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Waiting for SSH session to complete.
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] scp stderr (length 69): Sink: C0644 71 script_2908.sh
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: scp: debug1: fd 0 clearing O_NONBLOCK
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] starting remote command: chmod 0755 /tmp/script_2908.sh
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] starting remote command: chmod +x /tmp/script_2908.sh; PACKER_BUILDER_TYPE='proxmox-iso' PACKER_BUILD_NAME='ubuntu-server-noble' PACKER_HTTP_ADDR='10.255.255.254:8336' PACKER_HTTP_IP='10.255.255.254' PACKER_HTTP_PORT='8336'  /tmp/script_2908.sh
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] 0 bytes written for 'stderr'
+2025/02/03 21:19:40 [INFO] 0 bytes written for 'stdout'
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] 0 bytes written for 'stdout'
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] 0 bytes written for 'stderr'
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] starting remote command: rm -f /tmp/script_2908.sh
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] Opening new ssh session
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [DEBUG] starting remote command: rm -f
+2025/02/03 21:19:40 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] RPC endpoint: Communicator ended with: 0
+2025/02/03 21:19:40 packer-provisioner-shell plugin: [INFO] RPC client: Communicator ended with: 0
+2025/02/03 21:19:40 [INFO] (telemetry) ending shell
+2025/02/03 21:19:40 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Stopping VM[0m
+2025/02/03 21:19:44 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Converting VM to template[0m
+2025/02/03 21:19:46 packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64 plugin: 2025/02/03 21:19:46 template_id: 402
+2025/02/03 21:19:46 ui: [1;32m==> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: Adding a cloud-init cdrom in storage pool zfsdata01[0m
+2025/02/03 21:19:48 [INFO] (telemetry) ending proxmox-iso.ubuntu-server-noble
+2025/02/03 21:19:48 ui: [1;32mBuild 'ubuntu-server-noble.proxmox-iso.ubuntu-server-noble' finished after 7 minutes 2 seconds.[0m
+2025/02/03 21:19:48 ui: 
+==> Wait completed after 7 minutes 2 seconds
+2025/02/03 21:19:48 ui: 
+==> Builds finished. The artifacts of successful builds are:
+2025/02/03 21:19:48 machine readable: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble,artifact-count []string{"1"}
+2025/02/03 21:19:48 machine readable: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble,artifact []string{"0", "builder-id", "proxmox.iso"}
+2025/02/03 21:19:48 machine readable: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble,artifact []string{"0", "id", "402"}
+2025/02/03 21:19:48 machine readable: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble,artifact []string{"0", "string", "A template was created: 402"}
+2025/02/03 21:19:48 machine readable: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble,artifact []string{"0", "files-count", "0"}
+2025/02/03 21:19:48 machine readable: ubuntu-server-noble.proxmox-iso.ubuntu-server-noble,artifact []string{"0", "end"}
+2025/02/03 21:19:48 ui: --> ubuntu-server-noble.proxmox-iso.ubuntu-server-noble: A template was created: 402
+2025/02/03 21:19:48 [INFO] (telemetry) Finalizing.
+2025/02/03 21:19:49 waiting for all plugin processes to complete...
+2025/02/03 21:19:49 /home/pofo14/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.2_x5.0_linux_amd64: plugin process exited
+2025/02/03 21:19:49 /usr/bin/packer: plugin process exited
+2025/02/03 21:19:49 /usr/bin/packer: plugin process exited
+2025/02/03 21:19:49 /usr/bin/packer: plugin process exited

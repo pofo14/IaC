@@ -1,0 +1,42 @@
+media_dataset: /mnt/testpool/media
+create_directories:
+  - path: "{{ media_dataset }}/audiobooks"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/magazines"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/movies"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/music"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/phone-pictures"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/pictures"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/tv"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/videos"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'

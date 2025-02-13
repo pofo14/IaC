@@ -1,11 +1,11 @@
 output "vm_id" {
   description = "The ID of the created VM"
-  value       = proxmox_vm_qemu.vm.id
+  value       = proxmox_vm_qemu.vm-clone.id
 }
 
 output "vm_name" {
   description = "The name of the created VM"
-  value       = proxmox_vm_qemu.vm.name
+  value       = proxmox_vm_qemu.vm-clone.name
 }
 
 # output "vm_ip" {

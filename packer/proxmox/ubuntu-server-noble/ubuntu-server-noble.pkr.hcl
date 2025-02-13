@@ -28,22 +28,21 @@ source "proxmox-iso" "ubuntu-server-noble" {
     
     # VM General Settings
     node = "proxmox"
-    vm_id = "401"
+    vm_id = "402"
     vm_name = "ubuntu-server-noble"
     template_description = "Ubuntu Server Noble Image"
 
     # VM OS Settings
     # (Option 1) Local ISO File
-    iso_file = "zfsdata01:iso/ubuntu-24.04.1-live-server-amd64.iso"
-    # - or -
-    # (Option 2) Download ISO
-    # iso_url = "https://releases.ubuntu.com/24.04/ubuntu-24.04-live-server-amd64.iso"
-    # iso_checksum = "8762f7e74e4d64d72fceb5f70682e6b069932deedb4949c6975d0f0fe0a91be3"
-    iso_storage_pool = "zfsdata01"
-    unmount_iso = true
+    #iso_file = "zfsdata01:iso/ubuntu-24.04.1-live-server-amd64.iso"
+    boot_iso {
+      #type = "zfsdata01"
+      iso_file = "zfsdata01:iso/ubuntu-24.04.1-live-server-amd64.iso"
+      unmount = true
+    }
 
     # VM System Settings
-    qemu_agent = true
+    # qemu_agent = true
 
     # VM Hard Disk Settings
     scsi_controller = "virtio-scsi-pci"
@@ -52,7 +51,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
         disk_size = "20G"
         format = "raw"
         storage_pool = "zfsdata01"
-        storage_pool_type = "zfs"
+        #storage_pool_type = "zfs"
         type = "virtio"
     }
 
@@ -71,7 +70,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
 
     # VM Cloud-Init Settings
     cloud_init = true
-    cloud_init_storage_pool = "local-zfs"
+    cloud_init_storage_pool = "zfsdata01"
 
     # PACKER Boot Commands
     boot_command = [
@@ -79,20 +78,26 @@ source "proxmox-iso" "ubuntu-server-noble" {
         "e<wait>",
         "<down><down><down><end>",
         "<bs><bs><bs><bs><wait>",
-        "autoinstall ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ---<wait>",
+        #"autoinstall ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ---<wait>",
+        "autoinstall ds=nocloud-net\\;s=http://192.168.2.236:{{ .HTTPPort }}/ ---<wait>",
+        "<wait>",
         "<f10><wait>"
     ]
 
     boot                    = "c"
-    boot_wait               = "10s"
+    boot_wait               = "15s"
     communicator            = "ssh"
+
+    qemu_agent = true
 
     # PACKER Autoinstall Settings
     http_directory          = "http" 
     # (Optional) Bind IP Address and Port
-    # http_bind_address       = "0.0.0.0"
-    # http_port_min           = 8802
-    # http_port_max           = 8802
+    #http_bind_address       = "0.0.0.0"
+    #http_bind_address       = "172.24.22.178"
+    #http_interface         = "vEthernet (WSL (Hyper-V firewall))"
+    http_port_min           = 8336
+    http_port_max           = 8336
 
     ssh_username            = "pofo14"
 
@@ -104,6 +109,7 @@ source "proxmox-iso" "ubuntu-server-noble" {
 
     # Raise the timeout, when installation takes longer
     ssh_timeout             = "30m"
+    ssh_handshake_attempts = "100"
     ssh_pty                 = true
 }
 
@@ -145,3 +151,8 @@ build {
     # Add additional provisioning scripts here
     # ...
 }
+
+
+# TODO: Need to document dev machine setup, and this requires packer plugins install github.com/hashicorp/proxmox
+# TODO: setup http netsh interface portproxy add v4tov4 listenport=8336 listenaddress=0.0.0.0 connectport=8336 connectaddress=(wsl hostname -I)
+# TODO: netsh interface portproxy delete v4tov4 listenport=8336 listenaddress=0.0.0.0
