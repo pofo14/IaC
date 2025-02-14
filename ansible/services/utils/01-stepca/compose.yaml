@@ -8,7 +8,7 @@ services:
           - stepca.flopo.retropetro.net
           - stepca
     volumes:
-      - step:/home/step
+      - stepca_data:/home/step
     environment:
       - "DOCKER_STEPCA_INIT_NAME=RetroPetro-Homelab"
       - "DOCKER_STEPCA_INIT_DNS_NAMES=stepca.flopo.retropetro.net,localhost,stepca,stepca.proxy"

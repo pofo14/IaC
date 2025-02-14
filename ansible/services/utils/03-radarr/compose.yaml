@@ -6,27 +6,13 @@ services:
       # enable traefik
       - "traefik.enable=true"
 
-      # Regular HTTP Router (with redirect)
-      # - "traefik.http.routers.radarr-http.rule=Host(`radarr.flopo.retropetro.net`)"
-      # - "traefik.http.routers.radarr-http.entrypoints=web"
-      # - "traefik.http.routers.radarr-http.middlewares=redirect-to-https@docker"
-      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-
       # HTTPS Router
       - "traefik.http.routers.radarr.rule=Host(`radarr.flopo.retropetro.net`)"
       - "traefik.http.routers.radarr.entrypoints=websecure"
       - "traefik.http.routers.radarr.tls=true"
       - "traefik.http.routers.radarr.tls.certresolver=stepca"
-      
-      - "traefik.http.routers.radarr.service=radarr"
 
-      # # Test router for ACME
-      # - "traefik.http.routers.radarr-test.rule=Host(`radarr.flopo.retropetro.net`) && PathPrefix(`/.well-known/acme-challenge/`)"
-      # - "traefik.http.routers.radarr-test.entrypoints=web"
-      # - "traefik.http.routers.radarr-test.service=radarr"
-      # - "traefik.http.routers.radarr-test.priority=999"
-      # - "traefik.http.routers.radarr-test.middlewares=test-headers"
-      # - "traefik.http.middlewares.test-headers.headers.customresponseheaders.X-Test=working"
+      - "traefik.http.routers.radarr.service=radarr"
 
       # service config
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
@@ -37,7 +23,8 @@ services:
           - radarr
 
     volumes:
-      - "{{ appdata_path }}/arrs/radarr:{{ container_config_path }}"
+      #- "{{ appdata_path }}/arrs/radarr:{{ container_config_path }}"
+      - radarr_config:{{ container_config_path }}
       - "{{ storage_path }}:{{ container_data_path }}"
     environment:
       - PUID={{ arrs_uid }}

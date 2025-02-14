@@ -51,7 +51,7 @@ services:
       # - "--entrypoints.web.http.middlewares=acme-redirect@internal"      
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - acme-storage:/etc/traefik/acme
+      - acme_data:/etc/traefik/acme
       - /etc/ssl:/etc/ssl:ro
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
 
