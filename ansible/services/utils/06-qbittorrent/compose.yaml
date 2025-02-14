@@ -16,9 +16,9 @@ services:
       - "traefik.http.middlewares.qbit-prefix.stripprefix.prefixes=/qbittorrent"
       - "traefik.http.routers.qbittorrent.middlewares=qbit-prefix"
     volumes:
-      - "{{ appdata_path }}/downloaders/qbittorrent:{{ container_config_path }}"
+      - qbittorrent_config:{{ container_config_path }}
       - "{{ storage_path }}/torrents:{{ container_data_path }}/torrents"
-      
+
     networks:
       proxy:
         aliases:
@@ -36,8 +36,17 @@ networks:
     name: proxy
 
 volumes:
-  step:
+  stepca_data:
+    name: stepca_data
   portainer_data:
-  acme-storage:  
+    name: portainer_data  
+  acme_data:  
+    name: acme_data
+  radarr_config:
+    name: radarr_config  
+  prowlarr_config:
+    name: prowlarr_config      
+  qbittorrent_config:
+    name: qbittorrent_config      
 
 

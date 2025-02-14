@@ -19,7 +19,7 @@ services:
         aliases:
           - prowlarr
     volumes:
-      - "{{ appdata_path }}/arrs/prowlarr:{{ container_config_path }}"
+      - prowlarr_config:{{ container_config_path }}
     environment:
       - PUID={{ arrs_uid }}
       - PGID={{ arrs_gid }}
