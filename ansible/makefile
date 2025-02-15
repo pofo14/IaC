@@ -25,6 +25,8 @@ prod-utils:
 prod-utils-tags:
 	ansible-playbook site.yml -v -i ./inventories/production --limit utils --tags compose --ask-become-pass
 
+prod-pihole:
+	ansible-playbook site.yml -v -i ./inventories/production --limit pihole --ask-become-pass
 
 prod-truenas:
 	ansible-playbook site.yml -v -i ./inventories/production --limit truenas --ask-become-pass

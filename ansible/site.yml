@@ -166,3 +166,10 @@
         group: "{{ item.group }}"
         owner: "{{ item.owner }}"
       loop: "{{ create_directories }}"
+
+- name: Configure Pihole Server
+  hosts: pihole
+  become: true
+
+  roles:
+    - role: sixteenone.pihole-dns

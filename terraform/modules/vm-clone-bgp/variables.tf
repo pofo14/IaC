@@ -2,10 +2,12 @@ variable "hostname" {
   description = "The hostname of the VM"
   type        = string
 }
+
 variable "domain" {
   description = "The domain to join"
   type        = string
 }
+
 variable "proxmox_host" {
   description = "The Proxmox host to deploy the VM on"
   type        = string
@@ -52,7 +54,6 @@ variable "ssh_keys" {
   type        = list(string)
   default = []
 }
-
 
 variable "description" {
   description = "The descriptions to apply to the VM"

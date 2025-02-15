@@ -15,3 +15,6 @@ utils.flopo.retropetro.net  ansible_user=pofo14 ansible_ssh_private_key_file=~/.
 
 [truenas]
 truenas.flopo.retropetro.net  ansible_user=truenas_admin
+
+[pihole]
+pihole.flopo.retropetro.net  ansible_host=192.168.2.2 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
