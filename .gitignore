@@ -68,3 +68,8 @@ TODO
 secret
 *.secret
 TODO
+
+# Ignore unencrypted secrets
+**/secrets.yml
+# Don't ignore encrypted secrets
+!*.encrypted.yml

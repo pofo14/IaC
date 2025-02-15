@@ -19,6 +19,7 @@ roles:
   - src: tigattack.mergerfs
   - src: nierdz.nextcloud
   - src: artis3n.tailscale
+  - src: sixteenone.pihole-dns
 
 collections:
   - prometheus.prometheus

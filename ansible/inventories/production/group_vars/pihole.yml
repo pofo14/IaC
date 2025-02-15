@@ -1,0 +1,24 @@
+pihole_dns_dns:
+  - { ip: 192.168.2.2, domain: pihole.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: utils.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: radarr.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: prowlarr.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: portainer.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: qbittorrent.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: traefik.flopo.retropetro.net }
+  - { ip: 192.168.2.10, domain: sonarr.flopo.retropetro.net }
+
+# Transform the dns_entries into the format required by sixteenone.pihole-dns
+# pihole_dns_dns: >-
+#   {{
+#     dns_entries.hosts | map('combine',
+#       {'domain': '{{ item.name }}.' + dns_entries.base_domain},
+#       {'ip': '{{ item.ip }}'}
+#     ) | list
+#   }}
+
+# If you need CNAME records, you can define them here
+# pihole_dns_cname: []
+  # Example if you need CNAMEs:
+  # - domain: www.flopo.retropetro.net
+  #   target: utils.flopo.retropetro.net

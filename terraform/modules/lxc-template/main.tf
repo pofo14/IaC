@@ -1,36 +1,83 @@
 terraform {
   required_providers {
     proxmox = {
-      source = "Telmate/proxmox"
-      version = "2.9.14"  # Using stable version
+      source  = "bpg/proxmox"
+      version = "0.70.1"
     }
   }
 }
 
-resource "proxmox_lxc" "container" {
-  target_node  = "proxmox"
-  hostname     = "mealie-template"
-  ostemplate   = "local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst"
-  password     = "Ch@rl!e29"
-  unprivileged = true
-  
-  // Resource limits
-  cores    = 2
-  memory   = 1024
-  swap     = 512
-  
-  // Root disk
-  rootfs {
-    storage = "local-zfs"
-    size    = "32G"
-  }
-  
-  // Network configuration
-  network {
-    name   = "eth0"
-    bridge = "vmbr0"
-    ip     = "dhcp"
+resource "proxmox_virtual_environment_container" "container" {
+  description = "Managed by Terraform"
+  node_name = var.node_name
+
+
+  initialization {
+    hostname = var.hostname
+
+    dns {
+      domain = var.dns_domain
+      servers = var.dns_servers
+    }
+
+    ip_config {
+      ipv4 {
+        address = var.ip_address
+      }
+    }
+
+    user_account {
+      keys = [
+        var.ssh_keys
+      ]
+      password = var.user_password
+    }
   }
 
-  start = true
+  memory {
+    dedicated = var.memory
+  }
+
+  network_interface {
+    name = "eth0"
+  }
+
+  operating_system {
+    # You can use a volume ID, as obtained from a "pvesm list <storage>"
+    # i.e. local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst
+    template_file_id = var.os_template_file
+    type             = var.ostype
+  }
+
+  # CPU and memory
+  cpu {
+    architecture = var.cpu_architecture
+    cores   = var.cpu_cores
+  }
+
+  disk {
+    datastore_id = var.storage_pool
+    size         = var.rootfs_size
+  }
+
+  dynamic "mount_point" {
+    for_each = var.mount_points
+    content {
+      volume = mount_point.value.storage_pool
+      size   = mount_point.value.disk_size
+      path   = mount_point.value.path
+    }
+  }
+
+  startup {
+    order      = var.startup_order
+    up_delay   = var.up_delay
+    down_delay = var.down_delay
+  }
+
+  pool_id = var.pool_id
+  unprivileged = var.unprivileged
+
+  tags      = length(var.tags) > 0 ? var.tags : ["default-tag"]
+
 }
