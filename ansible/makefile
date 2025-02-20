@@ -31,6 +31,12 @@ prod-pihole:
 prod-truenas:
 	ansible-playbook site.yml -v -i ./inventories/production --limit truenas --ask-become-pass
 
+prod-proxmox:
+	ansible-playbook site.yml -v -i ./inventories/production --limit proxmox --ask-become-pass
+
+prod-pve:
+	ansible-playbook site.yml -v -i ./inventories/production --limit pve --ask-become-pass
+
 ### Vault Commands ####
 check-vault:
 	ansible-vault view inventories/production/group_vars/all/vault.yml

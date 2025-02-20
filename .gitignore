@@ -42,11 +42,9 @@ terraform.rc
 
 ## Ignore the python virtual environment
 ansible_env/
+.ansible
 .venv/
 venv/
-
-# Ignore Ansible roles installed by requirements
-roles/
 
 # generated files
 node_exporter_hosts.json

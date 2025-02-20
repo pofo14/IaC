@@ -1,0 +1,6 @@
+- name: Update Grub
+  ansible.builtin.command:
+    cmd: update-grub
+  when: ansible_facts['os_family'] == 'Debian' and ansible_facts['grub_cmdline_linux'] is changed
+  args:
+    creates: /boot/grub/grub.cfg

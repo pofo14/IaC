@@ -1,0 +1,55 @@
+- name: Ensure ISO directory exists
+  ansible.builtin.file:
+    path: "{{ iso_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Check if ISO exists
+  ansible.builtin.stat:
+    path: "{{ iso_path }}/{{ item.name }}"
+  register: iso_stat
+  loop: "{{ isos }}"
+
+- name: Download and decompress ISO
+  block:
+    - name: Download ISO
+      ansible.builtin.get_url:
+        url: "{{ item.item.url }}"
+        dest: "/tmp/{{ item.item.name }}{{ '.bz2' if item.item.url.endswith('.bz2') else '' }}"
+        checksum: "{{ item.item.checksum_type }}:{{ item.item.checksum }}"
+        mode: '0644'  # Add explicit permission for downloaded file
+      when: not item.stat.exists
+      loop: "{{ iso_stat.results }}"
+
+    - name: Decompress ISO if needed
+      ansible.builtin.command:
+        cmd: "bunzip2 /tmp/{{ item.item.name }}.bz2"
+        creates: "/tmp/{{ item.item.name }}"
+      when: not item.stat.exists and item.item.url.endswith('.bz2')
+      loop: "{{ iso_stat.results }}"  # Add loop
+
+    - name: Set permissions on decompressed ISO
+      ansible.builtin.file:
+        path: "/tmp/{{ item.item.name }}"
+        mode: '0644'
+        owner: root
+        group: root
+      when: not item.stat.exists
+      loop: "{{ iso_stat.results }}"  # Add loop
+
+    - name: Move ISO to Proxmox storage
+      ansible.builtin.command:
+        cmd: "mv /tmp/{{ item.item.name }} {{ iso_path }}/{{ item.item.name }}"
+        creates: "{{ iso_path }}/{{ item.item.name }}"
+      when: not item.stat.exists
+      loop: "{{ iso_stat.results }}"  # Add loop
+
+    - name: Set correct permissions on ISO
+      ansible.builtin.file:
+        path: "{{ iso_path }}/{{ item.item.name }}"
+        state: file
+        mode: '0644'
+        owner: root
+        group: root
+      when: not item.stat.exists
+      loop: "{{ iso_stat.results }}"  # Add loop

@@ -173,3 +173,25 @@
 
   roles:
     - role: sixteenone.pihole-dns
+
+- name: Configure Proxmox Node
+  hosts: proxmox
+  become: true
+
+  tasks:
+    - name: Import ISO management tasks
+      ansible.builtin.include_tasks: tasks/proxmox_iso.yml
+
+  roles:
+    - proxmox_post_install
+
+- name: Configure PVE Node
+  hosts: pve
+  become: true
+
+  tasks:
+    - name: Import ISO management tasks
+      ansible.builtin.include_tasks: tasks/proxmox_iso.yml
+
+  roles:
+    - proxmox_post_install

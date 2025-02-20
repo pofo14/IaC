@@ -1,0 +1,11 @@
+[Unit]
+Description=Fan Control Service
+After=network.target
+
+[Service]
+ExecStart=/opt/fancontrol/fancontrol.sh
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

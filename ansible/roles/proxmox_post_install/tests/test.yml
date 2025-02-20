@@ -1,0 +1,4 @@
+- name: Proxmox Post Install Test
+  hosts: localhost
+  roles:
+    - proxmox_post_install
