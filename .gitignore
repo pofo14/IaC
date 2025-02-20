@@ -71,3 +71,5 @@ TODO
 **/secrets.yml
 # Don't ignore encrypted secrets
 !*.encrypted.yml
+
+**/downloaded_iso_path/
