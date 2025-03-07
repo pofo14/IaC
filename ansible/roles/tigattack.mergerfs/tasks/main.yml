@@ -1,0 +1,45 @@
+---
+
+- name: Include OS-specific variables
+  ansible.builtin.include_vars:
+    file: "{{ ansible_os_family }}.yml"
+  tags: mergerfs
+
+- name: Install mergerfs prerequisites
+  become: true
+  ansible.builtin.package:
+    name: "{{ mergerfs_prerequisites }}"
+    state: present
+  tags: [mergerfs, mergerfs_install]
+  when: mergerfs_install_prerequisites
+
+- name: Include install tasks
+  ansible.builtin.include_tasks:
+    file: install_from_{{ mergerfs_install_mode }}.yml
+  tags: [mergerfs, mergerfs_install]
+
+- name: Mount mergerfs filesystems
+  ansible.posix.mount:
+    fstype: fuse.mergerfs
+    src: "{{ ':'.join(item.branches | mandatory) }}"
+    path: "{{ item.path | mandatory }}"
+    opts: "{{ item.options | default('defaults') }}"
+    state: "{{ item.state | default('mounted') }}"  # noqa args[module]
+  loop: "{{ mergerfs_mounts }}"
+  become: true
+  tags: [mergerfs, mergerfs_install]
+
+- name: Unmount unlisted mergerfs filesystems
+  block:
+    - name: List existing mergerfs filesystems
+      # ansible_mounts doesn't list fuse mounts
+      ansible.builtin.command: "findmnt -t fuse.mergerfs -o TARGET -n"
+      changed_when: false
+      register: existing_mergerfs_mounts
+    - name: Unmount mergerfs filesystems
+      ansible.posix.mount:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ existing_mergerfs_mounts.stdout_lines }}"
+      when: item not in mergerfs_mounts | map(attribute='path') | list
+  when: mergerfs_remove_undefined_mounts

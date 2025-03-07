@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: yamllint -s . && ansible-lint . && flake8
+platforms:
+  - name: instance
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-debian11}-ansible:latest"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        mergerfs_install_mode: ${INSTALL_MODE:-github_releases}
+verifier:
+  env:
+    PYTEST_CHECK_TEST_ID_REGEX: "0"
+  name: testinfra

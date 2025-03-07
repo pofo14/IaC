@@ -1,0 +1,51 @@
+---
+# General
+nextcloud_version: "30.0.2"
+nextcloud_domain: ""
+nextcloud_php_user: "{{ php_fpm_pool_user | default('www-data') }}"
+nextcloud_php_version: "{{ php_default_version_debian | default('8.2') }}"
+nextcloud_php_bin_path: "/usr/bin/php"
+nextcloud_keep_releases: "60d"
+nextcloud_admin_user: ""
+nextcloud_admin_password: ""
+nextcloud_config_template: "config.php.j2"
+
+# To generate config.php
+nextcloud_instanceid: ""
+nextcloud_passwordsalt: ""
+nextcloud_secret: ""
+nextcloud_dbhost: "localhost"
+nextcloud_dbname: "nextcloud"
+nextcloud_dbuser: "nextcloud"
+nextcloud_dbpassword: ""
+
+# Paths
+nextcloud_deploy_to: "/var/www/{{ nextcloud_domain }}"
+nextcloud_datadirectory: "{{ nextcloud_deploy_to }}/data"
+
+# Packages
+nextcloud_php_packages:
+  - php-pear
+  - php{{ nextcloud_php_version }}-bcmath
+  - php{{ nextcloud_php_version }}-bz2
+  - php{{ nextcloud_php_version }}-curl
+  - php{{ nextcloud_php_version }}-gd
+  - php{{ nextcloud_php_version }}-gmp
+  - php{{ nextcloud_php_version }}-imagick
+  - php{{ nextcloud_php_version }}-intl
+  - php{{ nextcloud_php_version }}-mbstring
+  - php{{ nextcloud_php_version }}-mysql
+  - php{{ nextcloud_php_version }}-redis
+  - php{{ nextcloud_php_version }}-xml
+  - php{{ nextcloud_php_version }}-zip
+nextcloud_packages:
+  - acl
+  - bzip2
+  - redis-server
+  - redis-tools
+
+# Post configuration
+nextcloud_apps: []
+
+# Hide sensitive data during deploy
+nextcloud_no_log: true

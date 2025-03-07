@@ -166,6 +166,12 @@
         group: "{{ item.group }}"
         owner: "{{ item.owner }}"
       loop: "{{ create_directories }}"
+  
+    - name: Set hostname
+      arensb.truenas.hostname:
+        name: {{truenas_hostname}}
+    
+    
 
 - name: Configure Pihole Server
   hosts: pihole

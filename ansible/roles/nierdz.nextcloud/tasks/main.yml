@@ -1,0 +1,34 @@
+---
+- name: Import check tasks
+  ansible.builtin.import_tasks: checks.yml
+
+- name: Import setup tasks
+  ansible.builtin.import_tasks: setup.yml
+
+- name: Import update tasks
+  ansible.builtin.import_tasks: update.yml
+
+- name: Import configure tasks
+  ansible.builtin.import_tasks: configure.yml
+
+- name: Find old releases
+  ansible.builtin.find:
+    paths: "{{ nextcloud_releases_path }}"
+    age: "{{ nextcloud_keep_releases }}"
+    file_type: directory
+    recurse: no
+  register: old_releases
+
+- name: Register current release
+  ansible.builtin.find:
+    paths: "{{ nextcloud_releases_path }}"
+    file_type: directory
+    recurse: no
+    patterns: "{{ nextcloud_version }}"
+  register: current_release
+
+- name: Delete old releases
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ old_releases.files | difference(current_release.files) }}"

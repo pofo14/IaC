@@ -1,0 +1,10 @@
+---
+- name: Make the filesystem
+  community.general.filesystem:
+    dev: '{{ item.dev }}'
+    force: '{{ item.force | default(omit) }}'
+    fstype: '{{ item.fstype }}'
+    opts: '{{ item.opts | default(omit) }}'
+    resizefs: '{{ item.resizefs | default(omit) }}'
+    state: '{{ item.state | default(omit) }}'
+  with_items: '{{ filesystem }}'
