@@ -1,0 +1,19 @@
+- name: Check if dataset exists
+  ansible.builtin.uri:
+    url: "https://{{ api_host }}/api/v2.0/pool/dataset/id/{{ media_dataset | urlencode }}"
+    method: GET
+    user: "{{ truenas_admin_user }}"
+    password: "{{ truenas_admin_password }}"
+    validate_certs: false
+    status_code: [200, 404]
+  register: dataset_status
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: " {{ item.mode }} "
+    group: "{{ item.group }}"
+    owner: "{{ item.owner }}"
+  loop: "{{ create_directories }}"
+  when: dataset_status.status == 200

@@ -1,0 +1,64 @@
+# API Info
+ansible_connection: local  # Since we're using API
+# api_key: "1-0aHthyNOSNWWGZSbWmcpYSgFEzEzaEYY2hA6JJOHE39RrtZ4nzbwacZh52IYgshE"
+# api_key: "3-nXA6fyx0aVhao7qYidNRl1TdnsbPMAU902X53ppdrj5cOLojCLJpfNXhoyL3X2YA"
+# auth api_key create name="api key 3" allowlist=[{"method": "*", "resource": "*"}]
+api_key: 7-m87lrRONnoDWXOfzvfcHgDCXZaf22KoVtApOzC0xw7BT9VwSaP9M6fdPGf5z8aDp
+api_host: "192.168.2.134"
+api_key_name: "Ansible"
+
+truenas_admin_user: "truenas_admin"
+truenas_admin_password: "Ch@rl!e29"
+truenas_hostname: test-truenas.flopo.retropetro.net
+truenas_validate_certs: false
+
+# truenas_datasets:
+#   - path: "{{ media_dataset }}"
+#   directories: "{{ create_directories }}"
+
+truenas_services:
+  - "ssh"
+
+# Standard Dataset folders
+media_dataset: /mnt/mediapool/media
+create_directories:
+  - path: "{{ media_dataset }}/audiobooks"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/magazines"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/movies"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/music"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/phone-pictures"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/pictures"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/tv"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'
+  - path: "{{ media_dataset }}/videos"
+    state: directory
+    group: dockermedia
+    owner: mediadl
+    mode: '0775'

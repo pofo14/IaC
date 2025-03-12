@@ -1,0 +1,19 @@
+- name: Configure datasets
+  ansible.builtin.include_tasks: dataset.yml
+  loop: "{{ truenas_datasets }}"
+  loop_control:
+    loop_var: dataset_item
+  vars:
+    dataset_path: "{{ dataset_item.path }}"
+    dataset_directories: "{{ dataset_item.directories }}"
+
+- name: Configure services
+  ansible.builtin.include_tasks: service.yml
+  loop: "{{ truenas_services }}"
+  loop_control:
+    loop_var: service_item
+  vars:
+    service_name: "{{ service_item }}"
+
+- name: Configure network
+  ansible.builtin.include_tasks: network.yml

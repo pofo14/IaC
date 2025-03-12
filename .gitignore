@@ -72,4 +72,6 @@ TODO
 # Don't ignore encrypted secrets
 !*.encrypted.yml
 
-**/downloaded_iso_path/
+# ISO files
+*.iso
+packer/proxmox/downloaded_iso_path/

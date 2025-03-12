@@ -7,8 +7,8 @@ source "proxmox-iso" "truenas" {
   insecure_skip_tls_verify = true
   task_timeout        = "30m"
 
-  # will need to install manually post-install
-  qemu_agent = false
+  # will need to install manually post-installs
+  qemu_agent = true
 
   # VM General Settings
   vm_name  = "Truenas-template"
@@ -22,14 +22,15 @@ source "proxmox-iso" "truenas" {
   # ISO Settings
   boot_iso {
     #iso_url      = "https://mirrors.nycbug.org/pub/opnsense/releases/25.1/OPNsense-25.1-dvd-amd64.iso.bz2"
-    iso_checksum = "68efe0e5c20bd5fbe42918f000685ec10a1756126e37ca28f187b2ad7e5889ca"
+    iso_checksum = "33e29ed62517bc5d4aed6c80b9134369e201bb143e13fefdec5dbf3820f4b946"
     iso_storage_pool = "local"
     iso_target_path = "TrueNAS-SCALE-24.10.2.iso"  # Remove 'local:iso/' prefix
     unmount     = true
-     iso_urls = [
-       "local:iso/TrueNAS-SCALE-24.10.2.iso",
-       "https://download.sys.truenas.net/TrueNAS-SCALE-ElectricEel/24.10.2/TrueNAS-SCALE-24.10.2.iso"
-     ]
+    iso_file = "local:iso/TrueNAS-SCALE-24.10.2.iso"
+    # iso_urls = [
+   #    "local:iso/TrueNAS-SCALE-24.10.2.iso"# ,
+     #  "https://download.sys.truenas.net/TrueNAS-SCALE-ElectricEel/24.10.2/TrueNAS-SCALE-24.10.2.iso"
+   #  ]
   }
 
   # Network Settings
@@ -51,20 +52,17 @@ source "proxmox-iso" "truenas" {
   http_port_min   = 8100
   http_port_max   = 8100
 
-  boot_wait           = "90s"
+  boot_wait           = "45s"
   boot_command = [
-    "1<enter>",
-    "<wait5>",
+    "1<enter><wait5>",
     "<spacebar><wait3><enter>",
     "<enter><wait5>",
-    "1<enter><wait3>",
+    # "1<enter><wait3>",
     "${var.opnsense_root_password}<tab><wait5>",  # Set root password
     "${var.opnsense_root_password}<wait5>",  # Confirm root password    
     "<enter>",
     "<enter>",
-    "<wait180>",
-    "3<wait180>"
-
+    "<wait100>"
   ]
 
   # SSH Settings

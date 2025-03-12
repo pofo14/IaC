@@ -1,0 +1,74 @@
+---
+# TrueNAS API Configuration
+truenas_api_host: "{{ inventory_hostname }}"
+truenas_admin_user: "admin"
+truenas_admin_password: "{{ vault_truenas_admin_password }}"
+truenas_validate_certs: false
+truenas_api_timeout: 30
+truenas_api_retries: 3
+truenas_api_delay: 5
+
+# Dataset Configuration
+truenas_datasets:
+  - name: "media"
+    path: "/mnt/media"
+    directories:
+      - path: "/mnt/media/movies"
+        mode: "0755"
+        owner: "media"
+        group: "media"
+      - path: "/mnt/media/tv"
+        mode: "0755"
+        owner: "media"
+        group: "media"
+      - path: "/mnt/media/music"
+        mode: "0755"
+        owner: "media"
+        group: "media"
+
+# Service Configuration
+truenas_services:
+  - name: "ssh"
+    state: "started"
+    enable: true
+  - name: "smb"
+    state: "started"
+    enable: true
+  - name: "nfs"
+    state: "started"
+    enable: true
+  - name: "afp"
+    state: "stopped"
+    enable: false
+  - name: "iscsi"
+    state: "stopped"
+    enable: false
+  - name: "ups"
+    state: "stopped"
+    enable: false
+
+# Network Configuration
+truenas_network:
+  interfaces:
+    - name: "eth0"
+      ipv4_method: "dhcp"
+      ipv6_method: "dhcp"
+  dns:
+    nameservers:
+      - "8.8.8.8"
+      - "8.8.4.4"
+    domains: []
+
+# Share Configuration
+truenas_shares: []
+# Example structure:
+# truenas_shares:
+#   - name: "media"
+#     path: "/mnt/media"
+#     type: "smb"
+#     options:
+#       comment: "Media Share"
+#       read_only: false
+#       guest_access: false
+#       valid_users: ["media"]
+#       valid_groups: ["media"]

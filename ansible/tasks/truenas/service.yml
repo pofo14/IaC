@@ -1,0 +1,43 @@
+- name: Enable SSH
+  ansible.builtin.uri:
+    url: "https://{{ api_host }}/api/v2.0/service/id/ssh"
+    method: PUT
+    user: "{{ truenas_admin_user }}"
+    password: "{{ truenas_admin_password }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      enable: true
+    validate_certs: false
+  delegate_to: localhost
+
+# Corrected task to check SSH service status
+- name: Check SSH service status
+  ansible.builtin.uri:
+    url: "https://{{ api_host }}/api/v2.0/service"
+    method: GET
+    user: "{{ truenas_admin_user }}"
+    password: "{{ truenas_admin_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: all_services
+  delegate_to: localhost
+
+- name: Find SSH service info
+  ansible.builtin.set_fact:
+    ssh_service: "{{ all_services.json | selectattr('service', 'equalto', 'ssh') | first | default({}) }}"
+
+# Updated task to start SSH service if not running
+- name: Start SSH service if not running
+  ansible.builtin.uri:
+    url: "https://{{ api_host }}/api/v2.0/service/start"
+    method: POST
+    user: "{{ truenas_admin_user }}"
+    password: "{{ truenas_admin_password }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      service: "ssh"
+    validate_certs: false
+  when: ssh_service.state is defined and ssh_service.state != 'RUNNING'
+  delegate_to: localhost

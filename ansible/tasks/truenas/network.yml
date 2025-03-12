@@ -1,0 +1,12 @@
+- name: Set hostname
+  ansible.builtin.uri:
+    url: "https://{{ api_host }}/api/v2.0/network/configuration"
+    method: PUT
+    user: "{{ truenas_admin_user }}"
+    password: "{{ truenas_admin_password }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      hostname: "{{ truenas_hostname }}"
+    validate_certs: false
+  delegate_to: localhost
