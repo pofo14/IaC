@@ -1,0 +1,10 @@
+---
+- name: Configure NFS service
+  arensb.truenas.nfs:
+   # protocols: "{{ truenas_nfs.protocols }}"
+    nfsv4: "{{ truenas_nfs.v4 | default(true) }}"
+    allow_nonroot: "{{ truenas_nfs.allow_nonroot | default(true) }}"
+  register: nfs_result
+  failed_when:
+    - nfs_result.failed is defined
+    - nfs_result.failed

@@ -23,4 +23,3 @@ roles:
 
 collections:
   - prometheus.prometheus
-  - arensb.truenas

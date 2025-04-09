@@ -1,0 +1,60 @@
+---
+- name: Manage datasets and directories
+  block:
+    - name: Verify datasets exist
+      ansible.builtin.uri:
+        url: "https://{{ ansible_host }}/api/v2.0/pool/dataset/id/{{ item.path | basename | regex_replace('/', '%2F') }}"
+        method: GET
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        force_basic_auth: true
+        validate_certs: false
+        status_code: [200, 404]
+      register: dataset_status
+      loop: "{{ truenas_datasets }}"
+      delegate_to: localhost
+
+    - name: Create directories within datasets
+      ansible.builtin.shell: >
+        ssh {{ ansible_user }}@{{ ansible_host }} "mkdir -p '{{ item.0.path }}/{{ item.1.path }}' && 
+        chown '{{ item.1.owner }}:{{ item.1.group }}' '{{ item.0.path }}/{{ item.1.path }}' && 
+        chmod {{ item.1.mode }} '{{ item.0.path }}/{{ item.1.path }}'"
+      args:
+        executable: /bin/bash
+      loop: "{{ truenas_datasets|subelements('directories') }}"
+      when: dataset_status.results[ansible_loop.index0].status == 200
+      changed_when: true
+      delegate_to: localhost
+  
+  rescue:
+    - name: API Method for directory management
+      ansible.builtin.uri:
+        url: "https://{{ ansible_host }}/api/v2.0/filesystem/stat/{{ item.0.path | urlencode }}/{{ item.1.path | urlencode }}"
+        method: GET
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        force_basic_auth: true
+        validate_certs: false
+        status_code: [200, 404]
+      register: directory_status
+      loop: "{{ truenas_datasets|subelements('directories') }}"
+      delegate_to: localhost
+
+    - name: Create directories via API
+      ansible.builtin.uri:
+        url: "https://{{ ansible_host }}/api/v2.0/filesystem"
+        method: POST
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        force_basic_auth: true
+        body_format: json
+        body:
+          path: "{{ item.0.path }}/{{ item.1.path }}"
+          owner: "{{ item.1.owner }}"
+          group: "{{ item.1.group }}"
+          mode: "{{ item.1.mode }}"
+          options: {"recursive": true}
+        validate_certs: false
+      loop: "{{ truenas_datasets|subelements('directories') }}"
+      delegate_to: localhost
+      when: directory_status.results[ansible_loop.index0].status == 404

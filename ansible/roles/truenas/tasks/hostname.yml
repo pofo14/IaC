@@ -1,0 +1,5 @@
+---
+- name: Configure Hostname
+  arensb.truenas.hostname:
+    name: "{{ truenas_hostname }}"
+  register: hostname_result

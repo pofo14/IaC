@@ -38,8 +38,7 @@ prod-pve:
 	ansible-playbook site.yml -v -i ./inventories/production --limit pve --ask-become-pass
 
 test-truenas:
-	ansible-playbook site.yml -v -i ./inventories/test --limit truenas
-
+	ansible-playbook site.yml -v -i ./inventories/test --limit truenas --ask-become-pass
 ### Vault Commands ####
 check-vault:
 	ansible-vault view inventories/production/group_vars/all/vault.yml
@@ -55,6 +54,10 @@ test-formatdisk-nas:
 
 delete_pars:
 	ansible-playbook ./playbooks/delete-partitions.yml -i staging --limit nas --ask-become-pass
+
+fix-ssh-keys:
+	ssh-keygen -f '/home/pofo14/.ssh/known_hosts' -R 'pve.flopo.retropetro.net'
+	@echo "SSH host key removed. Now try running your ansible command again."
 
 ######## TEST CALLS ######
 mount-disk-nas:

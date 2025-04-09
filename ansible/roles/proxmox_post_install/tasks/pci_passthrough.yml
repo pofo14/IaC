@@ -1,0 +1,23 @@
+---
+# Tasks for configuring PCI passthrough
+
+- name: Enable kernel modules for PCI passthrough
+  ansible.builtin.lineinfile:
+    path: /etc/modules
+    line: "{{ item }}"
+    state: present
+  with_items: "{{ proxmox_post_install_passthrough_modules }}"
+  when: proxmox_post_install_enable_passthrough | bool
+
+- name: Add kernel parameters for IOMMU
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet {{ proxmox_post_install_iommu_parameters }}"'
+  when: proxmox_post_install_enable_passthrough | bool
+
+- name: Update GRUB configuration
+  ansible.builtin.command: update-grub
+  args:
+    creates: /boot/grub/grub.cfg
+  when: proxmox_post_install_enable_passthrough | bool and not ansible_check_mode

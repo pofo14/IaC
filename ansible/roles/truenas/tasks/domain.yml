@@ -1,0 +1,4 @@
+---
+- name: Configure Domain service
+  arensb.truenas.domain:
+    name: "{{ truenas_domain }}"

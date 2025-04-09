@@ -55,14 +55,29 @@ source "proxmox-iso" "truenas" {
   boot_wait           = "45s"
   boot_command = [
     "1<enter><wait5>",
-    "<spacebar><wait3><enter>",
-    "<enter><wait5>",
-    # "1<enter><wait3>",
-    "${var.opnsense_root_password}<tab><wait5>",  # Set root password
-    "${var.opnsense_root_password}<wait5>",  # Confirm root password    
-    "<enter>",
-    "<enter>",
-    "<wait100>"
+    "<spacebar><wait3><enter><wait5>",
+    "y<wait5>",
+    "1<wait2><enter><wait5>",
+    "${var.truenas_root_password}<tab><wait5>",  # Set root password
+    "${var.truenas_root_password}<wait5>",  # Confirm root password    
+    "<enter><wait3>",
+    "<enter><wait3>",
+    "<wait100>",
+    "<enter><wait3>",
+
+    # After install, reboot
+    "<wait10>",
+    "3<wait2><enter><wait5>",
+    "<wait150>",
+    # Enter Truenas CLI
+    "6<wait3><enter><wait15>",
+    #Enable SSH
+    "service update id_or_name=ssh enable=true<wait3><enter><wait7>",
+    "service start service=ssh<wait3><enter><wait7>q<wait3>",
+    "service ssh update password_login_groups=truenas_admin<wait5><enter><wait5>",
+    "quit<enter><wait20>",
+    # Shutdown
+    "9<wait3><enter><wait3>y<enter><wait5>"
   ]
 
   # SSH Settings

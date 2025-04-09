@@ -15,7 +15,7 @@ variable "proxmox_api_token_secret" {
   sensitive = true
 }
 
-variable "opnsense_root_password" {
+variable "truenas_root_password" {
   type    = string
   sensitive = true
 }

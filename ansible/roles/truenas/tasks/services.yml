@@ -1,0 +1,11 @@
+---
+- name: Configure services
+  arensb.truenas.service:
+    name: "{{ item.name }}"
+    enabled: "{{ item.enabled | default(true) }}"
+    state: "{{ item.state | default('started') }}"
+  register: service_result
+  failed_when:
+    - service_result.failed is defined
+    - service_result.failed
+  loop: "{{ truenas_services }}"

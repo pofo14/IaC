@@ -157,12 +157,15 @@
   hosts: truenas
   gather_facts: false
   become: false
+  environment:
+    middleware_method: midclt
 
-  tasks:
-    - name: Configure TrueNAS
-      include_tasks: tasks/truenas/main.yml
+  collections:
+    - arensb.truenas
 
-  # TODO: Where I left off - Refactored the code to be more "role like", created task files that can loop through variables
+  roles:
+    - role: truenas
+      tags: truenas
 
 - name: Configure Pihole Server
   hosts: pihole
@@ -189,6 +192,6 @@
   tasks:
     - name: Import ISO management tasks
       ansible.builtin.include_tasks: tasks/proxmox_iso.yml
-
-#  roles:
-#    - proxmox_post_install
+      
+  roles:
+    - proxmox_post_install

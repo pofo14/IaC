@@ -1,0 +1,36 @@
+---
+- name: Configure TrueNAS hostname
+  ansible.builtin.include_tasks: hostname.yml
+  tags:
+    - truenas
+    - hostname
+
+- name: Configure TrueNAS domain
+  ansible.builtin.include_tasks: domain.yml
+  tags:
+    - truenas
+    - domain
+
+- name: Configure TrueNAS services
+  ansible.builtin.include_tasks: services.yml
+  tags:
+    - truenas
+    - services
+
+- name: Configure TrueNAS NFS settings
+  ansible.builtin.include_tasks: nfs.yml
+  tags:
+    - truenas
+    - nfs
+
+- name: Configure TrueNAS S.M.A.R.T. settings
+  ansible.builtin.include_tasks: smart.yml
+  tags:
+    - truenas
+    - smart
+
+# - name: Manage TrueNAS datasets and directories
+#   ansible.builtin.include_tasks: datasets.yml
+#   tags:
+#     - truenas
+#     - datasets

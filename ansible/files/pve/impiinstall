@@ -1,0 +1,8 @@
+apt install ipmitool -y
+
+modprobe ipmi_devintf
+modprobe ipmi_si
+
+# verify install
+ipmitool mc info
+

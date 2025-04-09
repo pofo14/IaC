@@ -1,0 +1,11 @@
+---
+- name: Configure S.M.A.R.T. service
+  arensb.truenas.smart:
+    power_mode: "{{ truenas_smart.power_mode | default('never') }}"
+    temp_difference: "{{ truenas_smart.temp_difference | default(2) }}"
+    temp_info: "{{ truenas_smart.temp_info | default(40) }}"
+    temp_crit: "{{ truenas_smart.temp_crit | default(45) }}"
+  register: smart_result
+  failed_when:
+    - smart_result.failed is defined
+    - smart_result.failed
