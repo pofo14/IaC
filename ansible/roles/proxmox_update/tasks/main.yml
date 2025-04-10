@@ -1,0 +1,13 @@
+- name: Update Proxmox VE
+  when: proxmox_update_enable | bool
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+    - name: Perform dist-upgrade
+      ansible.builtin.apt:
+        upgrade: dist
+
+- name: Reboot Proxmox VE
+  ansible.builtin.reboot:
+  when: proxmox_update_reboot | bool

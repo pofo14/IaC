@@ -178,20 +178,38 @@
   hosts: proxmox
   become: true
 
-  tasks:
-    - name: Import ISO management tasks
-      ansible.builtin.include_tasks: tasks/proxmox_iso.yml
-
- # roles:
- #   - proxmox_post_install
+  roles:
+    - role: proxmox_base_setup
+      tags: base_setup
+    - role: proxmox_ha_setup
+      tags: ha_setup
+    - role: proxmox_pci_passthrough
+      tags: pci_passthrough
+    - role: proxmox_update
+      tags: update
 
 - name: Configure PVE Node
   hosts: pve
   become: true
 
-  tasks:
-    - name: Import ISO management tasks
-      ansible.builtin.include_tasks: tasks/proxmox_iso.yml
-      
   roles:
-    - proxmox_post_install
+    - role: proxmox_base_setup
+      tags: base_setup
+    - role: proxmox_ha_setup
+      tags: ha_setup
+    - role: proxmox_pci_passthrough
+      tags: pci_passthrough
+    - role: install_fancontrol
+      tags: fan_control
+    - role: proxmox_update
+      tags: update
+
+- name: PXE Server Setup
+  hosts: pxe
+  become: true
+  vars:
+    iface: eth0
+  
+  tasks:
+  include_tasks: tasks/pxe_setup.yml
+  

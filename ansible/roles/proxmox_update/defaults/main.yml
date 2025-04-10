@@ -1,0 +1,2 @@
+proxmox_update_enable: true
+proxmox_update_reboot: false

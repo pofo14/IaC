@@ -1,0 +1,48 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name: [dnsmasq, nginx, curl, xz-utils, unzip]
+    state: present
+    update_cache: true
+
+- name: Configure dnsmasq
+  ansible.builtin.copy:
+    src: /home/pofo14/dev/IaC/files/pxe/srv/etc-dnsmasq.d-pxe.conf
+    dest: /etc/dnsmasq.d/pxe.conf
+    mode: '0644'
+
+- name: Create PXE directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  loop:
+    - /srv/pxe/tftp
+    - /srv/pxe/http/proxmox
+    - /srv/pxe/http/netboot.xyz
+
+- name: Deploy PXE boot.ipxe
+  ansible.builtin.copy:
+    src: /home/pofo14/dev/IaC/files/pxe/srv/pxe/http/boot.ipxe
+    dest: /srv/pxe/http/boot.ipxe
+    mode: '0644'
+
+- name: Deploy preseed config
+  ansible.builtin.copy:
+    src: /home/pofo14/dev/IaC/files/pxe/srv/pxe/http/proxmox/preseed.cfg
+    dest: /srv/pxe/http/proxmox/preseed.cfg
+    mode: '0644'
+
+- name: Symlink PXE HTTP directory
+  ansible.builtin.file:
+    src: ../files/pxe/srv/pxe/http
+    dest: /var/www/html/pxe
+    state: link
+    force: true
+
+- name: Restart services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - dnsmasq
+    - nginx

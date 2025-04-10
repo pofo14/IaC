@@ -1,7 +1,7 @@
 ---
 # Proxmox Post-Installation Setup Tasks
 - name: Correct Proxmox VE sources
-  when: proxmox_post_install_correct_sources | bool
+  when: proxmox_base_setup_correct_sources | bool
   block:
     - name: Update sources.list
       ansible.builtin.copy:
@@ -23,7 +23,7 @@
     content: |
       # deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise
     mode: '0644'
-  when: proxmox_post_install_disable_enterprise_repo | bool
+  when: proxmox_base_setup_disable_enterprise_repo | bool
 
 - name: Enable 'pve-no-subscription' repository
   ansible.builtin.copy:
@@ -31,7 +31,7 @@
     content: |
       deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
     mode: '0644'
-  when: proxmox_post_install_enable_no_subscription_repo | bool
+  when: proxmox_base_setup_enable_no_subscription_repo | bool
 
 - name: Correct 'ceph package sources'
   ansible.builtin.copy:
@@ -42,7 +42,7 @@
       # deb https://enterprise.proxmox.com/debian/ceph-reef bookworm enterprise
       # deb http://download.proxmox.com/debian/ceph-reef bookworm no-subscription
     mode: '0644'
-  when: proxmox_post_install_correct_ceph_sources | bool
+  when: proxmox_base_setup_correct_ceph_sources | bool
 
 - name: Add 'pvetest' repository and set disabled
   ansible.builtin.copy:
@@ -50,15 +50,16 @@
     content: |
       # deb http://download.proxmox.com/debian/pve bookworm pvetest
     mode: '0644'
-  when: proxmox_post_install_add_pvetest_repo | bool
+  when: proxmox_base_setup_add_pvetest_repo | bool
 
 - name: Disable subscription nag
-  when: proxmox_post_install_disable_subscription_nag | bool
+  when: proxmox_base_setup_disable_subscription_nag | bool
   block:
     - name: Create no-nag script
       ansible.builtin.copy:
         dest: /etc/apt/apt.conf.d/no-nag-script
-        content: 'DPkg::Post-Invoke { "sed -i ''s/data.status !== ''Active''/false/g'' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js || true"; };'
+        content: |
+          DPkg::Post-Invoke { "dpkg -V proxmox-widget-toolkit | grep -q '/proxmoxlib\\.js$'; if [ $? -eq 1 ]; then { echo 'Removing subscription nag from UI...'; sed -i '/data\\.status.*{/{s/\\!//;s/active/NoMoreNagging/}' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; }; fi"; };
         mode: '0644'
 
     - name: Reinstall proxmox-widget-toolkit
@@ -66,63 +67,3 @@
         name: proxmox-widget-toolkit
         state: present
         force: true
-
-- name: Enable high availability
-  when: proxmox_post_install_enable_ha | bool
-  block:
-    - name: Enable pve-ha-lrm
-      ansible.builtin.systemd:
-        name: pve-ha-lrm
-        enabled: true
-        state: started
-    - name: Enable pve-ha-crm
-      ansible.builtin.systemd:
-        name: pve-ha-crm
-        enabled: true
-        state: started
-    - name: Enable corosync
-      ansible.builtin.systemd:
-        name: corosync
-        enabled: true
-        state: started
-
-- name: Disable high availability
-  when: proxmox_post_install_disable_ha | bool
-  block:
-    - name: Disable pve-ha-lrm
-      ansible.builtin.systemd:
-        name: pve-ha-lrm
-        enabled: false
-        state: stopped
-    - name: Disable pve-ha-crm
-      ansible.builtin.systemd:
-        name: pve-ha-crm
-        enabled: false
-        state: stopped
-    - name: Disable corosync
-      ansible.builtin.systemd:
-        name: corosync
-        enabled: false
-        state: stopped
-
-- name: Update Proxmox VE
-  when: proxmox_post_install_update | bool
-  block:
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: true
-    - name: Perform dist-upgrade
-      ansible.builtin.apt:
-        upgrade: dist
-
-# Import PCI passthrough tasks
-- name: Configure PCI passthrough
-  ansible.builtin.import_tasks: pci_passthrough.yml
-
-# Import fan control tasks
-- name: Configure fan control
-  ansible.builtin.import_tasks: fancontrol.yml
-
-- name: Reboot Proxmox VE
-  ansible.builtin.reboot:
-  when: proxmox_post_install_reboot | bool

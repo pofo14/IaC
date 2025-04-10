@@ -1,36 +1,28 @@
 ---
 # Tasks for configuring fan control
-
-- name: Ensure fan control directory exists
-  ansible.builtin.file:
-    path: "{{ proxmox_post_install_fancontrol_script_path | dirname }}"
-    state: directory
-    mode: '0755'
-  when: proxmox_post_install_enable_fancontrol | bool
-
 - name: Copy fan control script
   ansible.builtin.copy:
     # src: fancontrol.sh.j2
     src: fancontrol.sh
     dest: /opt/fancontrol/fancontrol.sh
     mode: '0755'
-  when: proxmox_post_install_enable_fancontrol | bool
+  when: install_fancontrol_enable | bool
 
 - name: Copy fan control service file
   ansible.builtin.copy:
     src: fancontrol.service
     dest: /etc/systemd/system/fancontrol.service
     mode: '0644'
-  when: proxmox_post_install_enable_fancontrol | bool
+  when: install_fancontrol_enable | bool
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:
     daemon_reload: true
-  when: proxmox_post_install_enable_fancontrol | bool
+  when: install_fancontrol_enable | bool
 
 - name: Enable and start fan control service
   ansible.builtin.systemd:
     name: fancontrol
     state: started
     enabled: true
-  when: proxmox_post_install_enable_fancontrol | bool
+  when: install_fancontrol_enable | bool
