@@ -1,0 +1,36 @@
+- name: Check if pool '{{ pool_item.name }}' exists
+  ansible.builtin.command: zpool list -H -o name
+  register: existing_pools
+  changed_when: false
+  failed_when: false
+
+- name: Determine if pool '{{ pool_item.name }}' needs to be created
+  ansible.builtin.set_fact:
+    zfs_pool_missing: "{{ pool_item.name not in existing_pools.stdout_lines }}"
+
+- name: Create ZFS pool '{{ pool_item.name }}' if missing
+  ansible.builtin.command: >
+    zpool create 
+    {% if pool_item.pool_properties is defined and pool_item.pool_properties | length > 0 %}
+    {% for key, value in pool_item.pool_properties.items() %}
+    -o {{ key }}={{ value }}
+    {% endfor %}
+    {% endif %}
+    {{ pool_item.name }}
+    {{ pool_item.disks | join(' ') }}
+  when: zfs_pool_missing
+
+- name: Set ZFS filesystem properties on '{{ pool_item.name }}' if created
+  ansible.builtin.command: >
+    zfs set {{ key }}={{ value }} {{ pool_item.name }}
+  loop: "{{ pool_item.filesystem_properties | default({}) | dict2items }}"
+  loop_control:
+    loop_var: item_property
+    label: "{{ item_property.key }}={{ item_property.value }}"
+  vars:
+    key: "{{ item_property.key }}"
+    value: "{{ item_property.value }}"
+  when: 
+    - zfs_pool_missing
+    - pool_item.filesystem_properties is defined
+    - pool_item.filesystem_properties | length > 0

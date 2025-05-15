@@ -1,28 +1,35 @@
 ---
 # Tasks for configuring fan control
+- name: Install fan control package
+  ansible.builtin.package:
+    name: ipmitool
+    state: present
+
+- name: Ensure Fan Control Directory Exists
+  ansible.builtin.file:
+    path: "/opt/fancontrol/"
+    state: directory
+    mode: '0755'
+
 - name: Copy fan control script
   ansible.builtin.copy:
     # src: fancontrol.sh.j2
     src: fancontrol.sh
     dest: /opt/fancontrol/fancontrol.sh
     mode: '0755'
-  when: install_fancontrol_enable | bool
 
 - name: Copy fan control service file
   ansible.builtin.copy:
     src: fancontrol.service
     dest: /etc/systemd/system/fancontrol.service
     mode: '0644'
-  when: install_fancontrol_enable | bool
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:
     daemon_reload: true
-  when: install_fancontrol_enable | bool
 
 - name: Enable and start fan control service
   ansible.builtin.systemd:
     name: fancontrol
     state: started
     enabled: true
-  when: install_fancontrol_enable | bool

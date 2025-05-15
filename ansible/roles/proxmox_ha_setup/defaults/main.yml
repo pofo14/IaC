@@ -1,3 +1,0 @@
-# High availability settings
-proxmox_ha_setup_enable_ha: false
-proxmox_ha_setup_disable_ha: false

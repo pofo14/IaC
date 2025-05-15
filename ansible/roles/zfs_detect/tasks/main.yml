@@ -1,0 +1,51 @@
+---
+- name: Debug target pools to detect
+  ansible.builtin.debug:
+    msg: "Target pools to detect: {{ zfs_detect_pools | default([]) }}"
+  when: zfs_detect_debug | default(false)
+  tags: zfs_detect
+
+- name: Check if ZFS pool exists
+  ansible.builtin.command: zpool list -H -o name
+  register: existing_pools
+  changed_when: false
+  failed_when: false
+  tags: zfs_detect
+
+- name: Debug existing pools
+  ansible.builtin.debug:
+    msg: "Existing ZFS pools: {{ existing_pools.stdout_lines | default([]) }}"
+  when: zfs_detect_debug | default(false)
+  tags: zfs_detect
+
+- name: Check for pools available for import
+  ansible.builtin.command: zpool import
+  register: importable_pools
+  changed_when: false
+  failed_when: false
+  tags: zfs_detect
+
+- name: Debug importable pools
+  ansible.builtin.debug:
+    msg: "Importable ZFS pools: {{ importable_pools.stdout | default('None') }}"
+  when: zfs_detect_debug | default(false)
+  tags: zfs_detect
+
+- name: Parse available importable pools
+  ansible.builtin.set_fact:
+    available_pools: "{{ importable_pools.stdout | regex_findall('pool:\\s*(\\S+)') }}"
+  tags: zfs_detect
+
+- name: Debug available pools after parsing
+  ansible.builtin.debug:
+    msg: "Available importable pools: {{ available_pools | default([]) }}"
+  when: zfs_detect_debug | default(false)
+  tags: zfs_detect
+
+- name: Process each target pool
+  ansible.builtin.include_tasks: process_pool.yml
+  loop: "{{ zfs_detect_pools }}"
+  loop_control:
+    loop_var: current_pool
+    label: "{{ current_pool }}"
+  tags: zfs_detect

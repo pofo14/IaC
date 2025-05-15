@@ -1,4 +1,35 @@
-media_dataset: /mnt/testpool/media
+# TrueNAS hostname and domain settings
+truenas_hostname: "test-truenas"
+truenas_domain: "flopo.retropetro.net"
+truenas_fqdn: "{{ truenas_hostname }}.{{ truenas_domain }}"
+
+# Services configuration
+truenas_services:
+  - name: "ssh"
+    enabled: true
+    start: true
+  - name: "nfs"
+    enabled: true
+    start: true
+  - name: "smartd"
+    enabled: true
+    start: true
+
+# NFS configuration
+truenas_nfs:
+  protocols: "NFSv4"
+  v4: true
+  v3: false
+  allow_nonroot: true
+
+# S.M.A.R.T. configuration
+truenas_smart:
+  power_mode: "never"
+  temp_difference: 2
+  temp_info: 40
+  temp_crit: 45
+
+media_dataset: /mnt/mediapool/media
 create_directories:
   - path: "{{ media_dataset }}/audiobooks"
     state: directory

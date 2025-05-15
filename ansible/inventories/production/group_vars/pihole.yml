@@ -1,5 +1,8 @@
 pihole_dns_dns:
   - { ip: 192.168.2.2, domain: pihole.flopo.retropetro.net }
+  - { ip: 192.168.2.3, domain: nas.flopo.retropetro.net }
+  - { ip: 192.168.2.4, domain: proxmox.flopo.retropetro.net }
+  - { ip: 192.168.2.5, domain: plex.flopo.retropetro.net }
   - { ip: 192.168.2.10, domain: utils.flopo.retropetro.net }
   - { ip: 192.168.2.10, domain: radarr.flopo.retropetro.net }
   - { ip: 192.168.2.10, domain: prowlarr.flopo.retropetro.net }
@@ -7,6 +10,9 @@ pihole_dns_dns:
   - { ip: 192.168.2.10, domain: qbittorrent.flopo.retropetro.net }
   - { ip: 192.168.2.10, domain: traefik.flopo.retropetro.net }
   - { ip: 192.168.2.10, domain: sonarr.flopo.retropetro.net }
+  - { ip: 192.168.2.7, domain: management.flopo.retropetro.net }
+  - { ip: 192.168.2.30, domain: test-pve1.flopo.retropetro.net }
+  - { ip: 192.168.2.20, domain: pve1.flopo.retropetro.net }
 
 # Transform the dns_entries into the format required by sixteenone.pihole-dns
 # pihole_dns_dns: >-

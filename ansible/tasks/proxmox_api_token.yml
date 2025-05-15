@@ -1,0 +1,143 @@
+---
+- name: Get PVE auth cookie
+  ansible.builtin.uri:
+    url: "https://{{ ansible_host }}:8006/api2/json/access/ticket"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      username: "{{ proxmox_api_user | default('root@pam') }}"
+      password: "{{ proxmox_api_password | default(omit) }}"
+    validate_certs: false
+    status_code: [200, 401, 403]
+  register: pve_auth_cookie
+  failed_when: pve_auth_cookie.status != 200
+  no_log: true
+
+- name: Debug auth response structure (without sensitive data)
+  ansible.builtin.debug:
+    msg: "Auth response keys: {{ pve_auth_cookie | dict2items | map(attribute='key') | list }}"
+  when: pve_auth_debug | default(false)
+
+- name: TEMPORARY DEBUG - Show sensitive data (REMOVE AFTER DEBUGGING)
+  ansible.builtin.debug:
+    msg: "{{ pve_auth_cookie.json }}"
+  when: pve_auth_debug | default(true)
+
+- name: Get CSRF prevention token directly from auth response
+  ansible.builtin.set_fact:
+    csrf_token: "{{ pve_auth_cookie.json.data.CSRFPreventionToken }}"
+    ticket: "{{ pve_auth_cookie.json.data.ticket }}"
+  no_log: true
+
+- name: Debug CSRF token (without showing the actual token)
+  ansible.builtin.debug:
+    msg: "CSRF token is {{ 'successfully retrieved' if csrf_token is defined else 'NOT available' }}"
+  when: pve_auth_debug | default(false)
+
+- name: Check if API tokens exist
+  uri:
+    url: "https://{{ pve_hostname }}.{{ pve_domain }}:8006/api2/json/access/users/{{ item.user }}@{{ item.realm }}/token"
+    method: GET
+    user: "{{ proxmox_api_user }}"
+    password: "{{ proxmox_api_password }}"
+    validate_certs: no
+    status_code: [200, 401, 403, 404]
+    headers:
+      Content-Type: application/json
+    return_content: yes
+  register: token_check
+  loop: "{{ proxmox_api_tokens }}"
+  no_log: true
+  ignore_errors: true
+
+- name: Create API tokens for Proxmox users
+  ansible.builtin.uri:
+    url: "https://{{ ansible_host }}:8006/api2/json/access/users/{{ item.user }}@{{ item.realm | default('pve') }}/token/{{ item.token_name }}"
+    method: POST
+    body_format: json
+    body:
+      comment: "{{ item.comment | default('API token created by Ansible') }}"
+      privsep: "{{ item.privsep | default(0) }}"  # 0 for full user permissions
+    headers:
+      Cookie: "PVEAuthCookie={{ ticket }}"
+      CSRFPreventionToken: "{{ csrf_token }}"
+    validate_certs: false
+    status_code: [200, 201, 400]
+  register: token_results
+  failed_when:
+    - token_results.status != 200
+    - token_results.status != 201
+    - not (token_results.json.errors is defined and
+          token_results.json.errors.tokenid is defined and
+          'Token already exists' in token_results.json.errors.tokenid)
+  changed_when:
+    - token_results.status == 200 or token_results.status == 201
+  loop: "{{ proxmox_api_tokens }}"
+  loop_control:
+    label: "{{ item.user }}@{{ item.realm | default('pve') }}!{{ item.token_name }}"
+
+- name: Display API token information
+  ansible.builtin.debug:
+    msg: >-
+      API token {{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}
+      {% if item.status == 400 %}already exists{% else %}created successfully
+      {% if item.json.data is defined and item.json.data.value is defined %}
+      . Full token ID: {{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}, secret: {{ item.json.data.value }}
+      {% endif %}
+      {% endif %}
+  loop: "{{ token_results.results }}"
+  loop_control:
+    label: "{{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}"
+
+- name: Save API token information to local file
+  ansible.builtin.copy:
+    content: |
+      # Proxmox API Token for {{ item.item.user }}@{{ item.item.realm | default('pve') }} - Generated on {{ ansible_date_time.date }}
+      # Keep this file secure and add to .gitignore
+
+      [proxmox_{{ item.item.user }}_{{ item.item.token_name }}]
+      api_token_id = {{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}
+      {% if item.json.data is defined and item.json.data.value is defined %}
+      api_token_secret = {{ item.json.data.value }}
+      {% else %}
+      # Token already exists, secret not available
+      # api_token_secret = <SECRET ALREADY GENERATED - CHECK PREVIOUS FILES>
+      {% endif %}
+      api_url = https://{{ ansible_host }}:8006/api2/json
+    dest: "{{ playbook_dir }}/credentials/proxmox_api_token_{{ ansible_host | replace('.', '_') }}_{{ item.item.user }}_{{ item.item.token_name }}.ini"
+    mode: '0600'
+  delegate_to: localhost
+  become: false
+  loop: "{{ token_results.results }}"
+  loop_control:
+    label: "{{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}"
+
+- name: Ensure token output directory exists
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/credentials"
+    state: directory
+    mode: '0700'
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Save API token information to local file
+  ansible.builtin.copy:
+    content: |
+      # Proxmox API Token for {{ item.item.user }}@{{ item.item.realm | default('pve') }} - Generated on {{ ansible_date_time.date }}
+      # Keep this file secure and add to .gitignore
+
+      [proxmox_{{ item.item.user }}_{{ item.item.token_name }}]
+      api_token_id = {{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}
+      api_token_secret = {{ item.json.data.value }}
+      api_url = https://{{ ansible_host }}:8006/api2/json
+    dest: "{{ playbook_dir }}/credentials/proxmox_api_token_{{ ansible_host | replace('.', '_') }}_{{ item.item.user }}_{{ item.item.token_name }}.ini"
+    mode: '0600'
+  delegate_to: localhost
+  become: false
+  loop: "{{ token_results.results }}"
+  loop_control:
+    label: "{{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}"
+  when:
+    - item.status is defined
+    - (item.status == 200 or item.status == 201)

@@ -1,0 +1,12 @@
+---
+- name: Get list of existing ZFS pools
+  ansible.builtin.command: zpool list -H -o name
+  register: existing_pools
+  changed_when: false
+  failed_when: false
+
+- name: Ensure ZFS pools exist
+  ansible.builtin.include_tasks: create_pool.yml
+  loop: "{{ create_zfs_pool_pools }}"
+  loop_control:
+    loop_var: pool_item

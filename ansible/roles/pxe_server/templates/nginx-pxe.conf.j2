@@ -1,0 +1,11 @@
+server {
+    listen {{ pxe_server_http_port }};
+    server_name {{ pxe_server_name }};
+
+    location /{{ pxe_server_menu }} {
+        root {{ pxe_server_http_root }};
+        types { } default_type "text/plain";
+        add_header Cache-Control "no-cache";
+        add_header X-Content-Type-Options "nosniff";
+    }
+} 

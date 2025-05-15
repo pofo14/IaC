@@ -38,3 +38,13 @@ export ANSIBLE_CONFIG=./ansible.cfg
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=eyJhIjoiNzU4MWM5ZTBkNWY1NTQ3Y2ZlNzZjMGU2Y2VkMDY4NjMiLCJ0IjoiNDY1NzFlOTItOGYxYi00Y2JkLWEyYmEtNGQ5MWRjYWI2ZWZhIiwicyI6Ik9EbGlPR1ZtWW1NdFlqY3laaTAwWW1RMExXRTRaR1V0TURFek5UTmxOamcxTUdVeiJ9
+
+
+Preseed File Validator:
+debconf-set-selections -c ./files/pxe/preseed/proxmox-pve-test.cfg
+
+auto enp2s0f1
+iface enp2s0f1 inet static
+    address 192.168.2.20/24
+    gateway 192.168.2.1
+    dns-nameservers 192.168.2.2

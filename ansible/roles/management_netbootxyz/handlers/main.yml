@@ -1,0 +1,14 @@
+---
+- name: Force Restart NetbootXYZ Container
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_compose_generator_output_path }}"
+    state: absent
+  register: down_output
+  notify:
+    - Start NetbootXYZ Container
+
+- name: Start NetbootXYZ Container
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_compose_generator_output_path }}"
+    state: present
+  register: up_output

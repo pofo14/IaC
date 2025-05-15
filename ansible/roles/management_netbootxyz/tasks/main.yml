@@ -1,0 +1,51 @@
+---
+- name: Ensure NetbootXYZ Root Directory Exists
+  ansible.builtin.file:
+    path: "{{ docker_compose_generator_output_path }}/netboot_xyz"
+    state: directory
+    mode: '0755'
+
+- name: Ensure Config Directory Exists
+  ansible.builtin.file:
+    path: "{{ docker_compose_generator_output_path }}/netboot_xyz/config"
+    state: directory
+    mode: '0755'
+
+- name: Ensure Menus Directory Exists
+  ansible.builtin.file:
+    path: "{{ docker_compose_generator_output_path }}/netboot_xyz/config/menus"
+    state: directory
+    mode: '0755'
+
+- name: Ensure Assets Directory Exists
+  ansible.builtin.file:
+    path: "{{ docker_compose_generator_output_path }}/netboot_xyz/assets"
+    state: directory
+    mode: '0755'
+
+- name: Ensure Preseed Directory Exists
+  ansible.builtin.file:
+    path: "{{ docker_compose_generator_output_path }}/netboot_xyz/assets/preseed"
+    state: directory
+    mode: '0755'
+
+- name: Synchronize PXE TFTP Files
+  ansible.posix.synchronize:
+    src: "{{ playbook_dir }}/files/pxe/tftp/"
+    dest: "{{ docker_compose_generator_output_path }}/netboot_xyz/config/menus/"
+    recursive: true
+    rsync_opts:
+      - "--chmod=D0755,F0644"
+  notify: Force Restart NetbootXYZ Container
+
+- name: Synchronize PXE Preseed Files
+  ansible.posix.synchronize:
+    src: "{{ playbook_dir }}/files/pxe/preseed/"
+    dest: "{{ docker_compose_generator_output_path }}/netboot_xyz/assets/preseed/"
+    recursive: true
+    rsync_opts:
+      - "--chmod=D0755,F0644"
+  notify: Force Restart NetbootXYZ Container
+
+- name: Force handlers to run immediately
+  ansible.builtin.meta: flush_handlers

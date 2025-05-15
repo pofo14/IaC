@@ -1,6 +1,0 @@
-proxmox_base_setup_disable_enterprise_repo: true
-proxmox_base_setup_enable_no_subscription_repo: true
-proxmox_base_setup_correct_sources: true
-proxmox_base_setup_add_pvetest_repo: false
-proxmox_base_setup_correct_ceph_sources: true
-proxmox_base_setup_disable_subscription_nag: true

@@ -1,0 +1,26 @@
+---
+# PXE Server configuration
+pxe_server_tftp_root: /srv/tftp
+management_server_http_root: /opt/netbootxyz/assets/
+pxe_server_ip: "pxe.flopo.retropetro.net"  # Your management VM IP
+
+# File locations
+pxe_server_bootloader: "ipxe.kpxe"
+pxe_server_netboot_xyz_bootloader: "netboot.xyz.kpxe"
+pxe_server_menu: "boot.ipxe"
+
+# Web server configuration
+pxe_server_http_port: 80
+pxe_server_name: "pxe.local"
+
+# TFTP server configuration
+pxe_server_tftp_user: tftp
+pxe_server_tftp_group: tftp
+
+# Directory structure
+pxe_server_directories:
+  - path: "{{ management_server_http_root }}"
+    mode: "0755"
+  - path: "{{ management_server_http_root }}/preseed"
+    mode: "0755"
+

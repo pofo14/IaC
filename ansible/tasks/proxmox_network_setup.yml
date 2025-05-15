@@ -1,0 +1,50 @@
+- name: Remove all files from /etc/network/interfaces.d/
+  ansible.builtin.file:
+    path: "/etc/network/interfaces.d/"
+    state: absent
+
+- name: Recreate the /etc/network/interfaces.d/ directory
+  ansible.builtin.file:
+    path: "/etc/network/interfaces.d/"
+    state: directory
+    mode: "0755"
+
+- name: Ensure /etc/network/interfaces exists and is minimal
+  ansible.builtin.copy:
+    dest: "/etc/network/interfaces"
+    content: |
+      # This file will be managed by Ansible (lae.proxmox)
+      # Placeholder until lae.proxmox role applies full config.
+      auto lo
+      iface lo inet loopback
+    mode: "0644"
+
+- name: Install bridge-utils
+  ansible.builtin.apt:
+    name: bridge-utils
+
+- name: Configure /etc/network/interfaces
+  ansible.builtin.template:
+    src: "{{ interfaces_template }}"
+    dest: /etc/network/interfaces
+    mode: "0644"
+  register: _configure_interfaces
+
+- name: Check if vmbr0 exists
+  ansible.builtin.command: "ip link show vmbr0"
+  register: vmbr0_check
+  failed_when: false
+  changed_when: false
+
+- name: Create bridge if it doesn't exist
+  ansible.builtin.command: "ip link add name vmbr0 type bridge"
+  when: vmbr0_check.rc != 0
+
+- name: Ensure bridge is up
+  ansible.builtin.command: "ip link set dev vmbr0 up"
+  when: vmbr0_check.rc != 0
+
+- name: Restart networking service
+  ansible.builtin.systemd:
+    name: networking
+    state: restarted

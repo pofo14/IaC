@@ -1,0 +1,9 @@
+---
+- name: Include package installation tasks
+  ansible.builtin.import_tasks: install.yml
+
+- name: Include TFTP configuration tasks
+  ansible.builtin.import_tasks: tftp.yml
+
+- name: Include HTTP configuration tasks
+  ansible.builtin.import_tasks: http.yml

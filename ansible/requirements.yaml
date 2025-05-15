@@ -11,6 +11,7 @@ roles:
   - src: geerlingguy.mysql
   - src: geerlingguy.php-versions
   - src: geerlingguy.nginx
+  - src: geerlingguy.ntp
   - src: ironicbadger.snapraid
   - src: ironicbadger.docker_compose_generator
   - src: grog.package
@@ -20,6 +21,7 @@ roles:
   - src: nierdz.nextcloud
   - src: artis3n.tailscale
   - src: sixteenone.pihole-dns
+  - src: lae.proxmox
 
 collections:
   - prometheus.prometheus

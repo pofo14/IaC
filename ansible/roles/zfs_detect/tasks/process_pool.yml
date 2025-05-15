@@ -1,0 +1,21 @@
+---
+- name: Set facts for '{{ current_pool }}'
+  ansible.builtin.set_fact:
+    pool_already_present: "{{ current_pool in existing_pools.stdout_lines }}"
+    pool_importable: "{{ current_pool in available_pools }}"
+  tags: zfs_detect
+
+- name: Import ZFS pool '{{ current_pool }}' if needed
+  ansible.builtin.command: zpool import -f {{ current_pool }}
+  when:
+    - not pool_already_present
+    - pool_importable
+  tags: zfs_detect
+
+- name: Fail if ZFS pool '{{ current_pool }}' not found
+  ansible.builtin.debug:
+    msg: "ZFS pool '{{ current_pool }}' not found imported or available for import!"
+  when:
+    - not pool_already_present
+    - not pool_importable
+  tags: zfs_detect

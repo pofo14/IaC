@@ -1,8 +1,0 @@
-# PCI passthrough settings
-proxmox_pci_passthrough_enable_passthrough: true
-proxmox_pci_passthrough_passthrough_modules:
-  - vfio
-  - vfio_iommu_type1
-  - vfio_pci
-  - vfio_virqfd
-proxmox_pci_passthrough_iommu_parameters: "intel_iommu=on iommu=pt"

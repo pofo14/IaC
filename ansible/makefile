@@ -34,8 +34,14 @@ prod-truenas:
 prod-proxmox:
 	ansible-playbook site.yml -v -i ./inventories/production --limit proxmox --ask-become-pass
 
-prod-pve:
-	ansible-playbook site.yml -v -i ./inventories/production --limit pve --ask-become-pass
+prod-pve1:
+	ansible-playbook site.yml -v -i ./inventories/production --limit pve1 --ask-become-pass
+
+test-pve1:
+	ansible-playbook site.yml -v -i ./inventories/test --limit pve1 --ask-become-pass
+
+prod-management:
+	ansible-playbook site.yml -v -i ./inventories/production --limit management --ask-become-pass
 
 test-truenas:
 	ansible-playbook site.yml -v -i ./inventories/test --limit truenas --ask-become-pass

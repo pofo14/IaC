@@ -1,0 +1,21 @@
+---
+- name: Configure TFTP server
+  ansible.builtin.template:
+    src: tftpd-hpa.j2
+    dest: /etc/default/tftpd-hpa
+    mode: '0644'
+  notify: Restart tftpd
+
+- name: Copy PXE bootloader
+  ansible.builtin.copy:
+    src: "{{ pxe_server_bootloader }}"
+    dest: "{{ pxe_server_tftp_root }}/{{ pxe_server_bootloader }}"
+    mode: '0644'
+  notify: Restart tftpd
+
+- name: Copy PXE bootloader
+  ansible.builtin.copy:
+    src: "{{ pxe_server_bootloader }}"
+    dest: "{{ pxe_server_tftp_root }}/{{ pxe_server_netboot_xyz_bootloader }}"
+    mode: '0644'
+  notify: Restart tftpd

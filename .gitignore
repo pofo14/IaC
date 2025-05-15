@@ -74,4 +74,4 @@ TODO
 
 # ISO files
 *.iso
-packer/proxmox/downloaded_iso_path/
+packer/proxmox/downloaded_iso_path/tools/ipxe/

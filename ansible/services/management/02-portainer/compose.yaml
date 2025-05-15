@@ -1,0 +1,13 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=America/New_York
+    volumes:
+      - "{{ appdata_path }}/management/portainer:{{ container_config_path }}"
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9443:9443
+    restart: unless-stopped
