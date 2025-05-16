@@ -146,13 +146,19 @@
       tags: docker
     - role: ironicbadger.docker_compose_generator
       tags: compose
+<<<<<<< HEAD
     # - role: artis3n.tailscale
     #   tags: tailscale
+=======
+    - role: artis3n.tailscale
+      tags: tailscale
+>>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2
 
 # TODO: last clean run it doesn't look like pofo14 got added to docker group
 # TODO: Create plays for TrueNas to configuring NFS Shares, Users, and Groups
 # TODO: Create plays for proxmox host post install, creation of pci passthrough, etc
 
+<<<<<<< HEAD
 - name: Configure TrueNAS Server
   hosts: truenas
   gather_facts: false
@@ -166,12 +172,28 @@
   roles:
     - role: truenas
       tags: truenas
+=======
+- name: Configure Truenas Server
+  hosts: truenas
+  become: true
+
+  tasks:
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: " {{ item.mode }} "
+        group: "{{ item.group }}"
+        owner: "{{ item.owner }}"
+      loop: "{{ create_directories }}"
+>>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2
 
 - name: Configure Pihole Server
   hosts: pihole
   become: true
 
   roles:
+<<<<<<< HEAD
     - role: sixteenone.pihole-dns   # commented out missing role
 
 - name: Configure Proxmox Node
@@ -251,3 +273,6 @@
     - role: geerlingguy.node_exporter
     - role: ironicbadger.docker_compose_generator
     - role: management_netbootxyz
+=======
+    - role: sixteenone.pihole-dns
+>>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2

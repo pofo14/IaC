@@ -1,0 +1,12 @@
+[nas]
+192.168.2.247 ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible 
+
+[prometheus]
+prometheus.flopo.retropetro.net ansible_user=root ansible_ssh_private_key_file=~/.ssh/ansible
+
+[plex]
+test-plex.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible 
+#192.168.2.226 ansible_user=root ansible_ssh_private_key_file=~/.ssh/ansible 
+
+[nextcloud]
+test-ubuntu.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible 

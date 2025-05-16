@@ -270,8 +270,11 @@ resource "local_file" "ensure_dirs" {
     command = "mkdir -p ${var.ansible_dir}/group_vars/dns_servers"
   }
 }
+<<<<<<< HEAD
 
 
 ########################### PVE1 Notes #################################
 ####### IOU3 - set to 4x4x4x4 bifurcation                    ###########
 ########################################################################
+=======
+>>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2
