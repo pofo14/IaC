@@ -77,3 +77,4 @@ TODO
 packer/proxmox/downloaded_iso_path/tools/ipxe/
 # Ignore Packer ISO lock files
 *.iso.lock
+tools/ipxe/
