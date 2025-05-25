@@ -1,0 +1,28 @@
+---
+# tasks file for grafana_dashboards - upload dashboards
+
+- name: "Upload dashboard: {{ item.name }} (UID: {{ item.uid }})"
+  grafana.grafana.grafana_dashboard:
+    grafana_url: "{{ grafana_url }}"
+    grafana_api_key: "{{ grafana_api_key | default(omit) }}"
+    grafana_user: "{{ grafana_admin_user if not grafana_api_key else omit }}"
+    grafana_password: "{{ grafana_admin_password if not grafana_api_key else omit }}"
+    state: present
+    uid: "{{ item.uid }}"
+    # Path should be relative to the 'files' directory of the role, or an absolute path.
+    # The download task saves files to '{{ role_path }}/files/...'
+    # The grafana_dashboard module expects path relative to 'files' dir if not absolute.
+    path: "{{ item.path }}"
+    overwrite: true
+    # Assign to folder if folder creation is enabled and UID is available
+    folder_uid: "{{ grafana_folder_uid | default(omit) if grafana_dashboards_create_folder | bool else omit }}"
+    # folder: "{{ grafana_dashboards_folder_name if grafana_dashboards_create_folder | bool else omit }}" # Alternative: use folder name
+  loop: "{{ dashboard_list_updated_for_download | default(dashboard_list) }}" # Use updated list if downloads happened
+  when:
+    - item.path is defined # Ensure there's a path to upload, either predefined or from download
+  register: upload_status
+
+- name: Debug upload status (optional)
+  ansible.builtin.debug:
+    var: upload_status
+    verbosity: 1 # Only show if -v is used

@@ -1,0 +1,70 @@
+---
+# defaults file for grafana_dashboards
+
+# Grafana API endpoint and credentials
+grafana_url: "http://localhost:3000"
+grafana_admin_user: "admin"
+# grafana_admin_password: "admin" # For production, use grafana_api_key
+# It's recommended to use an API key for authentication
+grafana_api_key: "" # Example: "glsa_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx_xxxxxxxx"
+
+# Toggle for downloading dashboards from grafana.com
+dashboard_download: true
+
+# (Bonus) Folder configuration in Grafana
+grafana_dashboards_folder_name: "Homelab Dashboards"
+grafana_dashboards_create_folder: true # Set to false to disable folder creation
+
+# List of dashboards to manage
+# You can define dashboards to be downloaded from grafana.com or loaded from local files.
+#
+# For grafana.com dashboards:
+#   - name: A descriptive name for the dashboard
+#     uid: A unique identifier for Grafana to use. Can be custom.
+#     source: 'grafana.com'
+#     id: The dashboard ID from grafana.com (e.g., from the URL https://grafana.com/grafana/dashboards/XXXXX-name/)
+#     # revision: (Optional) Specify a specific revision number. Defaults to latest.
+#
+# For local dashboards:
+#   - name: A descriptive name for the dashboard
+#     uid: A unique identifier for Grafana to use.
+#     path: Relative path to the JSON file within the 'files/' directory of this role.
+#
+# !! IMPORTANT !!
+# The 'id' fields below for grafana.com dashboards are examples/common ones.
+# Please VERIFY these IDs on grafana.com for the most up-to-date and suitable versions for your setup.
+# Search on grafana.com/grafana/dashboards/ for the dashboards you need.
+dashboard_list:
+  - name: "Proxmox - Node Summary"
+    uid: "proxmox-node-summary"
+    source: "grafana.com"
+    id: 1860 # VERIFY THIS ID - Example: Node Exporter Full / Proxmox VE Exporter Dashboard
+    # filename: "community_proxmox-node-exporter-full.json" # Optional: if you want to control the downloaded filename
+
+  - name: "Linux Docker Host Monitoring"
+    uid: "linux-docker-host"
+    source: "grafana.com"
+    id: 14282 # VERIFY THIS ID - Example: Linux Host Metrics / Docker Host Monitoring
+    # filename: "community_linux-docker-host.json"
+
+  - name: "Docker Containers Overview"
+    uid: "docker-containers-overview"
+    source: "grafana.com"
+    id: 13331 # VERIFY THIS ID - Example: cAdvisor Exporter / Docker Container Metrics
+    # filename: "community_docker-containers-overview.json"
+
+  - name: "TrueNAS Core Hardware Monitoring"
+    uid: "truenas-core-hardware"
+    source: "grafana.com"
+    id: 12019 # VERIFY THIS ID - Example: TrueNAS Core System & Hardware / ZFS Stats
+    # filename: "community_truenas-core-hardware.json"
+
+  - name: "Disk S.M.A.R.T Monitoring"
+    uid: "disk-smart-monitoring"
+    source: "grafana.com"
+    id: 10530 # VERIFY THIS ID - Example: SMART Disk Health / HDD/SSD SMART Metrics
+    # filename: "community_disk-smart-monitoring.json"
+
+  - name: "My Custom Local Dashboard"
+    uid: "my-custom-dashboard"
+    path: "my-local-dashboard.json" # Example: place this file in roles/grafana_dashboards/files/

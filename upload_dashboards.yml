@@ -1,0 +1,37 @@
+---
+- name: Upload Grafana Dashboards
+  hosts: grafana # Ensure this host group is defined in your Ansible inventory
+  become: false # This role typically doesn't require privilege escalation
+  gather_facts: false
+
+  vars:
+    # Example of overriding the Grafana URL and API Key if needed
+    # grafana_url: "https://mygrafana.example.com"
+    # grafana_api_key: "glsa_your_actual_api_key_here" # Recommended for production
+    
+    # Example of overriding the dashboard list
+    # This example shows how to specify a mix of grafana.com and local dashboards
+    # And how to specify a custom filename for a downloaded dashboard
+    custom_dashboard_list:
+      - name: "Node Exporter Full (Community)"
+        uid: "node-exporter-full-custom" # Ensure UIDs are unique
+        source: "grafana.com"
+        id: 1860 # VERIFY THIS ID on grafana.com
+        filename: "community_node-exporter-full_v1860.json" # Custom filename for download
+
+      - name: "My Production Dashboard (Local)"
+        uid: "prod-server-overview"
+        path: "production-dashboard.json" # Assumes 'production-dashboard.json' is in roles/grafana_dashboards/files/
+
+      - name: "Another Local Dashboard"
+        uid: "another-local-dash"
+        path: "my-local-dashboard.json" # Uses the example one from the role's files dir
+
+  roles:
+    - role: grafana_dashboards
+      # Apply the overridden dashboard list
+      dashboard_list: "{{ custom_dashboard_list }}"
+      # Optionally, disable download if all dashboards are local or pre-downloaded
+      # dashboard_download: false
+      # Optionally, disable folder creation
+      # grafana_dashboards_create_folder: false

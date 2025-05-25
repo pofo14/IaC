@@ -1,0 +1,54 @@
+---
+# tasks file for grafana_dashboards - download community dashboards
+
+- name: "Download dashboard: {{ item.name }} (ID: {{ item.id }})"
+  ansible.builtin.uri:
+    url: "https://grafana.com/api/dashboards/{{ item.id }}/revisions/{{ item.revision | default('latest') }}/download"
+    dest: "{{ role_path }}/files/{{ item.filename | default(item.uid ~ '_' ~ item.id ~ '.json') }}"
+    method: GET
+    return_content: no # Important for file downloads
+    status_code: 200
+    timeout: 30
+    headers:
+      Accept: "application/json"
+  loop: "{{ dashboard_list }}"
+  when:
+    - item.source is defined and item.source == 'grafana.com'
+    - item.id is defined
+  register: download_results
+
+- name: "Update dashboard_list with downloaded paths"
+  ansible.builtin.set_fact:
+    dashboard_list_updated_for_download: |
+      {% set new_list = [] %}
+      {% for dash in dashboard_list %}
+        {% set found_download = namespace(path=None) %}
+        {% for result in download_results.results | default([]) %}
+          {% if result.item is defined and result.item.uid == dash.uid and result.dest is defined %}
+            {% set found_download.path = result.dest %}
+          {% endif %}
+        {% endfor %}
+        {% if dash.source is defined and dash.source == 'grafana.com' and dash.id is defined %}
+          {% if found_download.path %}
+            {% set _ = new_list.append(dash | combine({'path': found_download.path | regex_replace('^' + role_path + '/files/', '')})) %}
+          {% else %}
+            {# If download failed or was skipped for this item, keep original if it had a path, or skip if it only had grafana.com source #}
+            {% if dash.path is defined %}
+              {% set _ = new_list.append(dash) %}
+            {% else %}
+              # Optionally, log a warning that download failed and it won't be uploaded unless path was already defined
+              # For now, we just exclude it if download failed and no local path was ever specified.
+            {% endif %}
+          {% endif %}
+        {% else %}
+          {% set _ = new_list.append(dash) %}
+        {% endif %}
+      {% endfor %}
+      {{ new_list }}
+  when: download_results is defined and download_results.results is defined
+
+- name: "Debug updated dashboard list after downloads (optional)"
+  ansible.builtin.debug:
+    var: dashboard_list_updated_for_download
+    verbosity: 1 # Only show if -v is used
+  when: dashboard_list_updated_for_download is defined

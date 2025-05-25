@@ -1,0 +1,29 @@
+---
+# tasks file for grafana_dashboards - manage folder
+
+- name: Ensure Grafana dashboards folder '{{ grafana_dashboards_folder_name }}' exists
+  grafana.grafana.grafana_folder:
+    name: "{{ grafana_dashboards_folder_name }}"
+    state: present
+    grafana_url: "{{ grafana_url }}"
+    grafana_api_key: "{{ grafana_api_key | default(omit) }}"
+    grafana_user: "{{ grafana_admin_user if not grafana_api_key else omit }}"
+    grafana_password: "{{ grafana_admin_password if not grafana_api_key else omit }}"
+  register: folder_creation_status
+  # When using older versions of the collection, uid might be required or auto-generated differently.
+  # If issues arise, consider setting a 'uid:' for the folder explicitly.
+
+- name: Set folder UID fact for dashboard uploads
+  ansible.builtin.set_fact:
+    grafana_folder_uid: "{{ folder_creation_status.uid | default('') }}"
+  when: grafana_dashboards_create_folder | bool and folder_creation_status is defined and folder_creation_status.uid is defined
+
+- name: Debug folder creation status (optional)
+  ansible.builtin.debug:
+    var: folder_creation_status
+    verbosity: 1 # Only show if -v is used
+
+- name: Debug folder UID fact (optional)
+  ansible.builtin.debug:
+    var: grafana_folder_uid
+    verbosity: 1

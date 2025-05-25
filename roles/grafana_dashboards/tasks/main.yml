@@ -1,0 +1,13 @@
+---
+# tasks file for grafana_dashboards
+
+- name: Ensure Grafana dashboards folder exists (Bonus)
+  ansible.builtin.include_tasks: manage_folder.yml
+  when: grafana_dashboards_create_folder | bool
+
+- name: Download community dashboards from grafana.com
+  ansible.builtin.include_tasks: download_dashboards.yml
+  when: dashboard_download | bool
+
+- name: Upload dashboards to Grafana
+  ansible.builtin.include_tasks: upload_dashboards.yml

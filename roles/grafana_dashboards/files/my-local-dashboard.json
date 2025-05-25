@@ -1,0 +1,22 @@
+{
+  "uid": "my-custom-dashboard",
+  "title": "My Custom Local Dashboard",
+  "tags": [ "local", "example" ],
+  "timezone": "browser",
+  "schemaVersion": 16,
+  "version": 1,
+  "refresh": "25s",
+  "panels": [
+    {
+      "title": "Simple Text Panel",
+      "type": "text",
+      "description": "A simple text panel example.",
+      "gridPos": { "h": 3, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "mode": "markdown",
+        "content": "# Hello World!\n\nThis is a simple dashboard loaded from a local JSON file using the Ansible role."
+      }
+    }
+  ]
+}
