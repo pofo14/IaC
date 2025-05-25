@@ -1,0 +1,71 @@
+---
+# tasks file for smartctl_exporter in install_monitoring_exporters
+
+- name: Install smartctl_exporter using systemd
+  when: exporter_install_method == 'systemd'
+  block:
+    - name: Ensure smartmontools is installed (prerequisite for smartctl_exporter)
+      ansible.builtin.package:
+        name: smartmontools
+        state: present
+      # This might need to be adapted for different package managers
+      # The prometheus.prometheus.smartctl_exporter role might also handle this.
+      # Adding it here for explicitness.
+
+    - name: Ensure smartctl_exporter group exists (for systemd)
+      ansible.builtin.group:
+        name: "{{ monitoring_exporter_group }}"
+        state: present
+      when: prometheus_prometheus_smartctl_exporter_create_user_group | default(true)
+
+    - name: Ensure smartctl_exporter user exists (for systemd)
+      ansible.builtin.user:
+        name: "{{ monitoring_exporter_user }}"
+        group: "{{ monitoring_exporter_group }}"
+        shell: /bin/false
+        create_home: false
+        system: true
+      when: prometheus_prometheus_smartctl_exporter_create_user_group | default(true)
+
+    - name: Include prometheus.prometheus.smartctl_exporter role for systemd
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.smartctl_exporter
+        public: true
+      vars:
+        smartctl_exporter_version: "{{ smartctl_exporter_version }}"
+        smartctl_exporter_web_listen_address: "0.0.0.0:{{ smartctl_exporter_port }}"
+        smartctl_exporter_user: "{{ monitoring_exporter_user }}"
+        smartctl_exporter_group: "{{ monitoring_exporter_group }}"
+        # Pass through any additional flags if the role supports it
+        smartctl_exporter_extra_flags: "{{ smartctl_exporter_config_flags }}"
+
+
+- name: Install smartctl_exporter using Docker
+  when: exporter_install_method == 'docker'
+  block:
+    - name: Pull smartctl_exporter Docker image
+      community.docker.docker_image:
+        name: "prometheuscommunity/smartctl-exporter:v{{ smartctl_exporter_version }}"
+        source: pull
+
+    - name: Run smartctl_exporter Docker container
+      community.docker.docker_container:
+        name: smartctl-exporter
+        image: "prometheuscommunity/smartctl-exporter:v{{ smartctl_exporter_version }}"
+        state: started
+        restart_policy: unless-stopped
+        network_mode: host # Simplifies port exposure
+        volumes: "{{ smartctl_exporter_docker_volumes | default(['/dev:/dev:ro']) }}" # Default to read-only /dev
+        privileged: "{{ smartctl_exporter_docker_privileged | default(true) }}" # Often needs privileged for smartctl access
+        # Consider using --cap-add SYS_RAWIO, --cap-add SYS_ADMIN instead of full privileged if possible,
+        # but this depends on the specific smartctl commands and kernel.
+        # Privileged is a common requirement for full smartctl functionality.
+        command:
+          - "--web.listen-address=0.0.0.0:{{ smartctl_exporter_port }}"
+          # Add smartctl_exporter_config_flags if they are compatible with docker command style
+          # e.g. if smartctl_exporter_config_flags is "--smartctl.device /dev/sda --smartctl.device /dev/sdb"
+          # It might need to be transformed or passed directly if the exporter supports it.
+          # The image's entrypoint usually handles smartctl execution.
+          # Default behavior is often to scan all available devices.
+          # Specific devices can be passed as command arguments if needed:
+          # e.g. /dev/sda /dev/sdb ...

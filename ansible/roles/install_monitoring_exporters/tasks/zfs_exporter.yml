@@ -1,0 +1,98 @@
+---
+# tasks file for zfs_exporter in install_monitoring_exporters
+
+- name: Install ZFS exporter using systemd
+  when: exporter_install_method == 'systemd'
+  block:
+    - name: Ensure ZFS exporter group exists
+      ansible.builtin.group:
+        name: "{{ monitoring_exporter_group }}"
+        state: present
+        system: true
+
+    - name: Ensure ZFS exporter user exists
+      ansible.builtin.user:
+        name: "{{ monitoring_exporter_user }}"
+        group: "{{ monitoring_exporter_group }}"
+        shell: /bin/false
+        create_home: false
+        system: true
+
+    - name: Set ZFS exporter binary name based on URL
+      ansible.builtin.set_fact:
+        zfs_exporter_archive_name: "{{ zfs_exporter_binary_url | urlsplit('path') | basename }}"
+        zfs_exporter_extracted_dir_name: "{{ (zfs_exporter_binary_url | urlsplit('path') | basename) | regex_replace('\\.tar\\.gz$', '') }}"
+
+    - name: Download and unarchive ZFS exporter binary
+      ansible.builtin.unarchive:
+        src: "{{ zfs_exporter_binary_url }}" # Defined in defaults/main.yml
+        dest: "/tmp/" # Extract to a temporary directory first
+        remote_src: yes
+        creates: "/tmp/{{ zfs_exporter_extracted_dir_name }}/zfs_exporter"
+      register: zfs_exporter_unarchive_result
+
+    - name: Install ZFS exporter binary to bin path
+      ansible.builtin.copy:
+        src: "/tmp/{{ zfs_exporter_extracted_dir_name }}/zfs_exporter"
+        dest: "{{ monitoring_exporter_bin_path }}/zfs_exporter"
+        owner: root # Binaries usually owned by root
+        group: root
+        mode: '0755'
+        remote_src: yes # Important as src is on the managed node
+      when: zfs_exporter_unarchive_result.changed or not (ansible_check_mode)
+      # This simplified copy assumes a consistent extraction path.
+      # The 'creates' in unarchive helps make this idempotent.
+
+    - name: Clean up ZFS exporter temporary download
+      ansible.builtin.file:
+        path: "/tmp/{{ zfs_exporter_extracted_dir_name }}"
+        state: absent
+      when: zfs_exporter_unarchive_result.changed or not (ansible_check_mode)
+
+    - name: Clean up ZFS exporter temporary archive
+      ansible.builtin.file:
+        path: "/tmp/{{ zfs_exporter_archive_name }}"
+        state: absent
+      when: zfs_exporter_unarchive_result.changed or not (ansible_check_mode)
+
+
+    - name: Template ZFS exporter systemd service file
+      ansible.builtin.template:
+        src: zfs_exporter.service.j2
+        dest: /etc/systemd/system/zfs_exporter.service
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart zfs_exporter # Handler to be created
+
+    - name: Ensure ZFS exporter service is enabled and started
+      ansible.builtin.systemd:
+        name: zfs_exporter
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+- name: Install ZFS exporter using Docker
+  when: exporter_install_method == 'docker'
+  block:
+    - name: Pull ZFS exporter Docker image
+      community.docker.docker_image:
+        name: "{{ zfs_exporter_docker_image }}:{{ zfs_exporter_docker_image_tag }}"
+        source: pull
+
+    - name: Run ZFS exporter Docker container
+      community.docker.docker_container:
+        name: zfs-exporter
+        image: "{{ zfs_exporter_docker_image }}:{{ zfs_exporter_docker_image_tag }}"
+        state: started
+        restart_policy: unless-stopped
+        network_mode: host # Simplifies port exposure
+        volumes: "{{ zfs_exporter_docker_volumes | default(['/dev/zfs:/dev/zfs:ro', '/proc/spl:/proc/spl:ro']) }}"
+        privileged: "{{ zfs_exporter_docker_privileged | default(false) }}" # May not always need full privileged, but often needs device access
+        # Capabilities like SYS_ADMIN might be needed if not privileged.
+        command: # Command from defaults can be appended here if needed
+          - "--web.listen-address=0.0.0.0:{{ zfs_exporter_port }}"
+          # Add zfs_exporter_config_flags if compatible
+          # Ensure zfs_exporter_config_flags is a list of strings if used directly in command
+          # Example: command: ["--web.listen-address...", "{{ zfs_exporter_config_flags }}"] might not work if it's a single string
+          # Better to process flags into a list or ensure they are passed correctly for the container.

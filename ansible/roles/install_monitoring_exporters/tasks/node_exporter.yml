@@ -1,0 +1,67 @@
+---
+# tasks file for node_exporter in install_monitoring_exporters
+
+- name: Install node_exporter using systemd
+  when: exporter_install_method == 'systemd'
+  block:
+    - name: Ensure node_exporter group exists (for systemd)
+      ansible.builtin.group:
+        name: "{{ monitoring_exporter_group }}"
+        state: present
+      when: prometheus_prometheus_node_exporter_create_user_group | default(true) # Condition based on potential community role var
+
+    - name: Ensure node_exporter user exists (for systemd)
+      ansible.builtin.user:
+        name: "{{ monitoring_exporter_user }}"
+        group: "{{ monitoring_exporter_group }}"
+        shell: /bin/false
+        create_home: false
+        system: true
+      when: prometheus_prometheus_node_exporter_create_user_group | default(true) # Condition based on potential community role var
+
+    - name: Include prometheus.prometheus.node_exporter role for systemd
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.node_exporter
+        public: true # Make variables from this role available to the parent role
+      vars:
+        node_exporter_version: "{{ node_exporter_version }}"
+        node_exporter_web_listen_address: "0.0.0.0:{{ node_exporter_port }}"
+        # Pass common user/group if the role supports it, otherwise it might create its own
+        node_exporter_user: "{{ monitoring_exporter_user }}"
+        node_exporter_group: "{{ monitoring_exporter_group }}"
+        # Example of disabling textfile collectors if not needed by default
+        node_exporter_textfile_collectors_paths: []
+        node_exporter_enabled_collectors:
+          - systemd
+          - processes
+          -filesystem
+        node_exporter_disabled_collectors: []
+
+
+- name: Install node_exporter using Docker
+  when: exporter_install_method == 'docker'
+  block:
+    - name: Pull node_exporter Docker image
+      community.docker.docker_image:
+        name: "prom/node-exporter:v{{ node_exporter_version }}"
+        source: pull
+
+    - name: Run node_exporter Docker container
+      community.docker.docker_container:
+        name: node-exporter
+        image: "prom/node-exporter:v{{ node_exporter_version }}"
+        state: started
+        restart_policy: unless-stopped
+        network_mode: host
+        pid_mode: host
+        volumes:
+          - "/:/host:ro,rslave" # Mount entire host filesystem read-only
+        command:
+          - "--path.rootfs=/host"
+          - "--web.listen-address=0.0.0.0:{{ node_exporter_port }}"
+          # Add other collectors as needed, mapping to Docker paths
+          - "--collector.systemd"
+          - "--collector.processes"
+          - "--collector.filesystem"
+        ports: # Not strictly needed with network_mode: host, but good for documentation
+          - "{{ node_exporter_port }}:{{ node_exporter_port }}"

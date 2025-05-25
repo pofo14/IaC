@@ -1,0 +1,57 @@
+---
+# tasks file for docker_exporter (cAdvisor) in install_monitoring_exporters
+
+- name: Install cAdvisor (docker_exporter) using systemd
+  when: exporter_install_method == 'systemd'
+  block:
+    - name: Ensure cAdvisor group exists (for systemd)
+      ansible.builtin.group:
+        name: "{{ monitoring_exporter_group }}"
+        state: present
+      when: prometheus_prometheus_cadvisor_create_user_group | default(true) # Based on community role var
+
+    - name: Ensure cAdvisor user exists (for systemd)
+      ansible.builtin.user:
+        name: "{{ monitoring_exporter_user }}"
+        group: "{{ monitoring_exporter_group }}"
+        shell: /bin/false
+        create_home: false
+        system: true
+      when: prometheus_prometheus_cadvisor_create_user_group | default(true) # Based on community role var
+
+    - name: Include prometheus.prometheus.cadvisor role for systemd
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.cadvisor
+        public: true
+      vars:
+        cadvisor_version: "{{ cadvisor_version }}" # Using the one from defaults for consistency
+        cadvisor_web_listen_address: "0.0.0.0:{{ cadvisor_port }}"
+        cadvisor_user: "{{ monitoring_exporter_user }}"
+        cadvisor_group: "{{ monitoring_exporter_group }}"
+        cadvisor_extra_args: "{{ cadvisor_extra_args }}" # Pass through extra args from defaults/vars
+
+- name: Install cAdvisor (docker_exporter) using Docker
+  when: exporter_install_method == 'docker'
+  block:
+    - name: Pull cAdvisor Docker image
+      community.docker.docker_image:
+        name: "gcr.io/cadvisor/cadvisor:{{ cadvisor_version }}"
+        source: pull
+
+    - name: Run cAdvisor Docker container
+      community.docker.docker_container:
+        name: cadvisor
+        image: "gcr.io/cadvisor/cadvisor:{{ cadvisor_version }}"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ cadvisor_port }}:8080" # cAdvisor image listens on 8080 by default
+        volumes:
+          - "/:/rootfs:ro"
+          - "/var/run:/var/run:rw" # Or 'ro' if sufficient, 'rw' often needed for Docker socket interaction
+          - "/sys:/sys:ro"
+          - "/var/lib/docker/:/var/lib/docker:ro"
+          # Add other specific paths if needed, e.g., for other container runtimes
+        devices: "{{ cadvisor_docker_devices | default([]) }}" # e.g. /dev/kmsg for kernel message access
+        privileged: "{{ cadvisor_docker_privileged | default(false) }}" # Set to true if extensive host access is needed
+        command: "{{ cadvisor_extra_args }}" # Pass extra arguments

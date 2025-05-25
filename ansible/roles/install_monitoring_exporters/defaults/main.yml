@@ -1,0 +1,70 @@
+---
+# defaults file for install_monitoring_exporters
+
+# Installation method: 'systemd' or 'docker'
+exporter_install_method: systemd
+
+# Monitoring tier: 'base', 'docker', 'storage', 'full'
+# This will typically be overridden by host_vars or group_vars.
+monitoring_tier: base
+
+# Exporter Versions
+node_exporter_version: "1.7.0"
+promtail_version: "2.9.2" # Check Grafana Loki releases for latest
+smartctl_exporter_version: "0.11.1" # Check prometheus-community/smartctl_exporter releases
+zfs_exporter_version: "1.6.0" # Check DanielGibert/zfs_exporter releases
+cadvisor_version: "v0.47.2" # Check google/cadvisor releases (for docker_exporter)
+
+# Default Listen Ports
+node_exporter_port: 9100
+promtail_port: 9080 # Default for gRPC, HTTP is often 3100 or by config
+smartctl_exporter_port: 9631
+zfs_exporter_port: 9134 # Often seen, but can vary
+cadvisor_port: 8080
+
+# Binary URLs for manual systemd installations (ignored if using Docker method for these)
+# Ensure these URLs point to the correct architecture (e.g., amd64)
+# Users might need to adjust these based on architecture and desired version.
+promtail_binary_url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-amd64.zip"
+# Example for zfs_exporter, adjust based on actual releases and architecture
+zfs_exporter_binary_url: "https://github.com/DanielGibert/zfs_exporter/releases/download/v{{ zfs_exporter_version }}/zfs_exporter-{{ zfs_exporter_version }}.linux-amd64.tar.gz"
+
+# Configuration directory for Promtail (used for Docker mount and systemd config)
+promtail_config_dir: "/etc/promtail"
+promtail_config_file: "{{ promtail_config_dir }}/config.yml"
+
+# Configuration for smartctl_exporter (used if not using the community role's defaults)
+smartctl_exporter_config_flags: "" # e.g., "--smartctl.path=/usr/sbin/smartctl"
+
+# Configuration for zfs_exporter (used for systemd service)
+zfs_exporter_config_flags: "" # e.g., "--collector.pool" "--collector.dataset"
+
+# Configuration for cAdvisor (docker_exporter)
+cadvisor_extra_args: [] # e.g., ["--docker_only=true"]
+
+# User and group for systemd services
+monitoring_exporter_user: "prometheus"
+monitoring_exporter_group: "prometheus"
+
+# Paths for systemd installations
+monitoring_exporter_bin_path: "/usr/local/bin"
+monitoring_exporter_config_path: "/etc/prometheus" # General config path for exporters like zfs_exporter if needed
+
+# Promtail specific
+promtail_http_listen_port: 0 # Set to a specific port e.g. 9081 if HTTP interface is needed, 0 often disables it or picks random.
+promtail_loki_url: "http://loki:3100/loki/api/v1/push" # User must override this with their Loki instance URL
+promtail_extra_args: "" # Extra command line arguments for promtail service or container
+
+# smartctl_exporter Docker specific
+smartctl_exporter_docker_volumes: ["/dev:/dev:ro"] # Mount /dev read-only by default
+smartctl_exporter_docker_privileged: true # Exporter often needs privileged mode
+
+# ZFS_exporter Docker specific
+zfs_exporter_docker_image: "ghcr.io/danielgibert/zfs-exporter" # A common image for zfs_exporter
+zfs_exporter_docker_image_tag: "latest" # Or pin to zfs_exporter_version
+zfs_exporter_docker_volumes: ["/dev/zfs:/dev/zfs:ro", "/proc/spl:/proc/spl:ro"] # Typical mounts for ZFS access
+zfs_exporter_docker_privileged: false # Try with false first; may need true or specific capabilities
+
+# cAdvisor (docker_exporter) Docker specific
+cadvisor_docker_devices: [] # e.g., ["/dev/kmsg:/dev/kmsg"]
+cadvisor_docker_privileged: false # Default to false. Set to true if specific host features are needed by cAdvisor.

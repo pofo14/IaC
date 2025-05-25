@@ -1,0 +1,109 @@
+---
+# tasks file for promtail in install_monitoring_exporters
+
+- name: Ensure Promtail config directory exists
+  ansible.builtin.file:
+    path: "{{ promtail_config_dir }}"
+    state: directory
+    mode: '0755'
+  when: exporter_install_method == 'systemd' or (exporter_install_method == 'docker' and promtail_config_file is defined)
+
+- name: Template Promtail configuration file
+  ansible.builtin.template:
+    src: promtail-config.yml.j2
+    dest: "{{ promtail_config_file }}"
+    owner: "{{ monitoring_exporter_user if exporter_install_method == 'systemd' else 'root' }}"
+    group: "{{ monitoring_exporter_group if exporter_install_method == 'systemd' else 'root' }}"
+    mode: '0640'
+  notify: restart promtail # Handler to be created later
+  vars:
+    # Default values if not set elsewhere, can be overridden
+    promtail_http_listen_port: 0 # Let Promtail pick a port or disable HTTP if 0, common to use gRPC port for Loki
+    promtail_loki_url: "http://loki.example.com:3100/loki/api/v1/push" # Placeholder, user must configure
+
+- name: Install Promtail using systemd
+  when: exporter_install_method == 'systemd'
+  block:
+    - name: Create Promtail user and group (systemd)
+      block:
+        - name: Ensure Promtail group exists
+          ansible.builtin.group:
+            name: "{{ monitoring_exporter_group }}"
+            state: present
+            system: true
+
+        - name: Ensure Promtail user exists
+          ansible.builtin.user:
+            name: "{{ monitoring_exporter_user }}"
+            group: "{{ monitoring_exporter_group }}"
+            shell: /bin/false
+            create_home: false
+            system: true
+
+    - name: Download and unarchive Promtail binary
+      ansible.builtin.unarchive:
+        src: "{{ promtail_binary_url }}" # e.g. https://github.com/grafana/loki/releases/download/v2.9.2/promtail-linux-amd64.zip
+        dest: "/tmp" # Extract to a temporary directory first
+        remote_src: yes
+        creates: "/tmp/promtail-linux-amd64" # This is the typical binary name inside the zip for linux-amd64
+      # Note: The 'creates' here refers to the binary *inside* the temp extraction dir, not the final destination.
+
+    - name: Install Promtail binary to final location
+      ansible.builtin.copy:
+        src: "/tmp/promtail-linux-amd64" # Path to the extracted binary
+        dest: "{{ monitoring_exporter_bin_path }}/promtail" # Final path and name
+        remote_src: yes # Important: indicates that src is on the remote machine
+        mode: '0755'
+        owner: "{{ monitoring_exporter_user }}"
+        group: "{{ monitoring_exporter_group }}"
+      notify: restart promtail
+      # This assumes the binary inside the zip is named 'promtail-linux-amd64'. Adjust if necessary.
+
+    - name: Template Promtail systemd service file
+      ansible.builtin.template:
+        src: promtail.service.j2
+        dest: /etc/systemd/system/promtail.service
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart promtail
+
+    - name: Ensure Promtail service is enabled and started
+      ansible.builtin.systemd:
+        name: promtail
+        state: started
+        enabled: yes
+        daemon_reload: yes # Reload systemd if the service file changed
+
+- name: Install Promtail using Docker
+  when: exporter_install_method == 'docker'
+  block:
+    - name: Pull Promtail Docker image
+      community.docker.docker_image:
+        name: "grafana/promtail:{{ promtail_version }}"
+        source: pull
+
+    - name: Run Promtail Docker container
+      community.docker.docker_container:
+        name: promtail
+        image: "grafana/promtail:{{ promtail_version }}"
+        state: started
+        restart_policy: unless-stopped
+        # network_mode: host # Consider if Loki is on host network
+        ports:
+          - "{{ promtail_port }}:{{ promtail_port }}" # gRPC port
+          # If promtail_http_listen_port is non-zero, you might want to map it too
+          # - "{{ promtail_http_listen_port }}:{{ promtail_http_listen_port }}"
+        volumes:
+          - "{{ promtail_config_file }}:{{ promtail_config_file }}:ro"
+          - "/var/log:/var/log:ro" # Common logs
+          - "/tmp/positions.yaml:/tmp/positions.yaml" # Promtail positions file
+          # Add more volume mounts as needed based on scrape_configs
+        command:
+          - "-config.file={{ promtail_config_file }}"
+          - "{{ promtail_extra_args | default('') }}"
+        # Consider logging driver if not using default json-file
+        # log_driver: "json-file"
+        # log_options:
+        #   max-size: "10m"
+        #   max-file: "3"

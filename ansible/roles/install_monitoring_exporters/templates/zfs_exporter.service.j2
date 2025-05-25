@@ -1,0 +1,18 @@
+[Unit]
+Description=ZFS Exporter
+Documentation=https://github.com/DanielGibert/zfs_exporter
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ monitoring_exporter_user }}
+Group={{ monitoring_exporter_group }}
+ExecStart={{ monitoring_exporter_bin_path }}/zfs_exporter {{ zfs_exporter_config_flags }} --web.listen-address=0.0.0.0:{{ zfs_exporter_port }}
+Restart=on-failure
+RestartSec=10s
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=zfs_exporter
+
+[Install]
+WantedBy=multi-user.target

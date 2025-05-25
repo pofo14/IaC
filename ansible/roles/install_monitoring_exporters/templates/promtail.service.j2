@@ -1,0 +1,18 @@
+[Unit]
+Description=Promtail service
+Documentation=https://grafana.com/docs/loki/latest/clients/promtail/
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ monitoring_exporter_user }}
+Group={{ monitoring_exporter_group }}
+ExecStart={{ monitoring_exporter_bin_path }}/promtail -config.file={{ promtail_config_file }} {{ promtail_extra_args | default('') }}
+Restart=on-failure
+RestartSec=10s
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=promtail
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+---
+# tasks file for input validation in install_monitoring_exporters
+
+- name: Validate 'monitoring_tier' variable
+  ansible.builtin.assert:
+    that:
+      - monitoring_tier is defined
+      - monitoring_tier in ['base', 'docker', 'storage', 'full']
+    fail_msg: |
+      Invalid value for 'monitoring_tier': '{{ monitoring_tier }}'.
+      Valid values are 'base', 'docker', 'storage', 'full'.
+    quiet: true
+
+- name: Validate 'exporter_install_method' variable
+  ansible.builtin.assert:
+    that:
+      - exporter_install_method is defined
+      - exporter_install_method in ['systemd', 'docker']
+    fail_msg: |
+      Invalid value for 'exporter_install_method': '{{ exporter_install_method }}'.
+      Valid values are 'systemd', 'docker'.
+    quiet: true

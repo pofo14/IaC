@@ -1,0 +1,30 @@
+---
+# main tasks file for install_monitoring_exporters
+
+- name: Include input validation tasks
+  ansible.builtin.include_tasks: validate_inputs.yml
+
+- name: Manage Node Exporter
+  ansible.builtin.include_tasks: node_exporter.yml
+  tags: ['monitoring', 'node_exporter']
+
+- name: Manage Promtail
+  ansible.builtin.include_tasks: promtail.yml
+  tags: ['monitoring', 'promtail']
+
+- name: Manage Smartctl Exporter
+  ansible.builtin.include_tasks: smartctl_exporter.yml
+  when: monitoring_tier in ['storage', 'full']
+  tags: ['monitoring', 'smartctl_exporter']
+
+- name: Manage ZFS Exporter
+  ansible.builtin.include_tasks: zfs_exporter.yml
+  when: monitoring_tier in ['storage', 'full']
+  tags: ['monitoring', 'zfs_exporter']
+
+- name: Manage Docker Exporter (cAdvisor)
+  ansible.builtin.include_tasks: docker_exporter.yml
+  when: monitoring_tier in ['docker', 'full']
+  tags: ['monitoring', 'docker_exporter', 'cadvisor']
+
+# Other exporter tasks will be added here later

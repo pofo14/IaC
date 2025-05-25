@@ -1,0 +1,30 @@
+# {{ ansible_managed }}
+server:
+  http_listen_port: {{ promtail_http_listen_port | default(0) }} # Port for Promtail's own HTTP interface (if needed, often 0 for auto)
+  grpc_listen_port: {{ promtail_port }} # Port for gRPC communication with Loki
+
+positions:
+  filename: /tmp/positions.yaml # Path to store read positions
+
+clients:
+  - url: {{ promtail_loki_url | default('http://loki:3100/loki/api/v1/push') }} # URL of the Loki instance
+
+scrape_configs:
+- job_name: system
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: syslog
+      host: {{ ansible_hostname }}
+      __path__: /var/log/syslog # Example: scrape syslog
+# Add more scrape_configs as needed, e.g., for journald or specific app logs
+# - job_name: journal
+#   journal:
+#     max_age: 12h
+#     labels:
+#       job: systemd-journal
+#       host: {{ ansible_hostname }}
+#   relabel_configs:
+#     - source_labels: ['__journal__systemd_unit']
+#       target_label: 'unit'
