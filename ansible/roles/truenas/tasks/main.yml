@@ -29,8 +29,8 @@
     - truenas
     - smart
 
-# - name: Manage TrueNAS datasets and directories
-#   ansible.builtin.include_tasks: datasets.yml
-#   tags:
+- name: Manage TrueNAS datasets and directories
+  ansible.builtin.include_tasks: datasets.yml
+  tags:
 #     - truenas
 #     - datasets

@@ -1,0 +1,29 @@
+---
+- name: Define exporter file paths for Prometheus
+  ansible.builtin.set_fact:
+    prometheus_node_exporter_target_file: "{{ inventory_dir }}/group_vars/all/node_exporters_truenas.yml"
+    prometheus_zfs_exporter_target_file: "{{ inventory_dir }}/group_vars/all/zfs_exporters_truenas.yml"
+    prometheus_smartctl_exporter_target_file: "{{ inventory_dir }}/group_vars/all/smartctl_exporters_truenas.yml"
+  run_once: true # These are global paths, define once
+  delegate_to: localhost
+
+- name: Update Prometheus targets for TrueNAS Node Exporter
+  ansible.builtin.include_tasks: _update_prometheus_target.yml
+  vars:
+    target_file: "{{ prometheus_node_exporter_target_file }}"
+    exporter_port: "{{ node_exporter_port }}"
+    exporter_job_name: "truenas_node_exporter" # Example job name
+
+- name: Update Prometheus targets for TrueNAS ZFS Exporter
+  ansible.builtin.include_tasks: _update_prometheus_target.yml
+  vars:
+    target_file: "{{ prometheus_zfs_exporter_target_file }}"
+    exporter_port: "{{ zfs_exporter_port }}"
+    exporter_job_name: "truenas_zfs_exporter"
+
+- name: Update Prometheus targets for TrueNAS Smartctl Exporter
+  ansible.builtin.include_tasks: _update_prometheus_target.yml
+  vars:
+    target_file: "{{ prometheus_smartctl_exporter_target_file }}"
+    exporter_port: "{{ smartctl_exporter_port }}"
+    exporter_job_name: "truenas_smartctl_exporter"

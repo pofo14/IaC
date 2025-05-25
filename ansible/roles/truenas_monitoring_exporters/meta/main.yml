@@ -1,0 +1,10 @@
+galaxy_info:
+  author: Your Name
+  description: Deploys monitoring exporters (node, zfs, smartctl) via Docker on TrueNAS
+  company: Your Company
+  license: license (GPLv2, MIT, etc)
+  min_ansible_version: "2.12" # Adjust if specific features are used
+
+dependencies: []
+  # Example:
+  # - role: geerlingguy.docker # If we decide this role should enforce Docker installation

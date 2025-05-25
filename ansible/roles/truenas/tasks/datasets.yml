@@ -1,4 +1,14 @@
 ---
+- name: Ensure monitoring dataset exists
+  arensb.truenas.dataset:
+    name: "{{ truenas_monitoring_dataset_name }}"
+    state: present
+  # Assuming API connection details (user, password, host) are handled globally
+  # or by environment variables for the arensb.truenas collection.
+  # Add delegate_to: localhost and connection params if needed,
+  # similar to how the URI module is used in the original file,
+  # though arensb.truenas modules usually pick these from provider vars or env.
+
 - name: Manage datasets and directories
   block:
     - name: Verify datasets exist

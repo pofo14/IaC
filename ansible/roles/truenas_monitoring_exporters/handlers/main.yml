@@ -1,0 +1,8 @@
+---
+# Handlers for truenas_monitoring_exporters
+- name: Restart monitoring docker compose stack
+  ansible.builtin.docker_compose:
+    project_src: "{{ monitoring_docker_compose_dir }}"
+    state: present # Ensures containers are (re)created as per compose file
+    restarted: true # Actually forces a restart of services
+    # pulled: true # Optionally pull images on restart as well

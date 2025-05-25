@@ -1,0 +1,40 @@
+---
+# Expects 'target_file', 'exporter_port', and 'exporter_job_name' as input vars.
+
+- name: Ensure Prometheus target directory exists on localhost
+  ansible.builtin.file:
+    path: "{{ target_file | dirname }}"
+    state: directory
+    mode: '0755'
+  run_once: true # Only needs to run once for the directory
+  delegate_to: localhost
+
+- name: Ensure Prometheus target file exists and is initialized as a YAML list on localhost
+  ansible.builtin.lineinfile:
+    path: "{{ target_file }}"
+    line: "{{ item }}"
+    create: true
+    mode: '0644'
+  loop:
+    - "[]" # Ensures the file starts as an empty YAML list if created
+  run_once: true # Initialize once
+  delegate_to: localhost
+  # This is a bit simplistic; if the file exists but isn't a list, this won't fix it.
+  # A more robust way would be to read, check if it's a list, and initialize if not.
+  # For now, assume if it exists, it's correctly formatted or will be by the block.
+
+- name: Add/Update target for {{ inventory_hostname }} in {{ target_file }} on localhost
+  ansible.builtin.blockinfile:
+    path: "{{ target_file }}"
+    block: |
+      - targets:
+          - "{{ inventory_hostname }}:{{ exporter_port }}"
+        labels:
+          job: "{{ exporter_job_name }}"
+          instance: "{{ inventory_hostname }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ inventory_hostname }} {{ exporter_job_name }}"
+    create: true
+    mode: '0644'
+  delegate_to: localhost
+  # This will create a distinct block for each host/job combination.
+  # For Prometheus file_sd, all these blocks will be read as one concatenated YAML array of scrape configs.

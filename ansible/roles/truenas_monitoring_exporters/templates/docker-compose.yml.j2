@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  node_exporter:
+    image: "{{ node_exporter_image }}"
+    container_name: node_exporter
+    ports:
+      - "{{ node_exporter_port }}:9100"
+    pid: "host"
+    volumes:
+      - /:/host:ro,rslave
+    command:
+      - '--path.rootfs=/host'
+    restart: unless-stopped
+
+  zfs_exporter:
+    image: "{{ zfs_exporter_image }}"
+    container_name: zfs_exporter
+    ports:
+      - "{{ zfs_exporter_port }}:9134"
+    # privileged: true # Uncomment if necessary after testing
+    # volumes:
+    #   - /dev/zfs:/dev/zfs # Uncomment if necessary after testing
+    restart: unless-stopped
+
+  smartctl_exporter:
+    image: "{{ smartctl_exporter_image }}"
+    container_name: smartctl_exporter
+    ports:
+      - "{{ smartctl_exporter_port }}:9631"
+    privileged: true
+    volumes:
+      - /dev:/host/dev:ro
+    # environment:
+    #   SMARTCTL_EXPORTER_OPTIONS: "--smartctl.device /dev/sda --smartctl.device /dev/sdb" # Example
+    restart: unless-stopped

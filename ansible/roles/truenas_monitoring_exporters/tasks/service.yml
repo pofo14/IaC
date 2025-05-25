@@ -1,0 +1,7 @@
+---
+- name: Ensure monitoring exporter services are running via Docker Compose
+  ansible.builtin.docker_compose:
+    project_src: "{{ monitoring_docker_compose_dir }}"
+    state: present
+    # rebuilt: 'always' # Use with caution, consider 'changed' or let notify handle it.
+    # pulled: true # To ensure images are up-to-date
