@@ -1,0 +1,92 @@
+---
+# tasks file for home_assistant_config
+
+- name: Ensure Home Assistant base configuration path exists
+  ansible.builtin.file:
+    path: "{{ ha_config_base_path }}"
+    state: directory
+    owner: "{{ ha_config_owner | default('root') }}"
+    group: "{{ ha_config_group | default('root') }}"
+    mode: '0755'
+
+- name: Template main Home Assistant configuration.yaml
+  ansible.builtin.template:
+    src: configuration.yaml.j2
+    dest: "{{ ha_config_base_path }}/configuration.yaml"
+    owner: "{{ ha_config_owner | default('root') }}"
+    group: "{{ ha_config_group | default('root') }}"
+    mode: '0644'
+  notify: Restart Home Assistant # Or a more specific "Reload Core Config" handler if available
+
+- name: Ensure Home Assistant include directories exist
+  ansible.builtin.file:
+    path: "{{ ha_config_base_path }}/{{ item }}"
+    state: directory
+    owner: "{{ ha_config_owner | default('root') }}"
+    group: "{{ ha_config_group | default('root') }}"
+    mode: '0755'
+  loop: "{{ ha_include_dirs }}"
+  # This notify might be too broad if only adding a dir, but fine for now.
+  # notify: Restart Home Assistant 
+
+- name: Create boilerplate YAML files for includes
+  ansible.builtin.copy:
+    dest: "{{ ha_config_base_path }}/{{ item }}"
+    content: "{}" # Empty YAML dictionary, suitable for most list-based includes if HA creates the list
+    owner: "{{ ha_config_owner | default('root') }}"
+    group: "{{ ha_config_group | default('root') }}"
+    mode: '0644'
+    force: false # Do not overwrite if files exist and have content
+  loop:
+    - "automations.yaml"
+    - "scripts.yaml"
+    - "scenes.yaml"
+    # Add other common root YAML files here if needed, e.g., groups.yaml
+  notify: Restart Home Assistant # Or specific reload handlers
+
+- name: Ensure Lovelace dashboards directory exists (if managing Lovelace in YAML)
+  ansible.builtin.file:
+    path: "{{ ha_config_base_path }}/lovelace" # This matches the default dashboard path in configuration.yaml.j2
+    state: directory
+    owner: "{{ ha_config_owner | default('root') }}"
+    group: "{{ ha_config_group | default('root') }}"
+    mode: '0755'
+
+- name: Create a default ui-lovelace.yaml for generated dashboard
+  ansible.builtin.copy:
+    dest: "{{ ha_config_base_path }}/ui-lovelace.yaml" # Matches the 'lovelace-generated' dashboard in J2
+    content: |
+      # This is the default Lovelace dashboard.
+      # Home Assistant will auto-generate this if it's in storage mode.
+      # If in YAML mode and this file is empty or minimal,
+      # you might get a blank dashboard to start with.
+      title: Main
+      views:
+        - path: default_view
+          title: Home
+          cards:
+            - type: entities
+              entities:
+                - person.{{ ansible_user | default('default_user') }} # Example entity
+                - sun.sun
+    owner: "{{ ha_config_owner | default('root') }}"
+    group: "{{ ha_config_group | default('root') }}"
+    mode: '0644'
+    force: false # Don't overwrite if user has customized it.
+  # notify: Reload Lovelace # If such a handler exists
+
+# Example of how to synchronize a directory of user-defined Lovelace dashboards
+# - name: Synchronize user-defined Lovelace dashboards
+#   ansible.posix.synchronize:
+#     src: "{{ role_path }}/files/lovelace_dashboards/" # Requires files/lovelace_dashboards in role
+#     dest: "{{ ha_config_base_path }}/lovelace/" # Destination on HAOS VM
+#     delete: true # Set to yes to remove dashboards from VM not present in source
+#     recursive: true
+#     perms: true # Preserve permissions
+#   when: true # Add condition if this is optional
+#   notify: Reload Lovelace # If such a handler exists
+
+# Future tasks:
+# - SOPS integration for secrets in configuration files
+# - Tasks to manage specific integrations using community.home_assistant modules
+# - More specific reload handlers

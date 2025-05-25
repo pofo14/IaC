@@ -1,0 +1,113 @@
+# Base Home Assistant Configuration managed by Ansible
+
+homeassistant:
+  name: "{{ ha_instance_name }}"
+  latitude: {{ ha_latitude }}
+  longitude: {{ ha_longitude }}
+  elevation: {{ ha_elevation }}
+  unit_system: "{{ ha_unit_system }}"
+  time_zone: "{{ ha_time_zone }}"
+  country: "{{ ha_country }}"
+  currency: "{{ ha_currency }}"
+  # List of packages to include (optional, can be managed by adding to ha_include_dirs and templating this)
+  # packages: !include_dir_named packages
+  external_url: "auto" # Or set a specific URL
+  internal_url: "auto" # Or set a specific URL
+
+# Load default components
+default_config:
+
+# Example of loading specific components if not using default_config or needing more
+# {% for component in ha_default_components %}
+# {{ component }}:
+# {% endfor %}
+
+# Lovelace Dashboards (if managing in YAML mode)
+lovelace:
+  mode: yaml
+  # Path to your ui-lovelace.yaml or dashboards directory
+  # resources: # For custom cards, themes
+  #   - url: /local/my-custom-card.js
+  #     type: module
+  dashboards:
+    lovelace-generated: # Original auto-generated dashboard
+      mode: yaml
+      filename: ui-lovelace.yaml # Default Lovelace UI
+      title: Main
+      icon: mdi:home
+      show_in_sidebar: true
+      require_admin: false
+    # Example for another dashboard managed in {{ ha_config_base_path }}/lovelace/another_dashboard.yaml
+    # my-other-dash:
+    #   mode: yaml
+    #   filename: lovelace/another_dashboard.yaml
+    #   title: My Other Dashboard
+    #   icon: mdi:tablet-dashboard
+    #   show_in_sidebar: true
+    #   require_admin: false
+
+
+# Include various configurations from subdirectories
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Example for including all files from a directory (e.g., for integrations)
+# input_boolean: !include_dir_merge_list includes/input_boolean/
+# sensor: !include_dir_merge_list includes/sensors/
+# binary_sensor: !include_dir_merge_list includes/binary_sensors/
+
+# Example for packages
+# homeassistant:
+#   packages: !include_dir_named packages
+
+# Frontend themes (if you have a themes directory)
+# frontend:
+#   themes: !include_dir_merge_named themes
+
+# Python scripts (if used)
+# python_script:
+
+# TTS (Text-to-Speech) configuration example
+# tts:
+#   - platform: google_translate
+#     service_name: google_say
+#     language: 'en'
+
+# Logger configuration (example)
+logger:
+  default: info
+  logs:
+    custom_components: debug
+    # homeassistant.components.your_integration: debug
+
+# Allow Home Assistant Cloud (Nabu Casa)
+# cloud:
+
+# Allow HomeKit integration
+# homekit:
+
+# Allow Mobile App integration
+mobile_app:
+
+# Allow My Home Assistant (my.home-assistant.io redirects)
+my:
+
+# Allow Supervisor (if running HAOS or Supervised)
+supervisor:
+
+# Weather (example)
+# weather:
+#   - platform: meteofrance
+#     # api_key: YOUR_API_KEY (use secrets)
+#     # city: "Your City"
+
+# Allow access to /config/www for static files
+# http:
+#   server_port: 8123 # Default
+#   # ssl_certificate: /ssl/fullchain.pem
+#   # ssl_key: /ssl/privkey.pem
+#   # use_x_forwarded_for: true
+#   # trusted_proxies:
+#   #   - 172.17.0.0/16 # Example: Docker internal network
+#   #   - 192.168.0.0/16 # Example: Local network

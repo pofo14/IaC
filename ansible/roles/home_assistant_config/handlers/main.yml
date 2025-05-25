@@ -1,0 +1,9 @@
+---
+# handlers file for home_assistant_config
+- name: Restart Home Assistant
+  ansible.builtin.debug:
+    msg: "Handler: Would restart Home Assistant here (actual command TBD)"
+  # Example using community.home_assistant.homeassistant_restart (if collection is installed)
+  # community.home_assistant.homeassistant_restart:
+  #   url: "http://{{ ansible_host }}:8123" # Assuming HA is on port 8123
+  #   # api_token: "YOUR_LONG_LIVED_ACCESS_TOKEN" # Needs a way to get this securely

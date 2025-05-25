@@ -1,0 +1,103 @@
+---
+# defaults file for home_assistant_config
+
+# Base path for Home Assistant configuration on the target VM
+# For HAOS, this is typically /config when accessed from within HA,
+# which is often a mount point.
+ha_config_base_path: "/config"
+
+# User and group for HA configuration files.
+# HAOS runs components in containers; the user context for file permissions needs verification.
+# Defaulting to root for now, but this might need to be 'homeassistant' or a specific UID/GID.
+ha_config_owner: "root" 
+ha_config_group: "root"
+
+# List of include directories to create under the base path
+ha_include_dirs:
+  - "automations"
+  - "scenes"
+  - "scripts"
+  - "themes"
+  - "integrations" # For manual integration configs
+  - "custom_components" # For custom code
+  - "lovelace" # For YAML mode Lovelace dashboards
+  - "includes" # General purpose includes
+  - "packages" # For splitting config using packages
+
+# Basic Home Assistant settings
+ha_instance_name: "My Home Assistant"
+ha_latitude: 0.0  # Replace with actual latitude
+ha_longitude: 0.0 # Replace with actual longitude
+ha_elevation: 0   # Replace with actual elevation in meters
+ha_unit_system: "metric" # or "imperial"
+ha_time_zone: "Etc/UTC"   # Replace with actual Olson timezone, e.g., "America/New_York"
+ha_country: "US" # Two letter ISO country code
+ha_currency: "USD" # Three letter ISO currency code
+
+# Default components to load (can be expanded)
+# Note: 'default_config:' in configuration.yaml loads many of these.
+# This list is for explicit loading if default_config is not used or for clarity.
+ha_default_components:
+  - "automation"
+  - "input_boolean"
+  - "input_button"
+  - "input_datetime"
+  - "input_number"
+  - "input_select"
+  - "input_text"
+  - "person"
+  - "scene"
+  - "script"
+  - "sun"
+  - "system_health"
+  - "zone"
+  # - "blueprint"
+  # - "cloud" # Requires subscription
+  # - "config"
+  # - "counter"
+  # - "dhcp"
+  # - "energy" # Requires specific setup
+  # - "frontend"
+  # - "hardware"
+  # - "homeassistant_alerts"
+  # - "history"
+  # - "image"
+  # - "logbook"
+  # - "map"
+  # - "media_source"
+  # - "mobile_app"
+  # - "my"
+  # - "network"
+  # - "person"
+  # - "repairs"
+  # - "schedule"
+  # - "ssdp"
+  # - "stream"
+  # - "supervisor" # If HAOS/Supervised
+  # - "tag"
+  # - "timer"
+  # - "trace"
+  # - "tts" # Requires setup
+  # - "updater"
+  # - "usb"
+  # - "webhook"
+  # - "zeroconf"
+  # - "zwave_js" # Requires hardware
+  # - "websocket_api"
+  # - "system_log"
+  # - "diagnostics"
+  # - "lovelace"
+  # - "http"
+  # - "discovery"
+  # - "device_automation"
+  # - "backup"
+  # - "api"
+  # - "analytics"
+  # - "group"
+  # - "recorder"
+  # - "search"
+  # - "system_monitor"
+  # - "template"
+  # - "utility_meter"
+  # - "weather" # Requires setup
+  # - "zone"

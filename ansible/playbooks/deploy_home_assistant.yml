@@ -1,0 +1,28 @@
+---
+- name: Deploy and Configure Home Assistant
+  hosts: homeassistant_vms # Target group for Home Assistant VMs
+  gather_facts: true # Or false if not strictly needed for these tasks
+  become: true # Assumes configuration files are owned by root or require sudo
+
+  vars:
+    # Example of how to override role defaults if needed
+    # ha_config_base_path: "/opt/homeassistant/config" 
+    # ha_time_zone: "America/Los_Angeles"
+
+    # Placeholder for SOPS decryption if used directly in playbook
+    # sops_decrypted_secrets: "{{ lookup('sops', 'secrets.sops.yaml') }}"
+    # Example usage in role (would need var in role defaults/vars):
+    # ha_some_api_key: "{{ sops_decrypted_secrets.some_api_key }}"
+
+  roles:
+    - role: home_assistant_config
+      # Example of passing specific variables to the role if needed
+      # ha_instance_name: "My Awesome HA"
+
+  tasks:
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: |
+          Home Assistant configuration deployment complete.
+          Ensure Home Assistant has been restarted or reloaded appropriate configurations.
+          Access via http://{{ ansible_host }}:8123 (or your configured URL)

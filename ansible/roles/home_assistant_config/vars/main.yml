@@ -1,0 +1,6 @@
+---
+# vars file for home_assistant_config
+# You can define role-specific variables here that are not defaults
+# and are not expected to be overridden by the user in the playbook.
+# For example:
+# specific_ha_setting: value_for_this_role_only

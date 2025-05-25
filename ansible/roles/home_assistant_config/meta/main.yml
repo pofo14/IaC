@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Your Name
+  description: Ansible role to configure Home Assistant and manage its configuration via code.
+  company: Your Company
+  license: license (GPL-2.0-or-later, MIT, etc.)
+  min_ansible_version: "2.12" # Or your preferred minimum
+
+  platforms:
+    - name: GenericLinux # HAOS is Linux-based
+      versions:
+        - all
+  
+  galaxy_tags:
+    - homeassistant
+    - smarthome
+    - automation
+
+dependencies: []
+# List your role dependencies here, if any
