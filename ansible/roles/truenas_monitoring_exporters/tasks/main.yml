@@ -1,0 +1,12 @@
+---
+# tasks file for truenas_monitoring_exporters
+- name: Setup monitoring Docker Compose file and directory
+  ansible.builtin.include_tasks: docker_compose.yml
+
+- name: Manage monitoring exporter services
+  ansible.builtin.include_tasks: service.yml
+
+- name: Update Prometheus target files
+  ansible.builtin.include_tasks: prometheus_update.yml
+  tags:
+    - prometheus_update # Allow skipping this if not needed

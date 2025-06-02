@@ -146,23 +146,17 @@
       tags: docker
     - role: ironicbadger.docker_compose_generator
       tags: compose
-<<<<<<< HEAD
-    # - role: artis3n.tailscale
+    # - role: artis3n.tailscale  # Kept HEAD version (commented out)
     #   tags: tailscale
-=======
-    - role: artis3n.tailscale
-      tags: tailscale
->>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2
 
 # TODO: last clean run it doesn't look like pofo14 got added to docker group
 # TODO: Create plays for TrueNas to configuring NFS Shares, Users, and Groups
 # TODO: Create plays for proxmox host post install, creation of pci passthrough, etc
 
-<<<<<<< HEAD
 - name: Configure TrueNAS Server
   hosts: truenas
-  gather_facts: false
-  become: false
+  gather_facts: false # Retaining original play-level setting
+  become: false       # Retaining original play-level setting
   environment:
     middleware_method: midclt
 
@@ -172,29 +166,28 @@
   roles:
     - role: truenas
       tags: truenas
-=======
-- name: Configure Truenas Server
-  hosts: truenas
-  become: true
+      # This role uses API, ensure its become state is false, which it inherits from play
 
-  tasks:
-    - name: Create a directory if it does not exist
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: directory
-        mode: " {{ item.mode }} "
-        group: "{{ item.group }}"
-        owner: "{{ item.owner }}"
-      loop: "{{ create_directories }}"
->>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2
+    - name: Ensure Docker is installed on TrueNAS Scale # Added name for clarity
+      role: geerlingguy.docker
+      become: true # geerlingguy.docker usually needs root
+      tags:
+        - docker
+        - truenas_monitoring
+
+    - role: truenas_monitoring_exporters
+      tags: truenas_monitoring
+      # This role runs docker_compose. If the Ansible user is part of the
+      # docker group (managed by geerlingguy.docker), become: false (inherited) is fine.
+      # If issues arise with permissions (e.g. writing to /opt or docker socket),
+      # add 'become: true' to this role.
 
 - name: Configure Pihole Server
   hosts: pihole
   become: true
 
   roles:
-<<<<<<< HEAD
-    - role: sixteenone.pihole-dns   # commented out missing role
+    - role: sixteenone.pihole-dns   # Kept HEAD version (commented out missing role)
 
 - name: Configure Proxmox Node
   hosts: proxmox
@@ -273,6 +266,3 @@
     - role: geerlingguy.node_exporter
     - role: ironicbadger.docker_compose_generator
     - role: management_netbootxyz
-=======
-    - role: sixteenone.pihole-dns
->>>>>>> 647ad7cc110c488cb30a9e3ff6e7fd1b8cf90ea2
