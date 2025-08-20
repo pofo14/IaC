@@ -50,7 +50,10 @@ check-vault:
 	ansible-vault view inventories/production/group_vars/all/vault.yml
 
 ######### Utility Calls #######
-
+# Manage ISOs for specific hosts
+manage-isos-pve1:
+	ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve1" --ask-become-pass
+	
 # Updates prometheus target json file
 update_prometheus:
 	ansible-playbook -i ./inventories/staging ./playbooks/update_prometheus_targets.yml --ask-become-pass

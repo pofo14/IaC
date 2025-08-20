@@ -1,27 +1,32 @@
+locals {
+  secrets = yamldecode(sops_decrypt_file("${path.root}/../../environments/${var.environment}/secrets.enc.yml"))
+  
+  # Get host-specific configuration
+  host_config = local.secrets.environments[var.environment][var.proxmox_host]
+  
+  # Common settings
+  common_settings = local.secrets.global
+}
+
 source "proxmox-iso" "truenas-25" {
-  # Proxmox Connection Settings
-  proxmox_url              = var.proxmox_api_url
-  node                     = var.proxmox_node
-  username                 = var.proxmox_api_token_id
-  token                    = var.proxmox_api_token_secret
+  # Connection settings from shared module
+  proxmox_url = local.host_config.api_url
+  username = local.host_config.api_token_id
+  token = local.host_config.api_token_secret
+  node = local.host_config.node
   insecure_skip_tls_verify = true
-  task_timeout        = "30m"
-
-  # will need to install manually post-installs
-  qemu_agent = true
-
-  # VM General Settings
-  vm_name  = "truenas-25"
-  vm_id    = 9002
-  template_description = "Truenas 25.04 Template"
-  template_name          = "Truenas-25.04-template"
-  memory   = 8192
-  cores    = 2
-
-
-  # ISO Settings
+  task_timeout = "30m"
+  
+  # VM-specific settings
+  vm_name = "truenas-25"
+  vm_id = 9002
+  template_description = "TrueNAS Scale 25.04 Template"
+  template_name = "TrueNAS-25.04-template"
+  memory = 8192
+  cores = 2
+  
+  # ISO configuration
   boot_iso {
-    #iso_url      = "https://mirrors.nycbug.org/pub/opnsense/releases/25.1/OPNsense-25.1-dvd-amd64.iso.bz2"
     iso_checksum = "ede23d4c70a7fde6674879346c1307517be9854dc79f6a5e016814226457f359"
     iso_storage_pool = "local"
     iso_target_path = "TrueNAS-SCALE-25.04.0.iso"  # Remove 'local:iso/' prefix
@@ -85,28 +90,10 @@ source "proxmox-iso" "truenas-25" {
     "10<wait3><enter><wait3>image build<enter><wait5>"
   ]
 
-  # SSH Settings
-  
   communicator = "none"
-  #ssh_private_key_file = "~/.ssh/id_ed25519"
-  #ssh_username = "root"
-  #ssh_host = "192.168.2.49"
-  #ssh_password = var.opnsense_root_password
-  #ssh_timeout  = "5m"
 }
 
 build {
   sources = ["source.proxmox-iso.truenas-25"]
-
-  # provisioner "shell" {
-  #   script          = "${path.root}/scripts/base.sh"
-  #   execute_command = "chmod +x {{ .Path }}; /bin/sh -c '{{ .Vars }} {{ .Path }}'"
-  # }
-  # provisioner "shell" {
-  #   inline = [
-  #     "fetch -o /conf/config.xml http://{{ .HTTPIP }}:{{ .HTTPPort }}/config.xml",
-  #     "/usr/local/etc/rc.reload_all"
-  #   ]
-  # }  
 }
 

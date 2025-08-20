@@ -1,0 +1,9 @@
+# Stage environment SOPS configuration
+keys:
+  - age_key_file: /home/pofo14/dev/IaC/terraform/key.txt
+creation_rules:
+  - path_regex: .*\.yml$
+    age: age1d5eqgled05h4jgkfacvdamy7ys4hry740au8prqgvykx3l0apfzq85gr7y
+  # Stage-specific rules can be added here
+  # - path_regex: .*stage.*\.yml$
+  #   age: stage_specific_key 

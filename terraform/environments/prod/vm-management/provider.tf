@@ -44,7 +44,7 @@ provider "proxmox" {
 }
 
 data "sops_file" "secrets" {
-  source_file = "${path.module}/secrets.yml"
+  source_file = "${path.module}/../secrets.enc.yml"  # Environment-level file
 }
 
 data "github_ssh_keys" "pofo14_ssh_keys" {}

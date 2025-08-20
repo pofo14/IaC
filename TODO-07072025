@@ -1,0 +1,5 @@
+Working on creating an environmental structure for Packer.
+
+This is to be able to create a Truenas VM Template on pve1
+So I can then test the Terraform VM Creation
+So I can then test the ansible truenas configuration role from Jules

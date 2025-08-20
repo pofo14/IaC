@@ -8,6 +8,29 @@
 #     url: "https://download.sys.truenas.net/TrueNAS-SCALE-ElectricEel/24.10.2/TrueNAS-SCALE-24.10.2.iso"
 #     checksum: "33e29ed62517bc5d4aed6c80b9134369e201bb143e13fefdec5dbf3820f4b946"
 #     checksum_type: "sha256"
+# ISO management configuration
+iso_path: "/var/lib/vz/template/iso"
+isos:
+  - name: "TrueNAS-SCALE-24.10.2.iso"
+    url: "https://download.sys.truenas.net/TrueNAS-SCALE-ElectricEel/24.10.2/TrueNAS-SCALE-24.10.2.iso"
+    checksum: "33e29ed62517bc5d4aed6c80b9134369e201bb143e13fefdec5dbf3820f4b946"
+    checksum_type: "sha256"
+  - name: "TrueNAS-SCALE-25.04.0.iso"
+    url: "https://download.sys.truenas.net/TrueNAS-SCALE-Cobia/25.04.0/TrueNAS-SCALE-25.04.0.iso"
+    checksum: "ede23d4c70a7fde6674879346c1307517be9854dc79f6a5e016814226457f359"
+    checksum_type: "sha256"
+  - name: "TrueNAS-SCALE-25.04.2.iso"
+    url: "https://download.sys.truenas.net/TrueNAS-SCALE-Cobia/25.04.2/TrueNAS-SCALE-25.04.2.iso"
+    checksum: "1843386be5a11252e0dd19543d991f981f9304e156d0d2e6d8be4a5e95717f159"
+    checksum_type: "sha256"
+  - name: "OPNsense-25.1-dvd-amd64.iso"
+    url: "https://mirrors.nycbug.org/pub/opnsense/releases/25.1/OPNsense-25.1-dvd-amd64.iso.bz2"
+    checksum: "68efe0e5c20bd5fbe42918f000685ec10a1756126e37ca28f187b2ad7e5889ca"
+    checksum_type: "sha256"
+  - name: "OPNsense-25.7-dvd-amd64.iso"
+    url: "https://mirrors.nycbug.org/pub/opnsense/releases/25.7/OPNsense-25.7-dvd-amd64.iso.bz2"
+    checksum: "fa4b30df3f5fd7a2b1a1b2bdfaecfe02337ee42f77e2d0ae8a60753ea7eb153e"
+    checksum_type: "sha256"
 
 zfs_pool_name: "vmdata"  # <- Your data pool name
 zfs_disks:

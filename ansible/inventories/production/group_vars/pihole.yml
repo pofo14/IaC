@@ -13,6 +13,7 @@ pihole_dns_dns:
   - { ip: 192.168.2.7, domain: management.flopo.retropetro.net }
   - { ip: 192.168.2.30, domain: test-pve1.flopo.retropetro.net }
   - { ip: 192.168.2.20, domain: pve1.flopo.retropetro.net }
+  - { ip: 192.168.2.25, domain: truenas1.flopo.retropetro.net }
 
 # Transform the dns_entries into the format required by sixteenone.pihole-dns
 # pihole_dns_dns: >-

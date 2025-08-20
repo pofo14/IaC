@@ -1,0 +1,9 @@
+---
+- name: Manage Proxmox ISOs
+  hosts: "{{ target_hosts | default('pve1') }}"
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Include ISO management tasks
+      ansible.builtin.include_tasks: ../tasks/proxmox_iso.yml

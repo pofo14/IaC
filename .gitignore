@@ -78,3 +78,9 @@ packer/proxmox/downloaded_iso_path/tools/ipxe/
 # Ignore Packer ISO lock files
 *.iso.lock
 tools/ipxe/
+
+# Add to .gitignore
+packer/proxmox/secrets.yml
+packer/proxmox/*/secrets.yml
+*.auto.pkrvars.hcl
+credentials.pkr.hcl

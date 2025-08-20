@@ -13,8 +13,13 @@ build-truenas24:
 valid-truenas24:
 	packer validate ./truenas-24.10
 
-build-truenas25:
+# Add SOPS decryption helper
+decrypt-secrets:
+	sops -d secrets.enc.yml > secrets.yml
+
+build-truenas25: decrypt-secrets
 	packer build ./truenas-25.04
+	rm -f secrets.yml
 
 valid-truenas25:
 	packer validate ./truenas-25.04	

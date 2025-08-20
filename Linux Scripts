@@ -32,3 +32,24 @@ sudo apt update && sudo apt install nfs-common
 sudo mkdir -p /mnt/nextcloud
 add to fstab nas.flopo.retropetro.net:/nextcloud /mnt/nextcloud nfs defaults 0 0
 sudo useradd -M -s /usr/sbin/nologin -u 1099 nextcloud
+
+
+
+##### Dev/VENV Creation Setup ####
+# Make sure you're in the activated environment
+python3 -m venv ~/venvs/ansible
+
+source ~/venvs/ansible/bin/activate
+
+# Install common packages for Ansible/Packer work
+pip install ansible
+pip install ansible-lint
+#pip install yamllint
+
+# Terraform
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt update && sudo apt install terraform
+
+# Packer
+sudo apt install packer
