@@ -3,7 +3,7 @@ ENVIRONMENT = prod
 
 # Ensure ISOs are available before building
 ensure-isos-pve1:
-	cd ../../ansible && ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve1" --ask-become-pass
+	cd ../../../ansible && ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve1.flopo.retropetro.net" --ask-become-pass
 
 # PVE1 builds
 build-pve1-truenas25: ensure-isos-pve1

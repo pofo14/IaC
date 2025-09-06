@@ -1,0 +1,14 @@
+---
+# Encrypted variables for nextcloud group
+# Use ansible-vault edit this file to add encrypted variables
+
+# Nextcloud admin credentials
+nextcloud_admin_user_vault: "admin_username"
+nextcloud_admin_password_vault: "admin_password"
+nextcloud_instanceid_vault: "your_instance_id"
+nextcloud_passwordsalt_vault: "your_password_salt"
+nextcloud_secret_vault: "your_secret_key"
+nextcloud_dbpassword_vault: "db_password"
+
+# MySQL root password
+mysql_root_password_vault: "mysql_root_password"

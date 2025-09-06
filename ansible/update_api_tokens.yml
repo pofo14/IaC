@@ -1,0 +1,9 @@
+---
+- name: Update Proxmox API Token Permissions
+  hosts: pve1.flopo.retropetro.net
+  become: true
+
+  tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
+      tags: api_token, proxmox

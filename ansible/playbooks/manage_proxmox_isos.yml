@@ -1,6 +1,6 @@
 ---
 - name: Manage Proxmox ISOs
-  hosts: "{{ target_hosts | default('pve1') }}"
+  hosts: "{{ target_hosts | default('pve1.flopo.retropetro.net') }}"
   become: true
   gather_facts: false
 

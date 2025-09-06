@@ -11,8 +11,11 @@
   loop: "{{ isos }}"
 
 - name: Verify ISO checksum if file exists
-  ansible.builtin.shell: "sha256sum {{ iso_path }}/{{ item.item.name }} | cut -d' ' -f1"
+  ansible.builtin.shell:
+    cmd: "sha256sum {{ iso_path }}/{{ item.item.name }} | cut -d' ' -f1"
+    executable: /bin/bash
   register: existing_checksum
+  changed_when: false
   when: item.stat.exists
   loop: "{{ iso_stat.results }}"
 

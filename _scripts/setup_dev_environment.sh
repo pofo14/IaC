@@ -41,6 +41,30 @@ echo "Installing Python packages..."
 pip install --upgrade pip
 pip install ansible ansible-lint yamllint jmespath netaddr jinja2 pyyaml cryptography
 
+sudo apt install direnv
+
+# Add direnv hook to bashrc (if not already present)
+if ! grep -q "direnv hook bash" ~/.bashrc; then
+    echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+fi
+
+# Create .envrc file for auto-activating virtual environment
+echo "Creating .envrc file for direnv..."
+cat > .envrc << 'EOF'
+source ~/venvs/ansible/bin/activate
+EOF
+
+# Allow direnv in current directory
+direnv allow
+
+# Set your identity
+git config --global user.name "pofo14"
+git config --global user.email "ken.petro@gmail.com"
+
+# Set modern defaults
+git config --global init.defaultBranch main
+git config --global core.editor "code --wait"
+
 echo "Development environment setup complete!"
 echo ""
 echo "To activate the Python environment:"

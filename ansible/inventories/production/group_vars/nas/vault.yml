@@ -1,0 +1,7 @@
+---
+# Encrypted variables for nas group
+# Use ansible-vault edit this file to add encrypted variables
+
+# Snapraid email variables
+vault_snapraid_runner_email_address: "your-email@example.com"
+vault_snapraid_runner_email_pass: "your-email-password"

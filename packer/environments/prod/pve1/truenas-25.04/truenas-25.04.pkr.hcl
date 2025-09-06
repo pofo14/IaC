@@ -1,17 +1,3 @@
-locals {
-  environment = "prod"
-  proxmox_host = "pve1"
-  
-  # Load secrets using external data source
-  secrets = yamldecode(data.external.sops.result.content)
-  host_config = local.secrets.environments[local.environment][local.proxmox_host]
-}
-
-# External data source to decrypt SOPS file
-data "external" "sops" {
-  program = ["sh", "-c", "sops -d ${path.root}/../../../secrets.enc.yml"]
-}
-
 # Variable definitions
 variable "proxmox_api_url" {
   type = string
@@ -53,7 +39,7 @@ locals {
     node = var.proxmox_node
     storage_pools = {
       local = "local"
-      zfs = "local-zfs"
+      zfs = "zfs01"
     }
   }
   secrets = {
@@ -99,9 +85,9 @@ source "proxmox-iso" "truenas-25" {
   # ISO configuration
   boot_iso {
     iso_checksum = "ede23d4c70a7fde6674879346c1307517be9854dc79f6a5e016814226457f359"
-    iso_storage_pool = local.host_config.storage_pools.local
+    iso_storage_pool = "iso"
     iso_target_path = "TrueNAS-SCALE-25.04.0.iso"
-    iso_file = "${local.host_config.storage_pools.local}:iso/TrueNAS-SCALE-25.04.0.iso"
+    iso_file = "iso:iso/TrueNAS-SCALE-25.04.0.iso"
     unmount = true
   }
   
@@ -115,9 +101,11 @@ source "proxmox-iso" "truenas-25" {
   disks {
     type = "scsi"
     disk_size = "16G"
-    storage_pool = "${local.host_config.storage_pools.local}-zfs"
+    storage_pool = local.host_config.storage_pools.zfs
   }
   
+  boot_wait           = "45s"
+
   # Use password from secrets
   boot_command = [
     "1<enter><wait5>",
