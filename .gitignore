@@ -66,7 +66,11 @@ TODO
 secret
 *.secret
 secret.yml
+
+# TODO files - personal notes
 TODO
+TODO-*
+TODO_*
 
 # Ignore unencrypted secrets
 **/secrets.yml
