@@ -84,6 +84,12 @@ variable "gateway" {
   type        = string
 }
 
+variable "use_cloud_init" {
+  description = "Whether to use cloud-init for the VM"
+  type        = bool
+  default     = true
+}
+
 
 
 

@@ -76,3 +76,5 @@ echo "packer --version"
 echo "sops --version"
 echo "gh --version"
 echo "ansible --version"
+
+sudo apt update && sudo apt install -y age

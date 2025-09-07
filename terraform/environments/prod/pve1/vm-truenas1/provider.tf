@@ -27,19 +27,22 @@ data "github_ssh_keys" "pofo14_ssh_keys" {}
 
 provider "proxmox" {
   
-  endpoint = "https://pve1.flopo.retropetro.net:8006/"
-  username = data.sops_file.secrets.data["proxmox_username"]
-  password = data.sops_file.secrets.data["proxmox_password"]
+  
+  #username = data.sops_file.secrets.data["pve1_username"]
+  #password = data.sops_file.secrets.data["pve1_password"]
+  endpoint = data.sops_file.secrets.data["pve1_fdqn"]
+  api_token = "${data.sops_file.secrets.data["pve1_api_token_id"]}=${data.sops_file.secrets.data["pve1_api_token_secret"]}"  
 
   insecure = true
 
   ssh {
     agent = true
+    username = data.sops_file.secrets.data["pve1_username"]
   }
 }
 
 data "sops_file" "secrets" {
-  source_file = "${path.module}/../secrets.enc.yml"
+  source_file = "${path.module}/../../secrets.enc.yml"
 }
 
 

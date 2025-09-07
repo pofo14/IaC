@@ -4,7 +4,7 @@ variable "proxmox_host" {
 
 variable "truenas_template_id" {
   type = string
-  default = "local:iso/TrueNAS-SCALE-24.10.2.iso"
+  default = "9002"
 }
 
 variable "hostname" {

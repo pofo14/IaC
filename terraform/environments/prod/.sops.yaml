@@ -2,8 +2,8 @@
 keys:
   - age_key_file: /home/pofo14/dev/IaC/terraform/key.txt
 creation_rules:
-  - path_regex: .*\.yml$
-    age: age1d5eqgled05h4jgkfacvdamy7ys4hry740au8prqgvykx3l0apfzq85gr7y
+  - path_regex: secrets\.yml$ # Match the unencrypted file
+    age: age1uhhg4yltp5et92fnvf5lwksq3u8d0tlw2mq7qq82vjl8z8wh3v0q8ux9gs
   # Production-specific rules can be added here
   # - path_regex: .*prod.*\.yml$
-  #   age: prod_specific_key 
+  #   age: prod_specific_key

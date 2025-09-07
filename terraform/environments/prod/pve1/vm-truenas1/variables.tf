@@ -4,7 +4,12 @@ variable "proxmox_host" {
 
 variable "truenas_template_id" {
   type = string
-  default = "local:iso/TrueNAS-SCALE-25.04.01.iso"
+  default = "9002"
+}
+
+variable "storage_pool" {
+  type = string
+  default = "zfs01"  
 }
 
 variable "hostname" {

@@ -175,6 +175,7 @@ pve_roles:
       - VM.Config.Memory
       - VM.Config.Network
       - VM.Config.Options
+      - VM.Config.Cloudinit
       - VM.Console
       - VM.Monitor
       - VM.PowerMgmt

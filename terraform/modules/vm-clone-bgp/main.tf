@@ -19,6 +19,7 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
   clone {
     vm_id = var.template_id
     datastore_id = var.storage_pool
+    full = true
   }
 
   agent {
@@ -44,33 +45,41 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
 
 
   disk {
-    datastore_id = var.storage_pool
-    interface    = "virtio0"
-    iothread     = true
-    discard      = "on"
-    size         = var.disksize
+    #datastore_id = var.storage_pool
+    #interface    = "virtio0"
+    #iothread     = true
+    #discard      = "on"
+    #size         = var.disksize
+
+    aio               = "io_uring"
+    backup            = true
+    cache             = "none"
+    datastore_id      = var.storage_pool
+    discard           = "on"
+    file_format       = "raw"  # Explicitly set raw format for ZFS
+    interface         = "virtio0"
+    iothread          = true
+    replicate         = true
+    size              = var.disksize
+    ssd               = false
   }
 
-  initialization {
-    datastore_id = "zfsdata01"
-    ip_config {
-      ipv4 {
-        address = var.ipaddress
-        gateway = var.gateway
+  # Only include cloud-init initialization if use_cloud_init is true
+  dynamic "initialization" {
+    for_each = var.use_cloud_init ? [1] : []
+    content {
+      datastore_id = "snippets"
+      dynamic "ip_config" {
+        for_each = var.ipaddress != "dhcp" && var.ipaddress != "" && var.ipaddress != "ip=dhcp" ? [1] : []
+        content {
+          ipv4 {
+            address = var.ipaddress
+            gateway = var.gateway
+          }
+        }
       }
+      user_data_file_id = var.use_cloud_init ? proxmox_virtual_environment_file.user_data_cloud_config[0].id : null
     }
-    # TODO: Figure out how to pull in the ssh keys from the data source from GitHub
-    # user_account {
-    #   username = "pofo14"
-    #   keys =  [
-    #         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHzt5Uq1pY/zXZp30wjueijLzigpuAJ2p1Bew5AOMQ7y pofo14@Joes-MacBook-Pro.local",
-    #         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFw3M5B7y0icwQpUO2NvYEqg1qckmd1j01YpAxhm+HM pofo14@pc-ken",
-    #         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrhhjNH6tibJ1wVoZojtuUIcRamnOdQBwwS2RVGmDfN ansible user - windows pc"
-    #   ]
-    #   //keys = var.ssh_keys
-
-    # }
-    user_data_file_id = proxmox_virtual_environment_file.user_data_cloud_config.id
   }
 
   network_device {
@@ -79,13 +88,18 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
 
 }
 
+# Only create cloud-init file if use_cloud_init is true
 resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
+  count = var.use_cloud_init ? 1 : 0
+  
   content_type = "snippets"
-  datastore_id = "zfsdata01"
-  node_name    = "proxmox"
-
+  datastore_id = "snippets"
+  node_name    = var.proxmox_host
+  timeout_upload = 1800
+  
   source_raw {
-    data = <<-EOF
+    file_name = "${var.hostname}.cloud-config.yaml"
+    data = <<-EOT
     #cloud-config
     hostname: ${var.hostname}
     fqdn: ${var.hostname}.${var.domain}
@@ -101,9 +115,9 @@ resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
         # passwd: 
         # - or -
         ssh_authorized_keys:
-           - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHzt5Uq1pY/zXZp30wjueijLzigpuAJ2p1Bew5AOMQ7y pofo14@Joes-MacBook-Pro.local
-           - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFw3M5B7y0icwQpUO2NvYEqg1qckmd1j01YpAxhm+HM pofo14@pc-ken
-           - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrhhjNH6tibJ1wVoZojtuUIcRamnOdQBwwS2RVGmDfN ansible user - windows pc
+%{ for key in var.ssh_keys ~}
+           - ${key}
+%{ endfor ~}
 
     write_files:
       - path: /etc/netplan/99-custom.yaml
@@ -112,7 +126,14 @@ resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
             version: 2
             ethernets:
               eth0:  
-                %{if var.ipaddress != "" }
+                %{if var.ipaddress == "dhcp" || var.ipaddress == "" || var.ipaddress == "ip=dhcp" }
+                dhcp4: true
+                dhcp4-overrides:
+                  send-hostname: true
+                  use-hostname: true
+                  hostname: ${var.hostname}
+                dhcp-identifier: mac
+                %{else}
                 dhcp4: false
                 addresses:
                   - ${var.ipaddress}
@@ -121,14 +142,7 @@ resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
                   addresses: [192.168.2.2]
                 routes:
                   - to: default
-                    via: ${var.gateway}                
-                %{else}
-                dhcp4: true
-                dhcp4-overrides:
-                  send-hostname: true
-                  use-hostname: true
-                  hostname: ${var.hostname}
-                dhcp-identifier: mac
+                    via: ${var.gateway}
                 %{endif}
              
       - path: /etc/hosts
@@ -140,10 +154,7 @@ resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
       - netplan apply
       - hostnamectl set-hostname ${var.hostname}.${var.domain}
       - systemctl restart systemd-hostnamed
-
-    EOF
-
-    file_name = "${var.hostname}.cloud-config.yaml"
+    EOT
   }
 
 }

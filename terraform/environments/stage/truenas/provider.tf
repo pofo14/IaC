@@ -27,7 +27,7 @@ data "github_ssh_keys" "pofo14_ssh_keys" {}
 
 provider "proxmox" {
   
-  endpoint = "https://proxmox.flopo.retropetro.net:8006/"
+  endpoint = "https://pve1.flopo.retropetro.net:8006/"
 
   username = data.sops_file.secrets.data["proxmox_username"]
   password = data.sops_file.secrets.data["proxmox_password"]

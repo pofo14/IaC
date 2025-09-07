@@ -65,6 +65,7 @@ TODO
 .vaultpass
 secret
 *.secret
+secret.yml
 TODO
 
 # Ignore unencrypted secrets
