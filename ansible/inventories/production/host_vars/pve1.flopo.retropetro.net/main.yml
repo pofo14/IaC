@@ -99,6 +99,20 @@ pve_pcie_ovmf_enabled: false
 pve_pcie_ignore_msrs: false
 pve_pcie_report_msrs: true
 
+pve_pci_device_ids:
+  - id: "1000:0087"    # LSI SAS2308 (Fusion-MPT SAS-2)
+
+pve_vfio_blacklist_drivers:
+  - name: "mpt2sas"    # driver for SAS2 HBAs; prevents host from claiming it
+
+# My Custom PCIe Mappings
+pve_pci_mappings:
+  - { name: "hba_broadcom_1", host: "pve1", path: "0000:82:00.0" }
+
+# Empty Datacenter Config to ensure it's created
+pve_datacenter_cfg:
+  keyboard: en-us
+
 # ZFS Pool Setup
 # proxmox_zfs_pools:
 #   - name: "{{ zfs_pool_name }}"
@@ -165,6 +179,17 @@ pve_system_users:
 pve_roles:
   - name: homelab
     privileges:
+      - Datastore.Allocate
+      - Datastore.AllocateSpace
+      - Datastore.AllocateTemplate
+      - Datastore.Audit
+      - Mapping.Modify
+      - Mapping.Use
+      - SDN.Allocate
+      - SDN.Use
+      - Sys.Audit
+      - Sys.Modify
+      - Sys.Console
       - VM.Allocate
       - VM.Audit
       - VM.Clone
@@ -180,14 +205,6 @@ pve_roles:
       - VM.Monitor
       - VM.PowerMgmt
       - VM.Snapshot
-      - Datastore.Allocate
-      - Datastore.AllocateSpace
-      - Datastore.AllocateTemplate
-      - Datastore.Audit
-      - SDN.Use
-      - Sys.Audit
-      - Sys.Modify
-      - Sys.Console
 
 pve_groups:
   - name: terraform

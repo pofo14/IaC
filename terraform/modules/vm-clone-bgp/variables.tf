@@ -37,6 +37,54 @@ variable "cpu_type" {
   default = "x86-64-v2-AES"
 }
 
+variable "machine" {
+  description = "The QEMU machine type for the VM"
+  type        = string
+  default     = "q35"
+}
+
+variable "bios" {
+  description = "BIOS type to use for the VM (set to 'ovmf' for UEFI)"
+  type        = string
+  default     = "seabios"
+}
+
+variable "scsi_hardware" {
+  description = "SCSI hardware controller to use for the VM (provider-specific)."
+  type        = string
+  default     = "virtio-scsi-pci"
+}
+
+variable "efidisk_enabled" {
+  description = "Whether to create an EFI vars disk for OVMF (only relevant if bios='ovmf')"
+  type        = bool
+  default     = false
+}
+
+variable "efidisk_datastore" {
+  description = "Datastore id for the efivars disk"
+  type        = string
+  default     = "local"
+}
+
+variable "efidisk_file_format" {
+  description = "File format for the efivars disk"
+  type        = string
+  default     = "raw"
+}
+
+variable "efidisk_type" {
+  description = "EFI disk type (e.g., '4m' or '2m')"
+  type        = string
+  default     = "4m"
+}
+
+variable "efidisk_pre_enrolled_keys" {
+  description = "Whether to use pre-enrolled keys for the efivars disk"
+  type        = bool
+  default     = false
+}
+
 variable "memory" {
   description = "The amount of memory for the VM in MB"
   type        = number
@@ -90,6 +138,11 @@ variable "use_cloud_init" {
   default     = true
 }
 
+variable "pci_mappings" {
+  description = "PCI device mappings to attach to the VM"
+  type        = list(string)
+  default     = []  # Empty by default - no PCI passthrough
+}
 
 
 

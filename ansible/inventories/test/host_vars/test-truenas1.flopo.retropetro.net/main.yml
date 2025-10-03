@@ -1,0 +1,121 @@
+# TrueNAS API connection details
+ansible_truenas_api_host: "{{ ansible_host | default('192.168.2.113') }}"
+# Note: User and password should be in vault.yml
+
+# Enable debug output for disk information
+truenas_debug: true
+
+# TrueNAS hostname and domain settings
+truenas_hostname: "test-truenas1"
+truenas_domain: "flopo.retropetro.net"
+truenas_fqdn: "{{ truenas_hostname }}.{{ truenas_domain }}"
+
+# ZFS Pools configuration
+truenas_pools:
+  - name: generalpool
+    topology:
+      data:
+        - type: mirror
+          disks:
+            - "{{ truenas_disks_by_serial['WD-C80T6YNG'] | default('virtio-1') }}"
+            - "{{ truenas_disks_by_serial['WD-C82G75HK'] | default('virtio-2') }}"
+  - name: mediapool
+    topology:
+      data:
+        - type: mirror
+          disks:
+            - "{{ truenas_disks_by_serial['Z5QP9PDTS'] | default('virtio-3') }}"
+            - "{{ truenas_disks_by_serial['Z4Z3J204'] | default('virtio-4') }}"
+
+# Network configuration
+truenas_interface: "ens18"  # Update based on your network interface
+truenas_ipv4: "192.168.2.113"
+truenas_subnet_mask: "255.255.255.0"
+truenas_gateway: "192.168.2.1"
+truenas_nameservers:
+  - "192.168.2.2"
+
+# Services configuration
+truenas_services:
+  - name: "ssh"
+    enabled: true
+    start: true
+  - name: "nfs"
+    enabled: true
+    start: true
+  - name: "smartd"
+    enabled: true
+    start: true
+
+# NFS configuration
+truenas_nfs:
+  shares:
+    - path: "/zfs01/monitoring"
+      options:
+        ro: false
+        maproot_user: "root"
+
+  protocols: "NFSv4"
+  v4: true
+  v3: false
+  allow_nonroot: true
+
+# S.M.A.R.T. configuration
+truenas_smart:
+  power_mode: "never"
+  temp_difference: 2
+  temp_info: 40
+  temp_crit: 45
+
+# Dataset configuration
+truenas_datasets:
+  - name: "mediapool/media"
+    properties:
+      compression: "lz4"
+      atime: "off"  
+    directories: 
+      - path: "audiobooks"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "magazines"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "movies"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "music"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "phone-pictures"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "pictures"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "tv"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+      - path: "videos"
+        group: dockermedia
+        owner: mediadl
+        mode: '0775'
+  - name: "zfs01/monitoring"
+    properties:
+      compression: "lz4"
+      atime: "off"
+    directories:
+      - path: "prometheus"
+        owner: "root"
+        group: "root"
+        mode: "0755"
+      - path: "grafana"
+        owner: "root" 
+        group: "root"
+        mode: "0755"

@@ -1,0 +1,59 @@
+---
+# Tasks to ensure PCI mappings exist in Proxmox datacenter.cfg
+# This role delegates to a chosen Proxmox host (default: first host in group 'pve')
+
+- name: Determine delegate host for Proxmox datacenter changes
+  ansible.builtin.debug:
+    msg: "Preparing to ensure PCI mappings; delegate host will be computed and persisted as a fact."
+  run_once: true
+
+- name: Set local role vars with backwards-compatible fallbacks and persist delegate host
+  ansible.builtin.set_fact:
+    pve_pci_mappings_effective: "{{ pve_pci_mappings_list if (pve_pci_mappings_list | default([]) | length) > 0 else (pve_pci_mappings | default([])) }}"
+    pve_pci_mappings_create_allowed: "{{ pve_pci_mappings_force_create_datacenter_cfg | default(force_create_datacenter_cfg | default(false)) }}"
+    pve_pci_mappings_delegate_host: "{{ pve_delegate | default(groups['pve'] | default([inventory_hostname]) | first) }}"
+  run_once: true
+
+- name: Check if /etc/pve/datacenter.cfg exists on delegate host
+  ansible.builtin.stat:
+    path: /etc/pve/datacenter.cfg
+  delegate_to: "{{ pve_pci_mappings_delegate_host }}"
+  run_once: true
+  register: pve_pci_mappings_datacenter_cfg_stat
+
+- name: Warn if /etc/pve/datacenter.cfg does not exist and do not create it automatically
+  ansible.builtin.fail:
+    msg: >-
+      /etc/pve/datacenter.cfg was not found on {{ pve_pci_mappings_delegate_host }}.
+      The Proxmox cluster filesystem (/etc/pve) may not be mounted or the target host
+      is not a Proxmox node. Ensure the node is correct and pve-cluster is running.
+      If you really want to create the file locally (not recommended), set
+      `force_create_datacenter_cfg: true` and run again.
+  when: not pve_pci_mappings_datacenter_cfg_stat.stat.exists and not pve_pci_mappings_create_allowed
+
+- name: Optionally create /etc/pve/datacenter.cfg if allowed (risky)
+  ansible.builtin.copy:
+    content: "# datacenter config created by ansible role pve_pci_mappings\n"
+    dest: /etc/pve/datacenter.cfg
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  become: true
+  delegate_to: "{{ pve_pci_mappings_delegate_host }}"
+  run_once: true
+  when: pve_pci_mappings_create_allowed and not pve_pci_mappings_datacenter_cfg_stat.stat.exists
+
+- name: Ensure PCI mappings are present in /etc/pve/datacenter.cfg
+  ansible.builtin.lineinfile:
+    path: /etc/pve/datacenter.cfg
+    create: false
+    backup: true
+    regexp: "^pci:\\s*{{ item.name }}\\s+host={{ item.host }}\\s+path={{ item.path }}$"
+    line: "pci: {{ item.name }} host={{ item.host }} path={{ item.path }}"
+    state: present
+  loop: "{{ pve_pci_mappings_effective }}"
+  become: true
+  delegate_to: "{{ pve_pci_mappings_delegate_host }}"
+  run_once: true
+  when: pve_pci_mappings_datacenter_cfg_stat.stat.exists or pve_pci_mappings_create_allowed

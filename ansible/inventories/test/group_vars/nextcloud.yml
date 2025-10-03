@@ -1,4 +1,0 @@
-# code: language=ansible
-
-## nextcloud role:
-nextcloud_domain_url: "nextcloud.flopo.retropetro.net"

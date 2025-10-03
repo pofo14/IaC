@@ -182,6 +182,35 @@
       # If issues arise with permissions (e.g. writing to /opt or docker socket),
       # add 'become: true' to this role.
 
+- name: Configure Test-TrueNAS1 Server
+  hosts: test-truenas1.flopo.retropetro.net
+  gather_facts: false # Retaining original play-level setting
+  become: false       # Retaining original play-level setting
+  environment:
+    middleware_method: midclt
+
+  collections:
+    - arensb.truenas
+
+  roles:
+    - role: truenas
+      tags: truenas
+      # This role uses API, ensure its become state is false, which it inherits from play
+
+    # - name: Ensure Docker is installed on TrueNAS Scale # Added name for clarity
+    #   role: geerlingguy.docker
+    #   become: true # geerlingguy.docker usually needs root
+    #   tags:
+    #     - docker
+    #     - truenas_monitoring
+
+    # - role: truenas_monitoring_exporters
+    #   tags: truenas_monitoring
+      # This role runs docker_compose. If the Ansible user is part of the
+      # docker group (managed by geerlingguy.docker), become: false (inherited) is fine.
+      # If issues arise with permissions (e.g. writing to /opt or docker socket),
+      # add 'become: true' to this role.      
+
 - name: Configure Pihole Server
   hosts: pihole
   become: true
@@ -210,7 +239,7 @@
     #  tags: fan_control
 
 - name: Configure pve1 Node
-  hosts: pve1
+  hosts: pve1.flopo.retropetro.net
   become: true
   pre_tasks:
     - name: Create Proxmox API token for Terraform
@@ -245,6 +274,14 @@
         pve_skip_meta_packages: true
       tags: [proxmox, proxmox_zfs_config]
 
+    # Phase 4: Finalize Proxmox setup
+    - role: pve_pci_mappings
+      vars:
+        # optional: override delegate host, or leave unset to use first host in group 'pve'
+        # pve_delegate: pve1
+        # Allow creation of datacenter.cfg if it doesn't exist
+        pve_pci_mappings_force_create_datacenter_cfg: true
+      tags: pci_mappings
     - role: install_fancontrol
       tags: fancontrol
     
@@ -252,7 +289,7 @@
     # - name: Create Proxmox terraform user for SSH access
     #   ansible.builtin.import_tasks: tasks/proxmox_terraform_user.yml
     #   tags: [terraform, proxmox, ssh]  
-    
+
     - name: Create Proxmox API token for Terraform
       ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
       tags: api_token, proxmox

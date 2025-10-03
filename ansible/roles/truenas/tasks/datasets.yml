@@ -20,22 +20,22 @@
         force_basic_auth: true
         validate_certs: false
         status_code: [200, 404]
-      register: dataset_status
+      register: truenas_dataset_status
       loop: "{{ truenas_datasets }}"
       delegate_to: localhost
 
     - name: Create directories within datasets
       ansible.builtin.shell: >
-        ssh {{ ansible_user }}@{{ ansible_host }} "mkdir -p '{{ item.0.path }}/{{ item.1.path }}' && 
-        chown '{{ item.1.owner }}:{{ item.1.group }}' '{{ item.0.path }}/{{ item.1.path }}' && 
+        ssh {{ ansible_user }}@{{ ansible_host }} "mkdir -p '{{ item.0.path }}/{{ item.1.path }}' &&
+        chown '{{ item.1.owner }}:{{ item.1.group }}' '{{ item.0.path }}/{{ item.1.path }}' &&
         chmod {{ item.1.mode }} '{{ item.0.path }}/{{ item.1.path }}'"
       args:
         executable: /bin/bash
-      loop: "{{ truenas_datasets|subelements('directories') }}"
-      when: dataset_status.results[ansible_loop.index0].status == 200
+      loop: "{{ truenas_datasets | subelements('directories') }}"
+      when: truenas_dataset_status.results[ansible_loop.index0].status == 200
       changed_when: true
       delegate_to: localhost
-  
+
   rescue:
     - name: API Method for directory management
       ansible.builtin.uri:

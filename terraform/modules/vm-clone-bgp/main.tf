@@ -1,19 +1,10 @@
-terraform {
-  required_providers {
-    proxmox = {
-      source  = "bpg/proxmox"
-      version = "0.70.1"
-    }
-  }
-}
-
 resource "proxmox_virtual_environment_vm" "vm_clone" {
   name      = var.hostname
   node_name = var.proxmox_host
   tags      = length(var.tags) > 0 ? var.tags : ["default-tag"]
 
-  machine     = "q35"
-  //bios        = "ovmf"
+  machine     = var.machine
+  bios        = var.bios
   description = var.description 
 
   clone {
@@ -37,12 +28,26 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
     floating  = var.memory
   }
 
-  # efi_disk {
-  #   datastore_id = "zfsdata01"
-  #   file_format  = "raw"
-  #   type         = "4m"
-  # }
+  dynamic "efi_disk" {
+    for_each = var.efidisk_enabled ? [1] : []
+    content {
+      datastore_id      = var.efidisk_datastore
+      file_format       = var.efidisk_file_format
+      type              = var.efidisk_type
+      pre_enrolled_keys = var.efidisk_pre_enrolled_keys
+    }
+  }
 
+  # Add PCI passthrough devices
+dynamic "hostpci" {
+  for_each = var.pci_mappings
+  content {
+    device  = "hostpci${hostpci.key}"  # This creates hostpci0, hostpci1, etc.
+    mapping = hostpci.value            # This uses the mapping name like "hba_1"
+    pcie    = true
+    rombar  = true
+  }
+}
 
   disk {
     #datastore_id = var.storage_pool
@@ -63,6 +68,9 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
     size              = var.disksize
     ssd               = false
   }
+
+  # Set scsi hardware controller if provided
+  scsi_hardware = var.scsi_hardware
 
   # Only include cloud-init initialization if use_cloud_init is true
   dynamic "initialization" {

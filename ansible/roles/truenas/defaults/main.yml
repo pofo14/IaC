@@ -28,44 +28,6 @@ truenas_smart:
   temp_info: 40
   temp_crit: 45
 
-# Dataset configuration
-truenas_datasets:
-  - name: "media"
-    path: "/mnt/mediapool/media"
-    directories:
-      - path: "audiobooks"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "magazines"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "movies"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "music"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "phone-pictures"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "pictures"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "tv"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-      - path: "videos"
-        mode: "0775"
-        owner: "mediadl"
-        group: "dockermedia"
-
 # API Authentication
 truenas_api_key: "{{ vault_truenas_api_key | default('') }}"  # Should be defined in vault
 truenas_api_protocol: "http"  # or https if SSL is configured

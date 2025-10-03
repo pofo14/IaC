@@ -1,36 +1,33 @@
 ---
+- name: Configure TrueNAS pools
+  ansible.builtin.include_tasks: pools.yml
+  tags: [truenas, pools]
+  when: truenas_pools is defined and truenas_pools | length > 0
+
 - name: Configure TrueNAS hostname
   ansible.builtin.include_tasks: hostname.yml
-  tags:
-    - truenas
-    - hostname
+  tags: [truenas, hostname]
 
 - name: Configure TrueNAS domain
   ansible.builtin.include_tasks: domain.yml
-  tags:
-    - truenas
-    - domain
+  tags: [truenas, domain]
 
 - name: Configure TrueNAS services
   ansible.builtin.include_tasks: services.yml
-  tags:
-    - truenas
-    - services
+  tags: [truenas, services]
+  when: truenas_services is defined
 
 - name: Configure TrueNAS NFS settings
   ansible.builtin.include_tasks: nfs.yml
-  tags:
-    - truenas
-    - nfs
+  tags: [truenas, nfs]
+  when: truenas_nfs is defined and truenas_nfs.shares is defined
 
 - name: Configure TrueNAS S.M.A.R.T. settings
   ansible.builtin.include_tasks: smart.yml
-  tags:
-    - truenas
-    - smart
+  tags: [truenas, smart]
+  when: truenas_smart is defined
 
 - name: Manage TrueNAS datasets and directories
   ansible.builtin.include_tasks: datasets.yml
-  tags:
-#     - truenas
-#     - datasets
+  tags: [truenas, datasets]
+  when: truenas_datasets is defined and truenas_datasets | length > 0

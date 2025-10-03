@@ -45,6 +45,7 @@ ansible_env/
 .ansible
 .venv/
 venv/
+ansible/credentials
 
 # generated files
 node_exporter_hosts.json
@@ -89,3 +90,7 @@ packer/proxmox/secrets.yml
 packer/proxmox/*/secrets.yml
 *.auto.pkrvars.hcl
 credentials.pkr.hcl
+
+# credtential folder
+credentials
+

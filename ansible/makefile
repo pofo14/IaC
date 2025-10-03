@@ -35,7 +35,7 @@ prod-proxmox:
 	ansible-playbook site.yml -v -i ./inventories/production --limit proxmox --ask-become-pass
 
 prod-pve1:
-	ansible-playbook site.yml -v -i ./inventories/production --limit pve1 --ask-become-pass
+	ansible-playbook site.yml -v -i ./inventories/production --limit pve1.flopo.retropetro.net --ask-become-pass
 
 test-pve1:
 	ansible-playbook site.yml -v -i ./inventories/test --limit pve1 --ask-become-pass
@@ -44,7 +44,7 @@ prod-management:
 	ansible-playbook site.yml -v -i ./inventories/production --limit management --ask-become-pass
 
 test-truenas:
-	ansible-playbook site.yml -v -i ./inventories/test --limit truenas --ask-become-pass
+	ansible-playbook site.yml -v -i ./inventories/test --limit test-truenas1.flopo.retropetro.net --ask-become-pass
 ### Vault Commands ####
 check-vault:
 	ansible-vault view inventories/production/group_vars/all/vault.yml
