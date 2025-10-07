@@ -1,5 +1,5 @@
 module "utils_vm" {
-  source = "../../../modules/vm-clone-bgp"
+  source = "../../../../modules/vm-clone-bgp"
 
   hostname = var.hostname
   domain = var.domain
