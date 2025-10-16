@@ -47,5 +47,29 @@
       - "--chmod=D0755,F0644"
   notify: Force Restart NetbootXYZ Container
 
+# - name: Generate preseed configuration files
+#   template:
+#     src: "pxe/preseed/proxmox-pve.cfg.j2"
+#     dest: "/var/www/html/pxe/preseed/{{ inventory_hostname }}.cfg"
+#     owner: www-data
+#     group: www-data
+#     mode: '0644'
+#   delegate_to: "{{ netboot_server }}"
+#   tags:
+#     - preseed
+#     - config
+
+# - name: Generate iPXE boot files
+#   template:
+#     src: "pxe/ipxe/host.ipxe.j2"
+#     dest: "/var/www/html/pxe/ipxe/{{ inventory_hostname }}.ipxe"
+#     owner: www-data
+#     group: www-data
+#     mode: '0644'
+#   delegate_to: "{{ netboot_server }}"
+#   tags:
+#     - ipxe
+#     - config
+
 - name: Force handlers to run immediately
   ansible.builtin.meta: flush_handlers

@@ -1,4 +1,5 @@
 resource "proxmox_virtual_environment_vm" "vm_clone" {
+
   name      = var.hostname
   node_name = var.proxmox_host
   tags      = length(var.tags) > 0 ? var.tags : ["default-tag"]
@@ -38,16 +39,16 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
     }
   }
 
-  # Add PCI passthrough devices
-dynamic "hostpci" {
-  for_each = var.pci_mappings
-  content {
-    device  = "hostpci${hostpci.key}"  # This creates hostpci0, hostpci1, etc.
-    mapping = hostpci.value            # This uses the mapping name like "hba_1"
-    pcie    = true
-    rombar  = true
+    # Add PCI passthrough devices
+  dynamic "hostpci" {
+    for_each = var.pci_mappings
+    content {
+      device  = "hostpci${hostpci.key}"  # This creates hostpci0, hostpci1, etc.
+      mapping = hostpci.value            # This uses the mapping name like "hba_1"
+      pcie    = true
+      rombar  = true
+    }
   }
-}
 
   disk {
     #datastore_id = var.storage_pool
@@ -101,8 +102,8 @@ resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
   count = var.use_cloud_init ? 1 : 0
   
   content_type = "snippets"
-  datastore_id = "snippets"
-  node_name    = var.proxmox_host
+  datastore_id = "zfsdata01"
+  node_name    = "proxmox"#var.proxmox_host
   timeout_upload = 1800
   
   source_raw {

@@ -1,11 +1,3 @@
-terraform {
-  required_providers {
-    proxmox = {
-      source  = "bpg/proxmox"
-      version = "0.70.1"
-    }
-  }
-}
 
 resource "proxmox_virtual_environment_container" "container" {
   description = "Managed by Terraform"
