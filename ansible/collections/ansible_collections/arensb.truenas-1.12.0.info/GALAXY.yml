@@ -1,8 +1,0 @@
-download_url: https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/arensb-truenas-1.12.0.tar.gz
-format_version: 1.0.0
-name: truenas
-namespace: arensb
-server: https://galaxy.ansible.com/api/
-signatures: []
-version: 1.12.0
-version_url: /api/v3/plugin/ansible/content/published/collections/index/arensb/truenas/versions/1.12.0/

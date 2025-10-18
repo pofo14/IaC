@@ -1,0 +1,49 @@
+{
+    "Ansible Task": {
+        "prefix": "task",
+        "body": [
+            "- name: ${1:Task description}",
+            "  ${2:module_name}:",
+            "    ${3:parameter}: ${4:value}",
+            "  ${5:when: condition}",
+            "  ${6:tags: [${7:tag}]}"
+        ],
+        "description": "Create an Ansible task"
+    },
+    "Ansible Play": {
+        "prefix": "play",
+        "body": [
+            "- name: ${1:Play description}",
+            "  hosts: ${2:all}",
+            "  become: ${3:true}",
+            "  vars:",
+            "    ${4:variable}: ${5:value}",
+            "  tasks:",
+            "    $0"
+        ],
+        "description": "Create an Ansible play"
+    },
+    "Ansible Handler": {
+        "prefix": "handler",
+        "body": [
+            "- name: ${1:Handler description}",
+            "  ${2:module_name}:",
+            "    ${3:parameter}: ${4:value}",
+            "  listen: ${5:\"handler name\"}"
+        ],
+        "description": "Create an Ansible handler"
+    },
+    "Docker Compose Task": {
+        "prefix": "dockercompose",
+        "body": [
+            "- name: ${1:Deploy docker compose stack}",
+            "  community.docker.docker_compose:",
+            "    project_src: ${2:\"{{ docker_compose_dir }}\"}",
+            "    state: ${3:present}",
+            "    pull: ${4:true}",
+            "    recreate: ${5:smart}",
+            "  tags: [${6:compose}]"
+        ],
+        "description": "Create a Docker Compose task"
+    }
+}

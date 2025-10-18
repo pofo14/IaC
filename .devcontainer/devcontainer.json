@@ -1,41 +1,29 @@
 {
- "name": "infra-dev (TF + Ansible + MCP)",
- "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
- "features": {
-   "ghcr.io/devcontainers/features/common-utils:2": {},
-   "ghcr.io/devcontainers/features/git:1": {},
-   "ghcr.io/devcontainers/features/node:1": { "version": "lts" },
-   "ghcr.io/devcontainers/features/python:1": { "version": "3.11" }
- },
- "build": { "dockerfile": "Dockerfile" },
- "remoteUser": "vscode",
- "updateContentCommand": "bash .devcontainer/postCreate.sh",
- "postCreateCommand": "pre-commit install",
- "customizations": {
-   "vscode": {
-     "extensions": [
-       "GitHub.copilot",
-       "GitHub.copilot-chat",
-       "HashiCorp.terraform",
-       "redhat.ansible",
-       "redhat.vscode-yaml",
-       "Rubymaniac.vscode-direnv",
-       "EditorConfig.EditorConfig"
-     ],
-     "settings": {
-       "editor.formatOnSave": true,
-       "[terraform]": { "editor.defaultFormatter": "hashicorp.terraform" },
-       "ansible.python.interpreterPath": "python",
-       "ansibleLint.arguments": ["-p"]
-     }
-   }
- },
- "containerEnv": {
-   "PIPX_BIN_DIR": "/home/vscode/.local/bin",
-   "PIPX_HOME": "/home/vscode/.local/pipx"
- },
- "mounts": [
-   "source=ssh-agent,target=/ssh-agent,type=volume",
-   "source=pipx-cache,target=/home/vscode/.cache/pipx,type=volume"
- ]
+  "name": "infra-dev (TF + Ansible + MCP)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "lts" },
+    "ghcr.io/devcontainers/features/terraform:1": { "version": "latest" }
+  },
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "HashiCorp.terraform",
+        "redhat.ansible",
+        "redhat.vscode-yaml",
+        "Rubymaniac.vscode-direnv",
+        "EditorConfig.EditorConfig"
+      ]
+    }
+  },
+  "containerEnv": {
+    "DEBIAN_FRONTEND": "noninteractive"
+  }
 }

@@ -1,0 +1,148 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Terraform: Format All",
+            "type": "shell",
+            "command": "find",
+            "args": [
+                "terraform",
+                "-name",
+                "*.tf",
+                "-exec",
+                "terraform",
+                "fmt",
+                "{}",
+                "+"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Terraform: Validate All",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "find terraform -name '*.tf' -execdir terraform validate \\;"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ansible: Lint Playbooks",
+            "type": "shell",
+            "command": "ansible-lint",
+            "args": [
+                "ansible/"
+            ],
+            "group": "test",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Packer: Validate All",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "find packer -name '*.pkr.hcl' -execdir packer validate . \\;"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "SOPS: Decrypt Secrets (Temp)",
+            "type": "shell",
+            "command": "sops",
+            "args": [
+                "-d",
+                "${input:secretsFile}"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run: Production Ansible (Utils)",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "prod-utils"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ansible"
+            },
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Setup: Development Environment",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "_scripts/setup_dev_environment.sh"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "secretsFile",
+            "description": "Select secrets file to decrypt",
+            "type": "pickString",
+            "options": [
+                "terraform/environments/prod/secrets.enc.yml",
+                "terraform/environments/test/secrets.enc.yml",
+                "packer/environments/prod/secrets.enc.yml"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,74 @@
+{
+    "Terraform Resource": {
+        "prefix": "tfres",
+        "body": [
+            "resource \"${1:resource_type}\" \"${2:resource_name}\" {",
+            "  ${3:# Configuration}",
+            "  $0",
+            "}"
+        ],
+        "description": "Create a Terraform resource block"
+    },
+    "Terraform Data Source": {
+        "prefix": "tfdata",
+        "body": [
+            "data \"${1:data_source_type}\" \"${2:data_source_name}\" {",
+            "  ${3:# Configuration}",
+            "  $0",
+            "}"
+        ],
+        "description": "Create a Terraform data source block"
+    },
+    "Terraform Variable": {
+        "prefix": "tfvar",
+        "body": [
+            "variable \"${1:variable_name}\" {",
+            "  description = \"${2:Variable description}\"",
+            "  type        = ${3:string}",
+            "  default     = ${4:\"default_value\"}",
+            "}"
+        ],
+        "description": "Create a Terraform variable"
+    },
+    "Terraform Output": {
+        "prefix": "tfout",
+        "body": [
+            "output \"${1:output_name}\" {",
+            "  description = \"${2:Output description}\"",
+            "  value       = ${3:value}",
+            "}"
+        ],
+        "description": "Create a Terraform output"
+    },
+    "Terraform Local": {
+        "prefix": "tflocal",
+        "body": [
+            "locals {",
+            "  ${1:local_name} = ${2:value}",
+            "}"
+        ],
+        "description": "Create a Terraform locals block"
+    },
+    "Proxmox VM Module": {
+        "prefix": "proxmoxvm",
+        "body": [
+            "module \"${1:vm_name}\" {",
+            "  source = \"${2:../../modules/vm-clone-bgp}\"",
+            "",
+            "  hostname     = var.hostname",
+            "  domain       = var.domain",
+            "  proxmox_host = var.proxmox_host",
+            "  template_id  = var.${3:template_id}",
+            "  cores        = var.cores",
+            "  sockets      = var.sockets",
+            "  memory       = var.memory",
+            "  tags         = var.tags",
+            "  description  = var.description",
+            "  ipaddress    = var.ipaddress",
+            "  gateway      = var.gateway",
+            "  ssh_keys     = ${4:data.github_ssh_keys.pofo14_ssh_keys.keys}",
+            "}"
+        ],
+        "description": "Create a Proxmox VM module block"
+    }
+}

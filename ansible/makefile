@@ -53,7 +53,7 @@ check-vault:
 # Manage ISOs for specific hosts
 manage-isos-pve1:
 	ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve1" --ask-become-pass
-	
+
 # Updates prometheus target json file
 update_prometheus:
 	ansible-playbook -i ./inventories/staging ./playbooks/update_prometheus_targets.yml --ask-become-pass
@@ -75,7 +75,8 @@ mount-disk-nas:
 
 ##### Requirements #####
 reqs:
-	ansible-galaxy install -r requirements.yaml
+	ansible-galaxy install -r requirements.yaml --roles-path /home/vscode/.ansible/roles
+	ansible-galaxy collection install -r requirements.yaml --collections-path /home/vscode/.ansible/collections
 
 forcereqs:
 	ansible-galaxy install -r requirements.yaml --force

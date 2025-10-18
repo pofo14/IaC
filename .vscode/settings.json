@@ -1,0 +1,129 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.trimAutoWhitespace": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.associations": {
+    "*.hcl": "hcl",
+    "*.pkr.hcl": "hcl",
+    "*.tfvars": "hcl",
+    "*.tf": "terraform",
+    "*.yml": "yaml",
+    "*.yaml": "yaml",
+    "*.j2": "jinja",
+    "Dockerfile": "dockerfile",
+    "makefile": "makefile",
+    "Makefile": "makefile",
+    ".envrc": "shellscript"
+  },
+  "terraform.experimentalFeatures.validateOnSave": true,
+  "terraform.experimentalFeatures.prefillRequiredFields": true,
+  "terraform.languageServer.enable": true,
+  "terraform.validation.enableEnhancedValidation": true,
+  "hcl.experimentalFeatures": true,
+  "ansible.python.interpreterPath": "/usr/local/bin/python3",
+  "ansible.validation.enabled": true,
+  "ansible.validation.lint.enabled": true,
+  "ansible.validation.lint.path": "ansible-lint",
+  "ansible.executionEnvironment.enabled": false,
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": [
+      "ansible/**/*.yml",
+      "ansible/**/*.yaml"
+    ],
+    "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/inventory": [
+      "ansible/inventories/**/*.yml",
+      "ansible/inventories/**/*.yaml"
+    ]
+  },
+  "yaml.customTags": [
+    "!vault scalar",
+    "!ref scalar",
+    "!encrypted/pkcs1-oaep scalar"
+  ],
+  "yaml.format.enable": true,
+  "yaml.validate": true,
+  "shellcheck.enable": true,
+  "shellformat.useEditorConfig": true,
+  "json.format.keepLines": false,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.tf": "${capture}.auto.tfvars,${capture}.tfvars,${capture}.tfvars.example",
+    "terraform.tfvars": "terraform.tfvars.example,*.auto.tfvars",
+    "main.tf": "versions.tf,variables.tf,outputs.tf,data.tf,provider.tf,locals.tf",
+    "docker-compose.yml": "docker-compose.*.yml,docker-compose.*.yaml,.env,.env.*",
+    "ansible.cfg": "requirements.yml,requirements.yaml",
+    "makefile": "Makefile"
+  },
+  "search.exclude": {
+    "**/.terraform": true,
+    "**/.terraform.lock.hcl": true,
+    "**/terraform.tfstate*": true,
+    "**/.ansible": true,
+    "**/node_modules": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/*.log": true
+  },
+  "files.watcherExclude": {
+    "**/.terraform/**": true,
+    "**/.ansible/**": true,
+    "**/node_modules/**": true,
+    "**/venv/**": true,
+    "**/__pycache__/**": true
+  },
+  "security.workspace.trust.untrustedFiles": "prompt",
+  "git.ignoreLimitWarning": true,
+  "git.detectSubmodules": false,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.env.linux": {
+    "ANSIBLE_CONFIG": "${workspaceFolder}/ansible/ansible.cfg"
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.formatAll.terraform": "explicit"
+    }
+  },
+  "[hcl]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "editor.autoIndent": "advanced"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": true
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": true
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker",
+    "editor.formatOnSave": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on"
+  },
+  "remote.autoForwardPorts": false,
+  "remote.autoForwardPortsSource": "output",
+  "remote.portsAttributes": {
+    "*": {
+      "onAutoForward": "ignore"
+    }
+  }
+}

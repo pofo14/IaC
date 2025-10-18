@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug: Ansible Playbook",
+            "type": "python",
+            "request": "launch",
+            "program": "/usr/local/bin/ansible-playbook",
+            "args": [
+                "-vvv",
+                "${workspaceFolder}/ansible/site.yml",
+                "-i",
+                "${workspaceFolder}/ansible/inventories/test",
+                "--limit",
+                "${input:ansibleHost}",
+                "--check"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/ansible",
+            "env": {
+                "ANSIBLE_CONFIG": "${workspaceFolder}/ansible/ansible.cfg"
+            }
+        },
+        {
+            "name": "Debug: Python Script",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "args": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "ansibleHost",
+            "description": "Select Ansible host to target",
+            "type": "promptString",
+            "default": "all"
+        }
+    ]
+}
