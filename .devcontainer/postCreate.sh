@@ -10,6 +10,15 @@ if ! command -v pipx >/dev/null 2>&1; then
 fi
 pipx ensurepath || true
 
+# Install SOPS (download latest release)
+# Download the binary
+curl -LO https://github.com/getsops/sops/releases/download/v3.11.0/sops-v3.11.0.linux.amd64
+
+# Move the binary in to your PATH
+sudo mv sops-v3.11.0.linux.amd64 /usr/local/bin/sops
+
+# Make the binary executable
+sudo chmod +x /usr/local/bin/sops
 
 # Basic sanity
 terraform -version
@@ -19,6 +28,7 @@ ansible --version
 ansible-lint --version
 pre-commit --version
 detect-secrets --version
+sops --version
 
 # Optional: initialize tflint plugins
 if [ -f ".tflint.hcl" ]; then

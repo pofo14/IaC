@@ -26,7 +26,7 @@ variable "environment" {
 
 variable "node_suffix" {
   type = string
-  default = "pve1"
+  default = "pve2"
   description = "Node suffix for naming"
 }
 

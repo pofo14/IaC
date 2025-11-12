@@ -1,26 +1,26 @@
 # Environment-specific variables
 variable "vm_id" {
   type = number
-  default = 9002
+  default = 9001
   description = "VM ID for this template"
 }
 
 variable "memory" {
   type = number
-  default = 8192
+  default = 2048
   description = "Memory in MB"
 }
 
 variable "cores" {
   type = number
-  default = 2
+  default = 1
   description = "Number of CPU cores"
 }
 
 # Environment and node variables (set via auto.pkrvars.hcl)
 variable "environment" {
   type = string
-  default = "prod"
+  default = "dev"
   description = "Environment (dev/prod)"
 }
 
@@ -28,6 +28,11 @@ variable "node_suffix" {
   type = string
   default = "pve1"
   description = "Node suffix for naming"
+}
+
+variable "proxmox_host" {
+  type = string
+  description = "Proxmox host identifier for secrets lookup"
 }
 
 variable "proxmox_api_url" {
@@ -46,13 +51,13 @@ variable "proxmox_api_token_secret" {
   sensitive = true
 }
 
-variable "proxmox_host" {
+variable "proxmox_node" {
   type = string
-  description = "Proxmox host identifier for secrets lookup"
+  description = "Proxmox node name"
 }
 
-variable "truenas_root_password" {
+variable "opnsense_root_password" {
   type = string
-  description = "TrueNAS root password"
+  description = "OPNsense root password"
   sensitive = true
 }

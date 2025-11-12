@@ -80,7 +80,8 @@
   "git.detectSubmodules": false,
   "terminal.integrated.defaultProfile.linux": "bash",
   "terminal.integrated.env.linux": {
-    "ANSIBLE_CONFIG": "${workspaceFolder}/ansible/ansible.cfg"
+    "ANSIBLE_CONFIG": "${workspaceFolder}/ansible/ansible.cfg",
+    "SOPS_AGE_KEY_FILE": "/workspaces/IaC/terraform/key.txt"
   },
   "[terraform]": {
     "editor.defaultFormatter": "hashicorp.terraform",

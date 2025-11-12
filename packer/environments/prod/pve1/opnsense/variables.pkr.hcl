@@ -1,13 +1,13 @@
 # Environment-specific variables
 variable "vm_id" {
   type = number
-  default = 9002
+  default = 9001
   description = "VM ID for this template"
 }
 
 variable "memory" {
   type = number
-  default = 8192
+  default = 4096
   description = "Memory in MB"
 }
 
@@ -30,6 +30,11 @@ variable "node_suffix" {
   description = "Node suffix for naming"
 }
 
+variable "proxmox_host" {
+  type = string
+  description = "Proxmox host identifier for secrets lookup"
+}
+
 variable "proxmox_api_url" {
   type = string
   description = "Proxmox API URL"
@@ -46,13 +51,13 @@ variable "proxmox_api_token_secret" {
   sensitive = true
 }
 
-variable "proxmox_host" {
+variable "proxmox_node" {
   type = string
-  description = "Proxmox host identifier for secrets lookup"
+  description = "Proxmox node name"
 }
 
-variable "truenas_root_password" {
+variable "opnsense_root_password" {
   type = string
-  description = "TrueNAS root password"
+  description = "OPNsense root password"
   sensitive = true
 }

@@ -1,31 +1,23 @@
-# Production environment makefile
-ENVIRONMENT = prod
+# Development environment makefile
+ENVIRONMENT = dev
 
-# Ensure ISOs are available before building
-ensure-isos-pve1:
-	cd ../../../ansible && ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve1.flopo.retropetro.net" --ask-become-pass
-
-ensure-isos-pve2:
-	cd ../../../ansible && ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve2.flopo.retropetro.net" --ask-become-pass
-
-# PVE1 builds
-build-pve1-truenas25: ensure-isos-pve1
+# Node-specific builds
+build-pve1-truenas25:
 	cd pve1/truenas-25.04 && packer build .
 
-build-pve1-opnsense: ensure-isos-pve1
+build-pve1-opnsense:
 	cd pve1/opnsense && packer build .
 
-build-pve1-ubuntu-noble: ensure-isos-pve1
+build-pve1-ubuntu-noble:
 	cd pve1/ubuntu-server-noble && packer build .
 
-# PVE2 builds
-build-pve2-truenas25: ensure-isos-pve2
+build-pve2-truenas25:
 	cd pve2/truenas-25.04 && packer build .
 
-build-pve2-opnsense: ensure-isos-pve2
+build-pve2-opnsense:
 	cd pve2/opnsense && packer build .
 
-build-pve2-ubuntu-noble: ensure-isos-pve2
+build-pve2-ubuntu-noble:
 	cd pve2/ubuntu-server-noble && packer build .
 
 # All builds for specific node
@@ -69,5 +61,5 @@ init-plugins:
 
 # Clean old templates
 clean-templates:
-	@echo "Cleaning old prod templates..."
+	@echo "Cleaning old dev templates..."
 	# Add cleanup commands here

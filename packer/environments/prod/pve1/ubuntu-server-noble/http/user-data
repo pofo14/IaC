@@ -1,0 +1,35 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+  ssh:
+    install-server: true
+    allow-pw: true
+    disable_root: true
+    ssh_quiet_keygen: true
+    allow_public_ssh_keys: true
+  packages:
+    - qemu-guest-agent
+    - sudo
+  storage:
+    layout:
+      name: direct
+    swap:
+      size: 0
+  user-data:
+    package_upgrade: true
+    timezone: Amercia/New_York
+    users:
+      - name: pofo14
+        groups: [adm, sudo]
+        lock-passwd: false
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        # passwd:
+        # - or -
+        ssh_authorized_keys:
+           - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHzt5Uq1pY/zXZp30wjueijLzigpuAJ2p1Bew5AOMQ7y pofo14@Joes-MacBook-Pro.local
+           - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFw3M5B7y0icwQpUO2NvYEqg1qckmd1j01YpAxhm+HM pofo14@pc-ken
+           - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrhhjNH6tibJ1wVoZojtuUIcRamnOdQBwwS2RVGmDfN ansible user - windows pc

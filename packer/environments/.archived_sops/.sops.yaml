@@ -1,0 +1,6 @@
+# Staging environment SOPS configuration
+# SOPS configuration for dev environment
+# No explicit key references; relies on SOPS_AGE_KEY_FILE environment variable
+creation_rules:
+  - path_regex: .*\.yml$
+    age: age1uhhg4yltp5et92fnvf5lwksq3u8d0tlw2mq7qq82vjl8z8wh3v0q8ux9gs

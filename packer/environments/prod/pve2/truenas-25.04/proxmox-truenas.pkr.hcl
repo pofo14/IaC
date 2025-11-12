@@ -6,11 +6,6 @@ locals {
 
   # Common settings
   common_settings = local.secrets.global
-
-  # Environment and node-aware naming
-  template_name = "truenas-25.04-${var.environment}-${var.node_suffix}-template"
-  vm_name = "truenas-25.04-${var.environment}-${var.node_suffix}"
-  vm_id = var.vm_id
 }
 
 source "proxmox-iso" "truenas-25" {
@@ -23,12 +18,12 @@ source "proxmox-iso" "truenas-25" {
   task_timeout = "30m"
 
   # VM-specific settings
-  vm_name = local.vm_name
-  vm_id = local.vm_id
-  template_description = "TrueNAS Scale 25.04 Template - ${var.environment}/${var.node_suffix}"
-  template_name = local.template_name
-  memory = var.memory
-  cores = var.cores
+  vm_name = "truenas-25"
+  vm_id = 9002
+  template_description = "TrueNAS Scale 25.04 Template"
+  template_name = "TrueNAS-25.04-template"
+  memory = 8192
+  cores = 2
 
   # ISO configuration
   boot_iso {

@@ -7,20 +7,20 @@ variable "vm_id" {
 
 variable "memory" {
   type = number
-  default = 8192
+  default = 4096
   description = "Memory in MB"
 }
 
 variable "cores" {
   type = number
-  default = 2
+  default = 1
   description = "Number of CPU cores"
 }
 
 # Environment and node variables (set via auto.pkrvars.hcl)
 variable "environment" {
   type = string
-  default = "prod"
+  default = "dev"
   description = "Environment (dev/prod)"
 }
 
