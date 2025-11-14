@@ -16,7 +16,7 @@ source "proxmox-iso" "truenas" {
   vm_name              = local.vm_name
   template_description = "TrueNAS SCALE 25.04 template for ${var.environment}"
 
-  # ISO Settings - Updated to new boot_iso block syntax
+  # ISO Settings
   boot_iso {
     type             = "scsi"
     iso_file         = "local:iso/TrueNAS-SCALE-24.10.2.iso"
@@ -32,6 +32,13 @@ source "proxmox-iso" "truenas" {
   cpu_type = "host"
   bios     = "ovmf"
 
+  # EFI disk (required for UEFI boot)
+  efi_config {
+    efi_storage_pool  = var.disk_storage
+    efi_type          = "4m"
+    pre_enrolled_keys = true
+  }
+
   # Disk Settings
   scsi_controller = "virtio-scsi-single"
   disks {
@@ -46,39 +53,68 @@ source "proxmox-iso" "truenas" {
     bridge = "vmbr0"
   }
 
-  # HTTP Settings
-  http_directory    = "${path.root}/http"
-  http_bind_address = "0.0.0.0"
-  http_port_min     = 8100
-  http_port_max     = 8100
-
   # Boot configuration
-  boot_wait = "45s"
+  boot_wait = "10s"
   boot_command = [
-    "1<enter><wait5>",
-    "<spacebar><wait3><enter><wait5>",
-    "y<wait5>",
-    "1<wait2><enter><wait5>",
-    "${var.truenas_root_password}<tab><wait5>",
-    "${var.truenas_root_password}<wait5>",
-    "<enter><wait3>",
-    "<enter><wait3>",
-    "<wait150>",
-    "<enter><wait3>",
+    # Wait for installer to start
+    "<wait30>",
+    # Select Install/Upgrade (option 1)
+    "1<enter>",
+    # Wait for disk selection
     "<wait10>",
-    "3<wait2><enter><wait5>",
-    "<wait150>",
-    "7<wait3><enter><wait15>",
-    "service update id_or_name=ssh enable=true<wait3><enter><wait7>",
-    "service start service=ssh<wait3><enter><wait7>q<wait3>",
-    "service ssh update password_login_groups=truenas_admin<wait5><enter><wait5>",
-    "quit<enter><wait20>",
-    "10<wait3><enter><wait3>image build<enter><wait5>"
+    # Select first disk (option 1)
+    "1<enter>",
+    # Confirm installation
+    "<enter>",
+    # Wait for installation to complete (about 5-6 minutes)
+    "<wait120><wait120><wait120>",
+    # System reboots automatically, wait for console menu
+    "<wait60><wait30>",
+    # At console menu, select option 9 (Shell)
+    "9<enter>",
+    # Wait for shell prompt
+    "<wait5>",
+    # Enable SSH using midclt commands at console
+    "midclt call ssh.update '{\"tcpport\": 22, \"rootlogin\": true}'<enter>",
+    "<wait3>",
+    "midclt call service.start ssh<enter>",
+    "<wait3>",
+    "midclt call service.update ssh '{\"enable\": true}'<enter>",
+    "<wait3>",
+    # Exit shell back to menu
+    "exit<enter>",
+    # Wait for SSH to be ready
+    "<wait10>"
   ]
 
-  communicator = "none"
+  # SSH Settings - NOW Packer can connect
+  ssh_username           = "root"
+  ssh_password           = var.truenas_root_password
+  ssh_timeout            = "10m"
+  ssh_handshake_attempts = 50
+  ssh_pty                = true
+
+  # Template Settings
+  template_name = local.template_name
 }
 
 build {
   sources = ["source.proxmox-iso.truenas"]
+
+  # Verify SSH is working and system is ready
+  provisioner "shell" {
+    inline = [
+      "echo 'Connected via SSH successfully!'",
+      "midclt call system.ready",
+      "midclt call system.info | grep version"
+    ]
+  }
+
+  # Final configuration
+  provisioner "shell" {
+    inline = [
+      "echo 'TrueNAS SCALE template created successfully'",
+      "echo 'SSH is enabled and will persist after template conversion'"
+    ]
+  }
 }
