@@ -38,22 +38,22 @@ build-all: build-pve1-all build-pve2-all
 
 # Validation
 validate-pve1-truenas25:
-	cd pve1/truenas-25.04 && packer validate .
+	cd pve1/truenas-25.04 && packer validate -var-file=../../prod.auto.pkrvars.hcl -var-file=../../pve1.auto.pkrvars.hcl .
 
 validate-pve1-opnsense:
-	cd pve1/opnsense && packer validate .
+	cd pve1/opnsense && packer validate -var-file=../../prod.auto.pkrvars.hcl -var-file=../../pve1.auto.pkrvars.hcl .
 
 validate-pve1-ubuntu-noble:
-	cd pve1/ubuntu-server-noble && packer validate .
+	cd pve1/ubuntu-server-noble && packer validate -var-file=../../prod.auto.pkrvars.hcl -var-file=../../pve1.auto.pkrvars.hcl .
 
 validate-pve2-truenas25:
-	cd pve2/truenas-25.04 && packer validate .
+	cd pve2/truenas-25.04 && packer validate -var-file=../../prod.auto.pkrvars.hcl -var-file=../../pve2.auto.pkrvars.hcl .
 
 validate-pve2-opnsense:
-	cd pve2/opnsense && packer validate .
+	cd pve2/opnsense && packer validate -var-file=../../prod.auto.pkrvars.hcl -var-file=../../pve2.auto.pkrvars.hcl .
 
 validate-pve2-ubuntu-noble:
-	cd pve2/ubuntu-server-noble && packer validate .
+	cd pve2/ubuntu-server-noble && packer validate -var-file=../../prod.auto.pkrvars.hcl -var-file=../../pve2.auto.pkrvars.hcl .
 
 # Validate all
 validate-all: validate-pve1-truenas25 validate-pve1-opnsense validate-pve1-ubuntu-noble validate-pve2-truenas25 validate-pve2-opnsense validate-pve2-ubuntu-noble
