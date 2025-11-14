@@ -16,10 +16,13 @@ source "proxmox-iso" "truenas" {
   vm_name              = local.vm_name
   template_description = "TrueNAS SCALE 25.04 template for ${var.environment}"
 
-  # ISO Settings
-  iso_file         = "local:iso/TrueNAS-SCALE-24.10.2.iso"
-  unmount_iso      = true
-  iso_storage_pool = "local"
+  # ISO Settings - Updated to new boot_iso block syntax
+  boot_iso {
+    type             = "scsi"
+    iso_file         = "local:iso/TrueNAS-SCALE-24.10.2.iso"
+    iso_storage_pool = "local"
+    unmount          = true
+  }
 
   # System Settings
   os       = "l26"
