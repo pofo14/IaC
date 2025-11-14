@@ -32,12 +32,6 @@ source "proxmox-iso" "truenas" {
   cpu_type = "host"
   bios     = "ovmf"
 
-  # EFI disk (required for UEFI boot)
-  efi_config {
-    efi_storage_pool  = var.disk_storage
-    efi_type          = "4m"
-    pre_enrolled_keys = true
-  }
 
   # Disk Settings
   scsi_controller = "virtio-scsi-single"
