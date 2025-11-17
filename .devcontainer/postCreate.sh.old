@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure vscode user owns their cache directory
+sudo chown -R vscode:vscode /home/vscode/.cache 2>/dev/null || true
+
+# Make sure pipx path available for vscode user too
+if ! command -v pipx >/dev/null 2>&1; then
+ python3 -m pip install --user pipx
+fi
+pipx ensurepath || true
+
+# Install Packer
+if ! command -v packer &> /dev/null; then
+    echo "Installing Packer..."
+    PACKER_VERSION="1.11.2"
+    curl -fsSL https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip -o /tmp/packer.zip
+    sudo unzip -o /tmp/packer.zip -d /usr/local/bin/
+    sudo chmod +x /usr/local/bin/packer
+    rm /tmp/packer.zip
+    echo "Packer ${PACKER_VERSION} installed successfully"
+fi
+
+# Install SOPS (download latest release)
+# Download the binary
+curl -LO https://github.com/getsops/sops/releases/download/v3.11.0/sops-v3.11.0.linux.amd64
+
+# Move the binary in to your PATH
+sudo mv sops-v3.11.0.linux.amd64 /usr/local/bin/sops
+
+# Make the binary executable
+sudo chmod +x /usr/local/bin/sops
+
+# Basic sanity
+terraform -version
+tflint --version
+# trivy --version
+ansible --version
+ansible-lint --version
+pre-commit --version
+detect-secrets --version
+sops --version
+packer --version
+
+# Optional: initialize tflint plugins
+if [ -f ".tflint.hcl" ]; then
+ tflint --init || true
+fi
+
+# Install collections from requirements file
+if [ -f "ansible/requirements.yml" ]; then
+    cd /workspaces/IaC/ansible && make reqs
+fi
+
+echo "postCreate complete"

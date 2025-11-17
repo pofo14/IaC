@@ -1,0 +1,72 @@
+2025/11/17 01:40:02 [INFO] Packer version: 1.14.2 [go1.23.2 linux amd64]
+2025/11/17 01:40:02 [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2025/11/17 01:40:02 [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/vscode/.packerconfig
+2025/11/17 01:40:02 [WARN] Config file doesn't exist: /home/vscode/.packerconfig
+2025/11/17 01:40:02 [INFO] Setting cache directory: /home/vscode/.cache/packer
+2025/11/17 01:40:02 [TRACE] listing potential installations for <nil> that match "". plugingetter.ListInstallationsOptions{PluginDirectory:"/home/vscode/.config/packer/plugins", BinaryInstallationOptions:plugingetter.BinaryInstallationOptions{APIVersionMajor:"5", APIVersionMinor:"0", OS:"linux", ARCH:"amd64", Ext:"", Checksummers:[]plugingetter.Checksummer{plugingetter.Checksummer{Type:"sha256", Hash:(*sha256.digest)(0xc00004f100)}}, ReleasesOnly:false}}
+2025/11/17 01:40:02 [INFO] found external [-packer-default-plugin-name- clone iso] builders from proxmox plugin
+2025/11/17 01:40:02 [TRACE] validateValue: not active for disk_size_gb, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for storage_pool_zfs, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for storage_pool_iso, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for proxmox_api_token_secret, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for iso_filename, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for network_bridge, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for truenas_version, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for template_name_prefix, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for truenas_shutdown_option, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for memory, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for cores, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for proxmox_api_url, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for proxmox_api_token_id, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for proxmox_node, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for truenas_root_password, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for vm_id, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for environment, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for node_suffix, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for proxmox_host, so skipping
+2025/11/17 01:40:02 [TRACE] validateValue: not active for disk_storage, so skipping
+2025/11/17 01:40:02 [TRACE] Using protobuf for communication with plugins
+2025/11/17 01:40:02 [INFO] Starting external plugin /home/vscode/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 start builder --protobuf iso
+2025/11/17 01:40:02 Starting plugin: /home/vscode/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 []string{"/home/vscode/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64", "start", "builder", "--protobuf", "iso"}
+2025/11/17 01:40:02 Waiting for RPC address for: /home/vscode/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 Plugin address: unix /tmp/packer-plugin3494374741
+2025/11/17 01:40:02 Received unix RPC address for /home/vscode/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64: addr is /tmp/packer-plugin3494374741
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 Waiting for connection...
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 Serving a plugin connection...
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 [TRACE] starting builder iso
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 [DEBUG] - common: sending ConfigSpec as protobuf
+2025/11/17 01:40:02 [DEBUG] - common: receiving ConfigSpec as protobuf
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 OS not set, using default 'other'
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 Disk 0 cache mode not set, using default 'none'
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 boot_iso device type not set, using default type 'ide' and index '2'
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 [DEBUG] - common: sending ConfigSpec as protobuf
+2025/11/17 01:40:02 [DEBUG] - common: receiving ConfigSpec as protobuf
+2025/11/17 01:40:02 ui: [1;32mproxmox-iso.truenas: output will be in this color.[0m
+2025/11/17 01:40:02 ui:
+2025/11/17 01:40:02 Build debug mode: false
+2025/11/17 01:40:02 Force build: false
+2025/11/17 01:40:02 On error:
+2025/11/17 01:40:02 Waiting on builds to complete...
+2025/11/17 01:40:02 Starting build run: proxmox-iso.truenas
+2025/11/17 01:40:02 Running builder: proxmox-iso
+2025/11/17 01:40:02 [INFO] (telemetry) Starting builder proxmox-iso.truenas
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 using token auth
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 No CD files specified. CD disk will not be made.
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 No URLs were provided to Step Download. Continuing...
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 Mapping static assigned ISO to ide2
+2025/11/17 01:40:02 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:02 Mapping Disk to scsi0
+2025/11/17 01:40:02 ui: [1;32m==> proxmox-iso.truenas: Creating VM[0m
+2025/11/17 01:40:04 ui: [1;32m==> proxmox-iso.truenas: Starting VM[0m
+2025/11/17 01:40:05 ui error: Cancelling build after receiving interrupt
+2025/11/17 01:40:05 Cancelling builder after context cancellation context canceled
+2025/11/17 01:40:05 packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64 plugin: 2025/11/17 01:40:05 Received interrupt signal (count: 1). Ignoring.
+2025/11/17 01:40:06 ui: [1;32m==> proxmox-iso.truenas: Stopping VM[0m
+2025/11/17 01:40:06 ui: [1;32m==> proxmox-iso.truenas: Deleting VM[0m
+2025/11/17 01:40:08 [INFO] (telemetry) ending proxmox-iso.truenas
+2025/11/17 01:40:08 ui error: [1;31mBuild 'proxmox-iso.truenas' errored after 6 seconds 199 milliseconds: build was cancelled[0m
+2025/11/17 01:40:08 ui:
+==> Wait completed after 6 seconds 199 milliseconds
+2025/11/17 01:40:08 ui: Cleanly cancelled builds after being interrupted.
+2025/11/17 01:40:08 [INFO] (telemetry) Finalizing.
+2025/11/17 01:40:08 waiting for all plugin processes to complete...
+2025/11/17 01:40:08 /home/vscode/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.2.3_x5.0_linux_amd64: plugin process exited

@@ -16,7 +16,10 @@
   "runArgs": [
     "--dns=192.168.2.2",
     "--dns=8.8.8.8",
-    "--dns=1.1.1.1"
+    "--dns=1.1.1.1",
+    "--add-host=pve1.flopo.retropetro.net:192.168.2.20",
+    "--add-host=pve2.flopo.retropetro.net:192.168.2.21",
+    "--add-host=pve3.flopo.retropetro.net:192.168.2.22"
   ],
   "remoteUser": "vscode",
   "customizations": {
@@ -25,6 +28,7 @@
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "HashiCorp.terraform",
+        "HashiCorp.hcl",
         "redhat.ansible",
         "redhat.vscode-yaml",
         "Rubymaniac.vscode-direnv",

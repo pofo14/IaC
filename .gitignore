@@ -106,3 +106,15 @@ proxmox_api_token*
 *_token*
 *.key
 *.pem
+
+
+## Packer Ignore
+# Packer
+packer_cache/
+*.pid
+
+# Secret vars
+variables/secrets.pkrvars.hcl
+
+# VS Code
+.vscode/
