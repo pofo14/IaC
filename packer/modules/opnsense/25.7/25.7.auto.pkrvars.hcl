@@ -1,0 +1,6 @@
+opnsense_version = "25.7"
+default_ip = "192.168.2.49"
+default_gw = "192.168.2.1"
+iso_storage_pool = "iso"
+iso_file         = "iso:iso/OPNsense-25.7-dvd-amd64.iso"
+template_description = "OPNsense 25.7 Packer Template"

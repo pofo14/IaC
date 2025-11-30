@@ -28,8 +28,16 @@ isos:
     url: "https://mirrors.nycbug.org/pub/opnsense/releases/25.7/OPNsense-25.7-dvd-amd64.iso.bz2"
     checksum: "fa4b30df3f5fd7a2b1a1b2bdfaecfe02337ee42f77e2d0ae8a60753ea7eb153e"
     checksum_type: "sha256"
+  - name: "ubuntu-24.04.3-live-server-amd64.iso"
+    url: "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-live-server-amd64.iso"
+    checksum: "c3514bf0056180d09376462a7a1b4f213c1d6e8ea67fae5c25099c6fd3d8274b"
+    checksum_type: "sha256"
+  - name: "ubuntu-25.10-live-server-amd64.iso"
+    url: "https://releases.ubuntu.com/25.10/ubuntu-25.10-live-server-amd64.iso"
+    checksum: "dc54870e5261c0abad19f74b8146659d10e625971792bd42d7ecde820b60a1d0"
+    checksum_type: "sha256"
 
-zfs_pool_name: "vmdata"  # <- Your data pool name
+zfs_pool_name: "vmdata" # <- Your data pool name
 zfs_disks:
   - "/dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_0055074C188500046602"
   - "/dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_A39A074C181000024869"
@@ -70,18 +78,18 @@ interfaces_template: "{{ playbook_dir }}/templates/pve1_network_interface.j2"
 pve_network:
   interfaces:
     - name: enp2s0f1
-      address: "192.168.2.20/24"  # Your static IP
-      gateway: "192.168.2.1"      # Your gateway
+      address: "192.168.2.20/24" # Your static IP
+      gateway: "192.168.2.1" # Your gateway
       dns:
-        - "192.168.2.2"           # Your PiHole IP
+        - "192.168.2.2" # Your PiHole IP
 
   dns:
     domain: "flopo.retropetro.net"
     search: "flopo.retropetro.net"
     servers:
-      - "192.168.2.2"             # Your PiHole IP
+      - "192.168.2.2" # Your PiHole IP
 
-pve_reboot_timeout: 1200  # 20 minutes
+pve_reboot_timeout: 1200 # 20 minutes
 ansible_connection_timeout: 180
 
 # PVE Cluster Config
@@ -100,10 +108,10 @@ pve_pcie_ignore_msrs: false
 pve_pcie_report_msrs: true
 
 pve_pci_device_ids:
-  - id: "1000:0087"    # LSI SAS2308 (Fusion-MPT SAS-2)
+  - id: "1000:0087" # LSI SAS2308 (Fusion-MPT SAS-2)
 
 pve_vfio_blacklist_drivers:
-  - name: "mpt2sas"    # driver for SAS2 HBAs; prevents host from claiming it
+  - name: "mpt2sas" # driver for SAS2 HBAs; prevents host from claiming it
 
 # My Custom PCIe Mappings
 pve_pci_mappings:
@@ -226,7 +234,7 @@ proxmox_api_tokens:
     realm: pve
     token_name: terraform
     comment: "API token for Terraform automation"
-    privsep: 0  # 0 for full user permissions
+    privsep: 0 # 0 for full user permissions
   - user: terraform-user
     realm: pve
     token_name: packer

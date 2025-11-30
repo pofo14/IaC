@@ -84,7 +84,6 @@ tools/ipxe/
 # Add to .gitignore
 packer/proxmox/secrets.yml
 packer/proxmox/*/secrets.yml
-*.auto.pkrvars.hcl
 credentials.pkr.hcl
 
 # Credential files and folders
@@ -112,9 +111,15 @@ proxmox_api_token*
 # Packer
 packer_cache/
 *.pid
+.packer.log
 
 # Secret vars
 variables/secrets.pkrvars.hcl
 
 # VS Code
 .vscode/
+
+ansible/credentials
+
+# Packer generated files
+packer/**/http/user-data

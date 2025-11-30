@@ -1,0 +1,49 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  locale: en_US
+  keyboard:
+    layout: us
+
+  identity:
+    hostname: ubuntu-template
+    username: pofo14
+    password: "$6$zhQvz7TgiPFIFF1X$LnRwkvEd.Q6wZ.xSMXcm/BrAUlRl10ql/hhhK5/pPf05xUVj6hilS.3PY46hCQIM3L4LdYdy0eiW4OmiV5E.q0"
+
+  ssh:
+    install-server: true
+    authorized-keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHzt5Uq1pY/zXZp30wjueijLzigpuAJ2p1Bew5AOMQ7y"
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKFw3M5B7y0icwQpUO2NvYEqg1qckmd1j01YpAxhm+HM"
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOPze4KNwO3zMKsDQYoLKUVxlAPt7EqyA8+rWUMk/iuN"
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrhhjNH6tibJ1wVoZojtuUIcRamnOdQBwwS2RVGmDfN"
+    allow-pw: false
+
+  storage:
+    layout:
+      name: direct
+
+  packages:
+    - qemu-guest-agent
+    - cloud-init
+
+  late-commands:
+    - curtin in-target --target=/target -- systemctl enable qemu-guest-agent
+    - curtin in-target --target=/target -- systemctl enable ssh
+    - curtin in-target --target=/target -- timedatectl set-timezone America/New_York
+    # - curtin in-target --target=/target -- usermod -aG sudo,adm pofo14
+    - sh -c "printf '%s\n' 'pofo14 ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/pofo14 && chmod 0440 /target/etc/sudoers.d/pofo14"
+    # - curtin in-target --target=/target -- sh -c "echo 'pofo14 ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/pofo14"
+    # - curtin in-target --target=/target -- chmod 0440 /etc/sudoers.d/pofo14
+
+  # user-data:
+  #   users:
+  #     - name: pofo14
+  #       gecos: pofo14
+  #       groups: [sudo, adm]
+  #       shell: /bin/bash
+  #       sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+  #       lock_passwd: false
+
+package_upgrade: true

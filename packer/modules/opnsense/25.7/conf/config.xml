@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opnsense>
+
+  <system>
+    <hostname>opnsense</hostname>
+    <domain>local</domain>
+
+    <user>
+      <name>root</name>
+      <descr>System Administrator</descr>
+      <scope>system</scope>
+      <groupname>admins</groupname>
+      <password>$2y$10$abcdefghijk0000000000000000000000000000000000000000</password>
+      <uid>0</uid>
+      <expires/>
+      <authorizedkeys>c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUh6dDVVcTFwWS96WFpwMzB3anVlaWpMemlncHVBSjJwMUJldzVBT01RN3kNCnNzaC1lZDI1NTE5IEFBQUFDM056YUMxbFpESTFOVEU1QUFBQUlLRnczTTVCN3kwaWN3UXBVTzJOdllFcWcxcWNrbWQxajAxWXBBeGhtK0hNDQpzc2gtZWQyNTUxOSBBQUFBQzNOemFDMWxaREkxTlRFNUFBQUFJT1B6ZTRLTndPM3pNS3NEUVlvTEtVVnhsQVB0N0VxeUE4K3JXVU1rL2l1Tg0Kc3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxyaGhqTkg2dGliSjF3Vm9ab2p0dVVJY1JhbW5PZFFCd3dTMlJWR21EZk4=</authorizedkeys>
+      <otp_seed/>
+    </user>
+
+    <ssh>
+      <group>admins</group>
+      <noauto>1</noauto>
+      <interfaces>lan</interfaces>
+      <kex/>
+      <ciphers/>
+      <macs/>
+      <keys/>
+      <keysig/>
+      <permitrootlogin>1</permitrootlogin>
+      <passwordauth>1</passwordauth>
+      <enabled>enabled</enabled>
+    </ssh>
+
+    <timezone>UTC</timezone>
+  </system>
+
+  <!-- NETWORK INTERFACES -->
+  <interfaces>
+    <wan>
+      <if>vtnet1</if>
+      <ipaddr>dhcp</ipaddr>
+    </wan>
+
+    <lan>
+      <if>vtnet0</if>
+      <ipaddr>192.168.2.49</ipaddr>
+      <subnet>24</subnet>
+    </lan>
+  </interfaces>
+
+  <!-- DEFAULT GATEWAY -->
+  <gateways>
+    <gateway_item>
+      <name>lan_gw</name>
+      <gateway>192.168.2.1</gateway>
+      <interface>lan</interface>
+      <defaultgw>yes</defaultgw>
+    </gateway_item>
+  </gateways>
+
+
+  <!-- BASIC FIREWALL RULESETS -->
+  <filter>
+    <!-- Allow all LAN IPv4 -->
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet</ipprotocol>
+      <source><network>lan</network></source>
+      <destination><any/></destination>
+    </rule>
+
+    <!-- Allow all LAN IPv6 -->
+    <rule>
+      <type>pass</type>
+      <interface>lan</interface>
+      <ipprotocol>inet6</ipprotocol>
+      <source><network>lan</network></source>
+      <destination><any/></destination>
+    </rule>
+  </filter>
+
+
+  <!-- DNS -->
+  <unbound>
+    <enabled>1</enabled>
+  </unbound>
+
+
+  <!-- DHCP SERVER -->
+  <dhcpd>
+    <lan>
+      <enable>1</enable>
+      <range>
+        <from>192.168.2.100</from>
+        <to>192.168.2.199</to>
+      </range>
+    </lan>
+  </dhcpd>
+
+</opnsense>

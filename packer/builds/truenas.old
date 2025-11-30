@@ -1,0 +1,60 @@
+# TrueNAS top-level build file
+
+packer {
+  required_plugins {
+    proxmox = {
+      version = ">= 1.2.3"
+      source  = "github.com/hashicorp/proxmox"
+    }
+  }
+}
+
+source "proxmox-iso" "truenas" {
+  proxmox_url              = env(PROXMOX_API_URL)
+  username                 = env(PROXMOX_API_TOKEN_ID)
+  token                    = env(PROXMOX_API_TOKEN_SECRET)
+  insecure_skip_tls_verify = true
+  node                     = var.proxmox_node
+
+  # Do not wait for SSH, need to manually reboot and turn on
+  communicator             = "none"
+
+  vm_id                = var.vm_id
+  vm_name              = "${var.environment}-TrueNAS-${var.truenas_version}-template"
+  template_description = var.template_description
+
+  qemu_agent = false
+  memory     = var.memory
+  cores      = var.cores
+  sockets    = var.sockets
+  cpu_type   = "host"
+
+  scsi_controller = "virtio-scsi-single"
+
+  disks {
+    type           = "scsi"
+    storage_pool   = var.disk_storage
+    disk_size      = "${var.disk_size_gb}G"
+    format         = "raw"
+  }
+
+  network_adapters {
+    model  = "virtio"
+    bridge = var.network_bridge
+  }
+
+  boot_iso {
+    iso_file         = var.iso_file
+    iso_storage_pool = var.iso_storage_pool
+    unmount          = true
+  }
+
+  boot_wait        = var.boot_wait
+  boot_key_interval = var.boot_key_interval
+
+  boot_command = var.boot_command
+}
+
+build {
+  sources = ["source.proxmox-iso.truenas"]
+}
