@@ -6,12 +6,12 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
 
   machine     = var.machine
   bios        = var.bios
-  description = var.description 
+  description = var.description
 
   clone {
-    vm_id = var.template_id
+    vm_id        = var.template_id
     datastore_id = var.storage_pool
-    full = true
+    full         = true
   }
 
   agent {
@@ -19,9 +19,9 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
   }
 
   cpu {
-    cores = var.cores
+    cores   = var.cores
     sockets = var.sockets
-    type   = var.cpu_type 
+    type    = var.cpu_type
   }
 
   memory {
@@ -39,47 +39,58 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
     }
   }
 
-    # Add PCI passthrough devices
+  # Add PCI passthrough devices
   dynamic "hostpci" {
     for_each = var.pci_mappings
     content {
-      device  = "hostpci${hostpci.key}"  # This creates hostpci0, hostpci1, etc.
-      mapping = hostpci.value            # This uses the mapping name like "hba_1"
+      device  = "hostpci${hostpci.key}"
+      mapping = hostpci.value
       pcie    = true
       rombar  = true
     }
   }
 
+  # # Override the template/rootfs disksize from template, if different
   disk {
-    #datastore_id = var.storage_pool
-    #interface    = "virtio0"
-    #iothread     = true
-    #discard      = "on"
-    #size         = var.disksize
-
-    aio               = "io_uring"
-    backup            = true
-    cache             = "none"
-    datastore_id      = var.storage_pool
-    discard           = "on"
-    file_format       = "raw"  # Explicitly set raw format for ZFS
-    interface         = "virtio0"
-    iothread          = true
-    replicate         = true
-    size              = var.disksize
-    ssd               = false
+    backup       = true
+    datastore_id = var.storage_pool
+    discard      = "on"
+    interface    = "scsi0" # ← Same interface as template
+    iothread     = true
+    replicate    = true
+    size         = var.disksize # ← This will RESIZE the template's disk
+    ssd          = true
   }
 
-  # Set scsi hardware controller if provided
+  # Add an additional disk beyond the template's disk if requested
+  dynamic "disk" {
+    for_each = var.add_extra_disk ? var.extra_disks : []
+    content {
+      aio          = "io_uring"
+      backup       = true
+      cache        = "none"
+      datastore_id = var.storage_pool
+      discard      = "on"
+      file_format  = "raw"
+      interface    = "scsi${disk.key + 1}" # ← scsi1, scsi2, scsi3, etc. (scsi0 is the root disk)
+      iothread     = true
+      replicate    = true
+      size         = disk.value.size
+      ssd          = lookup(disk.value, "ssd", true)
+    }
+  }
+
   scsi_hardware = var.scsi_hardware
 
-  # Only include cloud-init initialization if use_cloud_init is true
+  # Only include initialization if cloud-init content is provided
   dynamic "initialization" {
-    for_each = var.use_cloud_init ? [1] : []
+    for_each = var.cloud_init_content != "" ? [1] : []
     content {
-      datastore_id = "snippets"
+      datastore_id = var.storage_pool_snippets
+
+      # Set static IP if not using DHCP
       dynamic "ip_config" {
-        for_each = var.ipaddress != "dhcp" && var.ipaddress != "" && var.ipaddress != "ip=dhcp" ? [1] : []
+        for_each = var.ipaddress != "dhcp" && var.ipaddress != "" ? [1] : []
         content {
           ipv4 {
             address = var.ipaddress
@@ -87,7 +98,18 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
           }
         }
       }
-      user_data_file_id = var.use_cloud_init ? proxmox_virtual_environment_file.user_data_cloud_config[0].id : null
+
+      # Use DHCP if no static IP specified
+      dynamic "ip_config" {
+        for_each = var.ipaddress == "dhcp" || var.ipaddress == "" ? [1] : []
+        content {
+          ipv4 {
+            address = "dhcp"
+          }
+        }
+      }
+
+      user_data_file_id = var.cloud_init_content != "" ? proxmox_virtual_environment_file.user_data_cloud_config[0].id : null
     }
   }
 
@@ -95,75 +117,20 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
     bridge = "vmbr0"
   }
 
+  depends_on = [proxmox_virtual_environment_file.user_data_cloud_config]
 }
 
-# Only create cloud-init file if use_cloud_init is true
+# Only create cloud-init file if content is provided
 resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
-  count = var.use_cloud_init ? 1 : 0
-  
-  content_type = "snippets"
-  datastore_id = "zfsdata01"
-  node_name    = "proxmox"#var.proxmox_host
+  count = var.cloud_init_content != "" ? 1 : 0
+
+  content_type   = "snippets"
+  datastore_id   = var.storage_pool_snippets
+  node_name      = var.proxmox_host
   timeout_upload = 1800
-  
+
   source_raw {
     file_name = "${var.hostname}.cloud-config.yaml"
-    data = <<-EOT
-    #cloud-config
-    hostname: ${var.hostname}
-    fqdn: ${var.hostname}.${var.domain}
-    preserve_hostname: true
-    manage_etc_hosts: true
-    prefer_fqdn_over_hostname: true    
-    users:
-      - name: pofo14
-        groups: [adm, sudo]
-        lock-passwd: false
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        shell: /bin/bash
-        # passwd: 
-        # - or -
-        ssh_authorized_keys:
-%{ for key in var.ssh_keys ~}
-           - ${key}
-%{ endfor ~}
-
-    write_files:
-      - path: /etc/netplan/99-custom.yaml
-        content: |
-          network:
-            version: 2
-            ethernets:
-              eth0:  
-                %{if var.ipaddress == "dhcp" || var.ipaddress == "" || var.ipaddress == "ip=dhcp" }
-                dhcp4: true
-                dhcp4-overrides:
-                  send-hostname: true
-                  use-hostname: true
-                  hostname: ${var.hostname}
-                dhcp-identifier: mac
-                %{else}
-                dhcp4: false
-                addresses:
-                  - ${var.ipaddress}
-                gateway4: ${var.gateway}
-                nameservers:
-                  addresses: [192.168.2.2]
-                routes:
-                  - to: default
-                    via: ${var.gateway}
-                %{endif}
-             
-      - path: /etc/hosts
-        content: |
-          127.0.0.1 localhost
-          127.0.1.1 ${var.hostname}.${var.domain} ${var.hostname}
-
-    runcmd:
-      - netplan apply
-      - hostnamectl set-hostname ${var.hostname}.${var.domain}
-      - systemctl restart systemd-hostnamed
-    EOT
+    data      = var.cloud_init_content
   }
-
 }

@@ -1,13 +1,18 @@
 ---
+- name: Debug auth response structure (without sensitive data)
+  ansible.builtin.debug:
+    msg: "Calling : https://{{ ansible_host }}:8006/api2/json/access/ticket with user {{ proxmox_api_user }} and {{ proxmox_api_password is defined | ternary('a password', 'no password (using token)') }}"
+  when: pve_auth_debug | default(false)
+
 - name: Get PVE auth cookie
   ansible.builtin.uri:
     url: "https://{{ ansible_host }}:8006/api2/json/access/ticket"
     method: POST
+    validate_certs: false
     body_format: form-urlencoded
     body:
       username: "{{ proxmox_api_user | default('root@pam') }}"
       password: "{{ proxmox_api_password | default(omit) }}"
-    validate_certs: false
     status_code: [200, 401, 403]
   register: pve_auth_cookie
   failed_when: pve_auth_cookie.status != 200
@@ -40,7 +45,7 @@
     method: GET
     user: "{{ proxmox_api_user }}"
     password: "{{ proxmox_api_password }}"
-    validate_certs: no
+    validate_certs: false
     status_code: [200, 401, 403, 404]
     headers:
       Content-Type: application/json
@@ -60,7 +65,7 @@
     validate_certs: false
     status_code: [200, 201, 400, 404]
   register: delete_results
-  failed_when: false  # Don't fail if token doesn't exist
+  failed_when: false # Don't fail if token doesn't exist
   loop: "{{ proxmox_api_tokens }}"
   loop_control:
     label: "{{ item.user }}@{{ item.realm | default('pve') }}!{{ item.token_name }}"
@@ -73,7 +78,7 @@
     body_format: json
     body:
       comment: "{{ item.comment | default('API token created by Ansible') }}"
-      privsep: "{{ item.privsep | default(0) }}"  # 0 for full user permissions
+      privsep: "{{ item.privsep | default(0) }}" # 0 for full user permissions
     headers:
       Cookie: "PVEAuthCookie={{ ticket }}"
       CSRFPreventionToken: "{{ csrf_token }}"
@@ -84,8 +89,8 @@
     - token_results.status != 200
     - token_results.status != 201
     - not (token_results.json.errors is defined and
-          token_results.json.errors.tokenid is defined and
-          'Token already exists' in token_results.json.errors.tokenid)
+      token_results.json.errors.tokenid is defined and
+      'Token already exists' in token_results.json.errors.tokenid)
   changed_when:
     - token_results.status == 200 or token_results.status == 201
   loop: "{{ proxmox_api_tokens }}"
@@ -105,55 +110,64 @@
   loop_control:
     label: "{{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}"
 
-- name: Save API token information to local file
-  ansible.builtin.copy:
-    content: |
-      # Proxmox API Token for {{ item.item.user }}@{{ item.item.realm | default('pve') }} - Generated on {{ ansible_date_time.date }}
-      # Keep this file secure and add to .gitignore
-
-      [proxmox_{{ item.item.user }}_{{ item.item.token_name }}]
-      api_token_id = {{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}
-      {% if item.json.data is defined and item.json.data.value is defined %}
-      api_token_secret = {{ item.json.data.value }}
-      {% else %}
-      # Token already exists, secret not available
-      # api_token_secret = <SECRET ALREADY GENERATED - CHECK PREVIOUS FILES>
-      {% endif %}
-      api_url = https://{{ ansible_host }}:8006/api2/json
-    dest: "{{ playbook_dir }}/credentials/proxmox_api_token_{{ ansible_host | replace('.', '_') }}_{{ item.item.user }}_{{ item.item.token_name }}.ini"
-    mode: '0600'
+- name: Determine inventory environment
+  ansible.builtin.set_fact:
+    inventory_env: "{{ inventory_dir.split('/')[-1] }}"
+    vault_password_file: "{{ playbook_dir }}/ansible_vault.pass"
   delegate_to: localhost
   become: false
-  loop: "{{ token_results.results }}"
-  loop_control:
-    label: "{{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}"
 
-- name: Ensure token output directory exists
+- name: Ensure vault file directory exists
   ansible.builtin.file:
-    path: "{{ playbook_dir }}/credentials"
+    path: "{{ playbook_dir }}/inventories/{{ inventory_env }}/group_vars/all"
     state: directory
-    mode: '0700'
+    mode: "0755"
   delegate_to: localhost
   become: false
-  run_once: true
 
-- name: Save API token information to local file
-  ansible.builtin.copy:
-    content: |
-      # Proxmox API Token for {{ item.item.user }}@{{ item.item.realm | default('pve') }} - Generated on {{ ansible_date_time.date }}
-      # Keep this file secure and add to .gitignore
-
-      [proxmox_{{ item.item.user }}_{{ item.item.token_name }}]
-      api_token_id = {{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}
-      api_token_secret = {{ item.json.data.value }}
-      api_url = https://{{ ansible_host }}:8006/api2/json
-    dest: "{{ playbook_dir }}/credentials/proxmox_api_token_{{ ansible_host | replace('.', '_') }}_{{ item.item.user }}_{{ item.item.token_name }}.ini"
-    mode: '0600'
-  delegate_to: localhost
-  become: false
+- name: Build API token dictionary from results
+  ansible.builtin.set_fact:
+    api_tokens_dict: "{{ api_tokens_dict | default({}) | combine({item.item.token_name: item.json.data.value}) }}"
   loop: "{{ token_results.results }}"
   loop_control:
-    label: "{{ item.item.user }}@{{ item.item.realm | default('pve') }}!{{ item.item.token_name }}"
+    label: "{{ item.item.token_name }}"
   when:
     - item.status is defined
     - (item.status == 200 or item.status == 201)
+    - item.json.data is defined
+    - item.json.data.value is defined
+  delegate_to: localhost
+  become: false
+
+- name: Create vault file content with API tokens
+  ansible.builtin.copy:
+    content: |
+      # Proxmox API Tokens for {{ pve_hostname }} - Generated on {{ ansible_date_time.date }}
+      # WARNING: This file is encrypted with Ansible Vault
+      # DO NOT commit unencrypted version to git
+
+      proxmox_api_tokens_generated:
+      {% for token_name, token_value in api_tokens_dict.items() %}
+        {{ token_name }}: "{{ token_value }}"
+      {% endfor %}
+    dest: "{{ playbook_dir }}/inventories/{{ inventory_env }}/group_vars/all/api_tokens_{{ pve_hostname }}.yml"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
+  register: vault_file_created
+  when: api_tokens_dict is defined
+
+- name: Encrypt the API tokens file with Ansible Vault
+  ansible.builtin.command:
+    cmd: "ansible-vault encrypt {{ playbook_dir }}/inventories/{{ inventory_env }}/group_vars/all/api_tokens_{{ pve_hostname }}.yml --vault-password-file={{ vault_password_file }} --encrypt-vault-id default"
+  delegate_to: localhost
+  become: false
+  when:
+    - vault_file_created.changed
+    - api_tokens_dict is defined
+  changed_when: false
+
+- name: Display vault file location
+  ansible.builtin.debug:
+    msg: "API tokens saved to encrypted vault file: inventories/{{ inventory_env }}/group_vars/all/api_tokens_{{ pve_hostname }}.yml"
+  when: vault_file_created.changed

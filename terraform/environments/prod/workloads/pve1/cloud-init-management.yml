@@ -1,0 +1,26 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname}.flopo.retropetro.net
+manage_etc_hosts: true
+
+# Don't create users - pofo14 already exists from Packer template
+# Just add SSH keys to existing user if needed
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - vim
+  - net-tools
+
+runcmd:
+  - timedatectl set-timezone America/New_York
+  - systemctl enable qemu-guest-agent || true
+  - systemctl start qemu-guest-agent || true
+  - mkdir -p /srv/pxe
+  - mkdir -p /srv/traefik
+  - chown -R pofo14:pofo14 /srv/pxe /srv/traefik
+
+final_message: "Management VM ready for Ansible configuration"

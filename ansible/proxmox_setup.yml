@@ -1,8 +1,0 @@
----
-- name: Configure Proxmox Users and Permissions
-  hosts: pve1.flopo.retropetro.net
-  become: true
-
-  roles:
-    - role: lae.proxmox
-      tags: proxmox

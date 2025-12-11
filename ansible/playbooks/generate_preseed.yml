@@ -1,0 +1,24 @@
+---
+- name: Generate preseed files
+  hosts: dev-pve
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Debug - Show all variables
+      debug:
+        msg: |
+          Host: {{ inventory_hostname }}
+          pve_hostname: {{ pve_hostname | default('NOT SET') }}
+          pve_ip: {{ pve_ip | default('NOT SET') }}
+          storage_disks: {{ storage_disks | default('NOT SET') }}
+          pve_domain: {{ pve_domain | default('NOT SET') }}
+          username: {{ username | default('NOT SET') }}
+      delegate_to: localhost
+
+    - name: Generate preseed file from template
+      template:
+        src: templates/proxmox-pve.cfg.j2
+        dest: "{{ playbook_dir }}/../files/pxe/preseed/proxmox-{{ pve_hostname }}.cfg"
+        mode: "0644"
+      delegate_to: localhost

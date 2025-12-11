@@ -20,11 +20,16 @@ provider "github" {
 }
 
 provider "proxmox" {
-  endpoint    = data.sops_file.secrets.data["pve1_fdqn"]
-  username    = data.sops_file.secrets.data["pve1_username"]
-  password    = data.sops_file.secrets.data["pve1_password"]
-  insecure    = true
-  ssh { agent = true }
+  endpoint = data.sops_file.secrets.data["pve1_fdqn"]
+  username = data.sops_file.secrets.data["pve1_username"]
+  password = data.sops_file.secrets.data["pve1_password"]
+  insecure = true
+  # ssh { agent = true }
+  ssh {
+    agent = false
+    # Point to your SSH private key
+    private_key = file(pathexpand("~/.ssh/id_ed25519"))
+  }
 }
 
 provider "sops" {
@@ -32,8 +37,7 @@ provider "sops" {
 }
 
 data "sops_file" "secrets" {
-  source_file = "${path.module}/../../secrets.enc.yml"  # Environment-level file
+  source_file = "${path.module}/../../secrets.enc.yml" # Environment-level file
 }
 
 data "github_ssh_keys" "pofo14_ssh_keys" {}
-

@@ -1,11 +1,11 @@
-- name: Remove all files from /etc/network/interfaces.d/
+- name: Remove all files from /etc/network/interfaces/
   ansible.builtin.file:
-    path: "/etc/network/interfaces.d/"
+    path: "/etc/network/interfaces/"
     state: absent
 
-- name: Recreate the /etc/network/interfaces.d/ directory
+- name: Recreate the /etc/network/interfaces/ directory
   ansible.builtin.file:
-    path: "/etc/network/interfaces.d/"
+    path: "/etc/network/interfaces/"
     state: directory
     mode: "0755"
 
@@ -48,3 +48,22 @@
   ansible.builtin.systemd:
     name: networking
     state: restarted
+
+- name: Ensure short hostname is resolvable in /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '^{{ pve_ip }}\s+'
+    line: "{{ pve_ip }} {{ inventory_hostname }} {{ pve_hostname }}"
+    state: present
+  # when: pve_cluster_enabled | bool
+
+- name: Add all cluster node short hostnames to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '^{{ hostvars[item].pve_ip }}\s+'
+    line: "{{ hostvars[item].pve_ip }} {{ item }} {{ hostvars[item].pve_hostname }}"
+    state: present
+  loop: "{{ groups[pve_group] }}"
+  when:
+    #   - pve_cluster_enabled | bool
+    - item != inventory_hostname

@@ -43,6 +43,14 @@ ansible_env/
 .venv/
 venv/
 
+# Ignore plaintext credential files (NOT vault encrypted)
+ansible/credentials/*.ini
+ansible/credentials/*.txt
+ansible/credentials/*.conf
+
+# DO commit encrypted vault files containing API tokens
+!ansible/inventories/**/api_tokens*.yml
+
 # generated files
 node_exporter_hosts.json
 

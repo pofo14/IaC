@@ -5,6 +5,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        exclude: 'cloud-init.*\.yml$'
       - id: check-json
       - id: check-merge-conflict
       - id: check-added-large-files

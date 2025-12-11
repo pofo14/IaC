@@ -1,0 +1,14 @@
+# Common Proxmox installation variables
+pve_domain: flopo.retropetro.net
+network_mask: 255.255.255.0
+network_prefix: 24
+network_gateway: 192.168.2.1
+network_dns: 192.168.2.2
+username: pofo14
+user_fullname: Ken Petro
+github_username: pofo14
+timezone: US/Eastern
+
+# User configuration
+root_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+user_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"

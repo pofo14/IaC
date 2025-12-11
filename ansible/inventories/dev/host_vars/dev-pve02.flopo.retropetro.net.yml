@@ -1,0 +1,225 @@
+---
+pve_hostname: "dev-pve02"
+pve_gateway: "192.168.2.1"
+
+pve_ip: 192.168.2.99
+ansible_host: 192.168.2.99
+network_interface: ens18
+os_disk: scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
+
+pve_auth_debug: true
+
+#################### Cluster Configuration ####################
+# Proxmox Cluster Configuration
+pve_cluster_enabled: true
+pve_group: dev-pve
+pve_cluster_clustername: dev-pve
+pve_cluster_setup: join # This is the SECOND node - joins cluster created by dev-pve01
+
+#################### PHASE 1 Variables ##############################
+###############   Network Setup - Create vmbr0   ####################
+#####################################################################
+interfaces_template: "{{ playbook_dir }}/templates/proxmox_node_network_interface.j2"
+
+#################### PHASE 2 Variables ##############################
+###############   ZFS Disks and Pool Info    ########################
+#####################################################################
+# zfs_pool_name: "zfs01" # <- Your data pool name
+# zfs_disks:
+#   - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
+#   - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2"
+
+# zfs_detect
+zfs_detect_debug: true
+zfs_detect_pools:
+  - zfs01
+
+#  Create ZFS Pool Role
+create_zfs_pool_pools:
+  - name: zfs01
+    pool_properties:
+      ashift: 12
+    filesystem_properties:
+      compression: lz4
+    disks:
+      - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
+      - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2"
+
+#################### lae.proxmox ##############################
+###############   Install Variables    ########################
+###############################################################
+pve_reboot_on_kernel_update: true
+pve_version: "9"
+
+pve_datacenter_cfg:
+  keyboard: en-us
+  console: xterm
+
+# Hardware Passrough Settings
+pve_pcie_passthrough_enabled: false
+pve_iommu_passthrough_mode: false
+pve_iommu_unsafe_interrupts: false
+pve_mediated_devices_enabled: false
+pve_pcie_ovmf_enabled: false
+pve_pcie_ignore_msrs: false
+pve_pcie_report_msrs: true
+
+pve_zfs_enabled: true
+pve_zfs_create_volumes:
+  - zfs01/iso
+  - zfs01/template
+  - zfs01/backup
+  - zfs01/snippets
+
+# Proxmox Storage Configuration
+pve_storages:
+  - name: zfs01
+    type: zfspool
+    content: ["images", "rootdir"]
+    pool: zfs01
+    sparse: true
+  - name: iso
+    type: dir
+    path: /zfs01/iso
+    content: ["iso"]
+  - name: templates
+    type: dir
+    path: /zfs01/templates
+    content: ["vztmpl"]
+  - name: backup
+    type: dir
+    path: /zfs01/backup
+    content: ["backup"]
+  - name: snippets
+    type: dir
+    path: /zfs01/snippets
+    content: ["snippets"]
+
+# User, Role and ACL Management
+pve_groups:
+  - name: api_users
+    comment: "Group for API automation"
+
+pve_users:
+  - name: root@pam
+    email: "petroplex56@gmail.com"
+  - name: terraform-user@pve
+    password: "{{ terraform_api_password | default('changeMe123!') }}"
+    #email: "admin@flopo.retropetro.net"
+    firstname: Terraform
+    lastname: API User
+    groups: ["api_users"]
+    enable: true
+    expire: 0
+    comment: API user for Terraform automation
+
+# System users (not PVE users - these are Linux system users)
+pve_system_users:
+  - name: terraform
+    groups: sudo
+    append: true
+    shell: /bin/bash
+    authorized_keys:
+      - "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+
+pve_roles:
+  - name: homelab
+    privileges:
+      - Datastore.Allocate
+      - Datastore.AllocateSpace
+      - Datastore.AllocateTemplate
+      - Datastore.Audit
+      - Mapping.Modify
+      - Mapping.Use
+      - SDN.Allocate
+      - SDN.Use
+      - Sys.Audit
+      - Sys.Modify
+      - Sys.Console
+      - VM.Allocate
+      - VM.Audit
+      - VM.Clone
+      - VM.Config.CDROM
+      - VM.Config.CPU
+      - VM.Config.Disk
+      - VM.Config.HWType
+      - VM.Config.Memory
+      - VM.Config.Network
+      - VM.Config.Options
+      - VM.Config.Cloudinit
+      - VM.Console
+      - VM.PowerMgmt
+      - VM.Snapshot
+
+pve_acls:
+  - path: /
+    roles: ["homelab"]
+    groups: ["api_users"]
+    propagate: true
+
+#################### PHASE 4 Variables ##############################
+###############   API Users   ####################
+#####################################################################
+# List of API tokens to create
+proxmox_api_user: "{{ vault_proxmox_root_user }}"
+proxmox_api_password: "{{ vault_proxmox_root_password }}"
+
+proxmox_api_tokens:
+  - user: terraform-user
+    realm: pve
+    token_name: terraform
+    comment: "API token for Terraform automation"
+    privsep: 0 # 0 for full user permissions
+  - user: terraform-user
+    realm: pve
+    token_name: packer
+    comment: "API token for Packer automation"
+    privsep: 0
+
+# After API tokens are created, they are saved to encrypted vault file:
+# inventories/dev/group_vars/all/api_tokens_dev-pve01.yml
+# Reference them in your playbooks as: proxmox_api_tokens_generated.terraform or .packer
+
+################### GRAVEYARD Variables ##############################
+#####################################################################
+
+# Static network configuration
+# pve_network:
+#   interfaces:
+#     - name: enp2s0f1
+#       address: "192.168.2.99/24" # Your static IP
+#       gateway: "192.168.2.1" # Your gateway
+#       dns:
+#         - "192.168.2.2" # Your PiHole IP
+
+#   dns:
+#     domain: "flopo.retropetro.net"
+#     search: "flopo.retropetro.net"
+#     servers:
+#       - "192.168.2.2" # Your PiHole IP
+
+# pve_reboot_timeout: 1200 # 20 minutes
+# ansible_connection_timeout: 180
+
+# ZFS Pool Setup
+# proxmox_zfs_pools:
+#   - name: "{{ zfs_pool_name }}"
+#     state: present
+#     disks: "{{ dynamic_zfs_disks }}"
+#     properties:
+#       ashift: 12
+#       compression: lz4
+#       atime: false
+
+#pve_auth_debug: true
+
+# API token configuration for Proxmox
+#proxmox_api_user: "root@pam"
+#proxmox_api_password: "{{ vault_proxmox_root_password }}"
+
+# geerlingguy.ntp
+ntp_manage_config: true
+ntp_servers:
+  - clock.sjc.he.net,
+  - clock.fmt.he.net,
+  - clock.nyc.he.net

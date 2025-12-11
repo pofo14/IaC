@@ -1,0 +1,122 @@
+### Debian (Trixie) preseed for Proxmox-on-Debian (Single Disk, ext4)
+### Generated from template for {{ pve_hostname }}
+
+### Locale & keyboard
+d-i debian-installer/locale string en_US.UTF-8
+d-i keyboard-configuration/xkb-keymap string us
+d-i keyboard-configuration/toggle select No toggling
+
+### Early: wipe disk.  Only
+d-i preseed/early_command string \
+  dd if=/dev/zero of=/dev/sda }} bs=1M count=10 status=none
+
+### Networking (installer + final system)
+d-i netcfg/choose_interface select auto
+d-i netcfg/disable_autoconfig boolean true
+d-i netcfg/disable_dhcp boolean true
+d-i netcfg/get_ipaddress string {{ pve_ip }}
+d-i netcfg/get_netmask string {{ network_mask }}
+d-i netcfg/get_gateway string {{ network_gateway }}
+d-i netcfg/get_nameservers string {{ network_dns }}
+d-i netcfg/confirm_static boolean true
+d-i netcfg/get_hostname string {{ pve_hostname }}
+d-i netcfg/get_domain string {{ pve_domain }}
+
+### Mirror
+d-i mirror/protocol select http
+d-i mirror/http/hostname string deb.debian.org
+d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string
+d-i mirror/country string manual
+d-i mirror/suite string trixie
+
+### Accounts
+d-i passwd/root-login boolean true
+d-i passwd/root-password-crypted password {{ root_password_hash }}
+
+d-i passwd/make-user boolean true
+d-i passwd/user-fullname string {{ user_fullname }}
+d-i passwd/username string {{ username }}
+d-i passwd/user-password-crypted password {{ user_password_hash }}
+
+### Time
+d-i clock-setup/utc boolean false
+d-i time/zone select {{ timezone }}
+
+### Disks (BIOS boot): Single drive with ext4
+d-i partman-auto/disk string /dev/disk/by-id/{{ storage_disks[0] }}
+
+# Standard partitioning method
+d-i partman-auto/method string regular
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-md/device_remove_md boolean true
+
+# Standard recipe: GPT + ext4
+d-i partman-auto/expert_recipe string \
+  custom-root :: \
+      1 1 1 free \
+          $gptonly{ } $primary{ } \
+          method{ keep } \
+          $bios_boot{ } biosgrub{ } \
+      . \
+      1024 1024 1024 ext4 \
+          $primary{ } \
+          method{ format } format{ } \
+          use_filesystem{ } filesystem{ ext4 } \
+          mountpoint{ /boot } \
+      . \
+      500 500 -1 ext4 \
+          $primary{ } \
+          method{ format } format{ } \
+          use_filesystem{ } filesystem{ ext4 } \
+          mountpoint{ / } \
+      .
+
+# Write & confirm partitioning
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+# Use UUID mounts
+d-i partman/mount_style select uuid
+
+### GRUB (BIOS) to single disk
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev string /dev/disk/by-id/{{ storage_disks[0] }}
+d-i grub-installer/allow_unauthenticated boolean true
+
+### Apt setup
+d-i apt-setup/disable-cdrom-entries boolean true
+d-i apt-setup/services-select multiselect security, updates
+
+### Package selection
+tasksel tasksel/first multiselect standard, ssh-server
+d-i pkgsel/include string build-essential curl gnupg2 ifupdown2
+
+### Late command: hostname, SSH keys, network (ifupdown2), sudo, services
+d-i preseed/late_command string \
+  echo {{ pve_hostname }} > /target/etc/hostname ; \
+  in-target mkdir -p /root/.ssh /home/{{ username }}/.ssh ; \
+  in-target sh -c 'curl -s https://github.com/{{ github_username }}.keys > /root/.ssh/authorized_keys' ; \
+  in-target install -m 600 /root/.ssh/authorized_keys /home/{{ username }}/.ssh/authorized_keys ; \
+  in-target chmod 700 /root/.ssh /home/{{ username }}/.ssh ; \
+  in-target chown -R {{ username }}:{{ username }} /home/{{ username }}/.ssh ; \
+  in-target sed -i "s/^#\\?PermitRootLogin.*/PermitRootLogin prohibit-password/" /etc/ssh/sshd_config ; \
+  in-target sed -i "s/^#\\?PasswordAuthentication.*/PasswordAuthentication no/" /etc/ssh/sshd_config ; \
+  in-target sh -c 'echo "{{ username }} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/{{ username }}' ; \
+  in-target chmod 0440 /etc/sudoers.d/{{ username }} ; \
+  in-target systemctl disable systemd-networkd || true ; \
+  in-target mkdir -p /etc/network/interfaces.d ; \
+  in-target sh -c 'printf "auto {{ network_interface }}\niface {{ network_interface }} inet static\n    address {{ pve_ip }}/{{ network_prefix }}\n    gateway {{ network_gateway }}\n    dns-nameservers {{ network_dns }}\n" > /etc/network/interfaces.d/{{ network_interface }}' ; \
+  in-target sh -c 'printf "source /etc/network/interfaces.d/*\n" > /etc/network/interfaces' ; \
+  in-target ifup {{ network_interface }} || true ; \
+  in-target hostnamectl set-hostname {{ pve_hostname }}.{{ pve_domain }} ; \
+  in-target sh -c 'echo "127.0.1.1 {{ pve_hostname }}.{{ pve_domain }} {{ pve_hostname }}" >> /etc/hosts' ; \
+  in-target sh -c 'echo "{{ pve_ip }} {{ pve_hostname }}.{{ pve_domain }} {{ pve_hostname }}" >> /etc/hosts' ; \
+  in-target systemctl restart ssh || true ; \
+  in-target systemctl restart networking || true
+
+### Finish
+d-i finish-install/reboot_in_progress note

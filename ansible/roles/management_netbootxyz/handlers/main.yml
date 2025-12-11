@@ -12,3 +12,25 @@
     project_src: "{{ docker_compose_generator_output_path }}"
     state: present
   register: up_output
+# ---
+# - name: Force Restart NetbootXYZ Container
+#   block:
+#     - name: Check if containers exist
+#       community.docker.docker_compose_v2_info:
+#         project_src: "{{ docker_compose_generator_output_path }}"
+#       register: compose_info
+#       failed_when: false
+
+#     - name: Restart existing containers
+#       community.docker.docker_compose_v2:
+#         project_src: "{{ docker_compose_generator_output_path }}"
+#         state: restarted
+#         recreate: always
+#       when: compose_info.containers is defined and compose_info.containers | length > 0
+
+#     - name: Start containers (first run)
+#       community.docker.docker_compose_v2:
+#         project_src: "{{ docker_compose_generator_output_path }}"
+#         state: present
+#         pull: "missing"
+#       when: compose_info.containers is not defined or compose_info.containers | length == 0

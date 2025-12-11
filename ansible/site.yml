@@ -209,7 +209,7 @@
       # This role runs docker_compose. If the Ansible user is part of the
       # docker group (managed by geerlingguy.docker), become: false (inherited) is fine.
       # If issues arise with permissions (e.g. writing to /opt or docker socket),
-      # add 'become: true' to this role.      
+      # add 'become: true' to this role.
 
 - name: Configure Pihole Server
   hosts: pihole
@@ -238,6 +238,169 @@
     # - role: install_fancontrol
     #  tags: fan_control
 
+- name: Install Proxmox on dev-pve INITIAL INSTALL
+  hosts: dev-pve
+  tags: [initial_install]
+
+  pre_tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_network_setup.yml
+      tags: network_setup, proxmox
+
+  roles:
+    - role: geerlingguy.ntp
+      tags: ntp
+
+    # Install Proxmox without ZFS configuration
+    - role: lae.proxmox
+      vars:
+        # Skip ZFS-related operations in first pass
+        pve_storages: []
+        pve_zfs_create_volumes: []
+      tags: [proxmox, proxmox_install]
+
+    # Phase 2: Set up ZFS
+    - role: zfs_detect
+      tags: zfs
+    - role: create_zfs_pool
+      tags: zfs
+
+  # Phase 3: Finalize Proxmox setup
+  tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
+      tags: api_token, proxmox
+
+- name: Install Proxmox on dev-pve01.flopo.retropetro.net Node - INITIAL INSTALL
+  hosts: dev-pve01.flopo.retropetro.net
+  tags: [initial_install]
+
+  pre_tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_network_setup.yml
+      tags: network_setup, proxmox
+    - name: Debug groups variable
+      ansible.builtin.debug:
+        msg: "pve_groups is: {{ pve_groups | default('NOT SET') }}"
+    - name: Debug _init_node variable
+      ansible.builtin.debug:
+        msg: "_init_node is: {{ _init_node | default('NOT SET') }}"
+
+  roles:
+    - role: geerlingguy.ntp
+      tags: ntp
+
+    # Install Proxmox without ZFS configuration
+    - role: lae.proxmox
+      vars:
+        pve_cluster_enabled: false
+
+        # Skip ZFS-related operations in first pass
+        pve_storages: []
+        pve_zfs_create_volumes: []
+      tags: [proxmox, proxmox_install]
+
+    # Phase 2: Set up ZFS
+    - role: zfs_detect
+      tags: zfs
+    - role: create_zfs_pool
+      tags: zfs
+
+    # # Phase 3: Configure Proxmox ZFS storage
+    # - role: lae.proxmox
+    #   vars:
+    #     # Skip non-ZFS operations that were already completed
+    #     pve_skip_subscription_check: true
+    #     pve_skip_firewall: true
+    #     pve_skip_kernel: true
+    #     pve_skip_meta_packages: true
+    #   tags: [proxmox, proxmox_zfs_config]
+
+  # Phase 3: Finalize Proxmox setup
+  tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
+      tags: api_token, proxmox
+
+- name: Install Proxmox on dev-pve02.flopo.retropetro.net Node - INITIAL INSTALL
+  hosts: dev-pve02.flopo.retropetro.net
+  tags: [initial_install]
+
+  pre_tasks:
+      - name: Create Proxmox API token for Terraform
+        ansible.builtin.import_tasks: tasks/proxmox_network_setup.yml
+        tags: network_setup, proxmox
+      - name: Debug groups variable
+        ansible.builtin.debug:
+          msg: "pve_groups is: {{ pve_groups | default('NOT SET') }}"
+      - name: Debug _init_node variable
+        ansible.builtin.debug:
+          msg: "_init_node is: {{ _init_node | default('NOT SET') }}"
+
+  roles:
+    - role: geerlingguy.ntp
+      tags: ntp
+
+    # Phase 1: Install Proxmox without ZFS configuration
+    - role: lae.proxmox
+      vars:
+        pve_cluster_enabled: false
+
+        # Skip ZFS-related operations in first pass
+        pve_storages: []
+        pve_zfs_create_volumes: []
+      tags: [proxmox, proxmox_install]
+
+    # Phase 2: Set up ZFS
+    - role: zfs_detect
+      tags: zfs
+    - role: create_zfs_pool
+      tags: zfs
+
+    # # Phase 3: Configure Proxmox ZFS storage
+    # - role: lae.proxmox
+    #   vars:
+    #     # Skip non-ZFS operations that were already completed
+    #     pve_skip_subscription_check: true
+    #     pve_skip_firewall: true
+    #     pve_skip_kernel: true
+    #     pve_skip_meta_packages: true
+    #   tags: [proxmox, proxmox_zfs_config]
+
+  # Phase 3: Finalize Proxmox setup
+  tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
+      tags: api_token, proxmox
+
+# - name: Gather facts from all dev-pve cluster nodes
+#   hosts: dev-pve
+#   gather_facts: true
+#   tags: update_dev_pve
+#   tasks:
+#     - name: Ensure facts are gathered
+#       ansible.builtin.debug:
+#         msg: "Facts gathered for {{ inventory_hostname }}"
+
+- name: Update dev-pve Nodes
+  hosts: dev-pve
+  tags: update_dev_pve
+
+  roles:
+    - role: lae.proxmox
+
+- name: Configure test-pve1 Node
+  hosts: test-pve1
+  become: true
+
+  roles:
+    - role: geerlingguy.ntp
+      tags: base_setup
+    - role: lae.proxmox
+      tags: base_setup
+    # - role: install_fancontrol
+    #  tags: fan_control
+
 - name: Configure pve1 Node
   hosts: pve1.flopo.retropetro.net
   become: true
@@ -249,7 +412,7 @@
   roles:
     - role: geerlingguy.ntp
       tags: ntp
-    
+
     # Phase 1: Install Proxmox without ZFS configuration
     - role: lae.proxmox
       vars:
@@ -257,7 +420,7 @@
         pve_storages: []
         pve_zfs_create_volumes: []
       tags: [proxmox, proxmox_install]
-    
+
     # Phase 2: Set up ZFS
     - role: zfs_detect
       tags: zfs
@@ -282,13 +445,14 @@
         # Allow creation of datacenter.cfg if it doesn't exist
         pve_pci_mappings_force_create_datacenter_cfg: true
       tags: pci_mappings
+
     - role: install_fancontrol
       tags: fancontrol
-    
+
   tasks:
     # - name: Create Proxmox terraform user for SSH access
     #   ansible.builtin.import_tasks: tasks/proxmox_terraform_user.yml
-    #   tags: [terraform, proxmox, ssh]  
+    #   tags: [terraform, proxmox, ssh]
 
     - name: Create Proxmox API token for Terraform
       ansible.builtin.import_tasks: tasks/proxmox_api_token.yml

@@ -1,0 +1,13 @@
+---
+- name: Generate preseed files from template
+  template:
+    src: ../files/pxe/preseed/proxmox-pve.cfg.j2
+    dest: "{{ playbook_dir }}/../files/pxe/preseed/proxmox-{{ item }}.cfg"
+    mode: "0644"
+  loop: "{{ groups['proxmox_hosts'] }}"
+  vars:
+    pve_hostname: "{{ hostvars[item]['pve_hostname'] }}"
+    pve_ip: "{{ hostvars[item]['pve_ip'] }}"
+    storage_disks: "{{ hostvars[item]['storage_disks'] }}"
+    network_interface: "{{ hostvars[item]['network_interface'] }}"
+  delegate_to: localhost

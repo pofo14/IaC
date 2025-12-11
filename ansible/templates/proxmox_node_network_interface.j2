@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+auto lo
+iface lo inet loopback
+
+# Physical interface - no IP, attached to bridge
+auto {{ network_interface }}
+iface {{ network_interface }} inet manual
+
+# VM Bridge
+auto vmbr0
+iface vmbr0 inet static
+    address {{ pve_ip }}/24
+    netmask 255.255.255.0
+    gateway {{ pve_gateway }}
+    bridge_ports {{ network_interface }}
+    bridge_stp off
+    bridge_fd 0
+
+# auto enp2s0f0
+# iface enp2s0f0 inet static
+#    address 10.10.10.{{ ansible_host.split('.')[-1] }}
+#    netmask 255.255.255.0

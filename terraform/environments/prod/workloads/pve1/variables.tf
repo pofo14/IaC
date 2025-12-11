@@ -2,21 +2,25 @@
 variable "proxmox_host" {
   description = "The Proxmox host to deploy the VM to"
   type        = string
+  default     = "pve1"
 }
 
 variable "ubuntu24_template_id" {
   description = "The ID of the Ubuntu 24 template to clone"
   type        = string
+  default     = "9005"
 }
 
 variable "domain" {
   description = "The domain name for the VM"
   type        = string
+  default     = "flopo.retropetro.net"
 }
 
 variable "gateway" {
   description = "The gateway IP address for the VM"
   type        = string
+  default     = "192.168.2.1"
 }
 
 # Optional Configuration Variables with Sensible Defaults

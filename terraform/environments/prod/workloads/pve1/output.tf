@@ -8,7 +8,7 @@ output "management_vm_id" {
 output "ssh_keys" {
   description = "SSH public keys from GitHub user pofo14"
   value       = data.github_ssh_keys.pofo14_ssh_keys.keys
-  sensitive   = true  # Prevents printing in terraform output
+  sensitive   = true # Prevents printing in terraform output
 }
 
 # Future: Uncomment when nextcloud module exists

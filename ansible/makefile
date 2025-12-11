@@ -34,6 +34,23 @@ prod-truenas:
 prod-proxmox:
 	ansible-playbook site.yml -v -i ./inventories/production --limit proxmox --ask-become-pass
 
+dev-pve01-install:
+	ansible-playbook site.yml -v -i ./inventories/dev --limit dev-pve01.flopo.retropetro.net --extra-vars "pve_cluster_enabled=false"
+
+dev-pve02-install:
+	ansible-playbook site.yml -v -i ./inventories/dev --limit dev-pve02.flopo.retropetro.net --extra-vars "pve_cluster_enabled=false"
+
+dev-pve-install:
+	ansible-playbook site.yml -v -i ./inventories/dev --limit dev-pve
+
+dev-pve-update:
+	ansible-playbook site.yml -v -i ./inventories/dev --tags update_dev_pve
+	@echo "Dev Proxmox cluster setup complete!"
+
+# Convenience target for full initial setup
+dev-pve-setup:
+	dev-pve01-install dev-pve02-install dev-pve-update
+
 prod-pve1:
 	ansible-playbook site.yml -v -i ./inventories/production --limit pve1.flopo.retropetro.net --ask-become-pass
 
@@ -67,6 +84,10 @@ delete_pars:
 fix-ssh-keys:
 	ssh-keygen -f '/home/pofo14/.ssh/known_hosts' -R 'pve.flopo.retropetro.net'
 	@echo "SSH host key removed. Now try running your ansible command again."
+
+.PHONY: generate-preseed-dev
+generate-preseed-dev:
+	ansible-playbook -i ./inventories/dev playbooks/generate_preseed.yml -vvv
 
 ######## TEST CALLS ######
 mount-disk-nas:
