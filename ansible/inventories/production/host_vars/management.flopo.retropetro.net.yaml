@@ -1,0 +1,116 @@
+---
+# managment_netbootxyz Server configuration
+pxe_server_http_root: /opt/netbootxyz/assets/
+management_server_ip: "management.flopo.retropetro.net" # Your management VM IP
+
+pxe_server_tftp_root: /opt/netbootxyz/config/menus/
+
+# List of PVE nodes to generate preseed files for
+pve_nodes:
+  - pve_hostname: dev-pve01
+    pve_ip: 192.168.2.98
+    network_mask: 255.255.255.0
+    network_gateway: 192.168.2.1
+    network_dns: 192.168.2.2
+    network_interface: ens18
+    pve_domain: flopo.retropetro.net
+    root_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    user_fullname: "Pofo Admin"
+    username: pofo14
+    user_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    timezone: "US/Eastern"
+    os_disk: scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
+    github_username: "pofo14"
+
+  - pve_hostname: dev-pve02
+    pve_ip: 192.168.2.99
+    network_mask: 255.255.255.0
+    network_gateway: 192.168.2.1
+    network_dns: 192.168.2.2
+    network_interface: ens18
+    pve_domain: flopo.retropetro.net
+    root_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    user_fullname: "Pofo Admin"
+    username: pofo14
+    user_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    timezone: "US/Eastern"
+    os_disk: scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
+    github_username: "pofo14"
+
+  - pve_hostname: pve01
+    pve_ip: 192.168.2.21
+    network_mask: 255.255.255.0
+    network_gateway: 192.168.2.1
+    network_dns: 192.168.2.2
+    network_interface: enp2s0f1
+    pve_domain: flopo.retropetro.net
+    root_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    user_fullname: "Pofo Admin"
+    username: pofo14
+    user_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    timezone: "US/Eastern"
+    os_disk: ata-Samsung_SSD_860_EVO_500GB_S598NE0M803304V
+    github_username: "pofo14"
+
+  - pve_hostname: pve02
+    pve_ip: 192.168.2.22
+    network_mask: 255.255.255.0
+    network_gateway: 192.168.2.1
+    network_dns: 192.168.2.2
+    network_interface: enp0s31f6
+    pve_domain: flopo.retropetro.net
+    root_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    user_fullname: "Pofo Admin"
+    username: pofo14
+    user_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+    timezone: "US/Eastern"
+    os_disk: ata-SATA_SSD_18122112000139
+    github_username: "pofo14"
+  # - pve_hostname: pve03
+  #   pve_ip: 192.168.2.23
+  #   network_mask: 255.255.255.0
+  #   network_gateway: 192.168.2.1
+  #   network_dns: 192.168.2.2
+  #   pve_domain: flopo.retropetro.net
+  #   root_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+  #   user_fullname: "Pofo Admin"
+  #   username: pofo14
+  #   user_password_hash: "$6$e7pqDzubRiwcuXr/$UXzYpp7371rTigpT3N0bkI90T1sFmzt2FzxQUq9Gi.D0pZjgNdnze79FB9xjXs5mU9Qes0PiZ9VBRckOdw1tO1"
+  #   timezone: "US/Eastern"
+  #   os_disk:
+  #   github_username: "pofo14"
+
+# Local staging directory for generated preseed files
+preseed_staging_dir: "{{ playbook_dir }}/files/pxe/preseed"
+
+# Directory structure
+pxe_server_directories:
+  - path: "{{ pxe_server_http_root }}"
+    mode: "0755"
+  - path: "{{ pxe_server_http_root }}/preseed"
+    mode: "0755"
+
+## Ironic Badgetools Docker Compose Generator
+docker_compose_generator_output_path: /opt/appdata
+docker_compose_hostname: management
+appdata_path: /opt/appdata
+container_config_path: /config
+
+# geerlingguy.docker
+docker_edition: "ce"
+docker_packages_state: present
+docker_service_manage: true
+docker_service_state: started
+docker_service_enabled: true
+docker_restart_handler_state: restarted
+
+docker_install_compose_plugin: true
+docker_compose_package: docker-compose-plugin
+docker_compose_package_state: present
+
+docker_add_repo: true
+docker_repo_url: https://download.docker.com/linux
+
+docker_users_manage: true
+docker_users:
+  - pofo14

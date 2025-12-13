@@ -4,7 +4,7 @@
 
 # Global variables
 set local_server http://192.168.2.7:8080
-set debian_mirror http://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/debian-installer/amd64
+set debian_mirror http://deb.debian.org/debian/dists/trixie/main/installer-amd64/current/images/netboot/debian-installer/amd64
 
 :start
 menu Debian PVE Base Auto Install
@@ -12,7 +12,7 @@ item --gap -- -------------------------------- Rescue / Utilities --------------
 item system-rescue SystemRescueCD
 item tiny-core Tiny Core Linux
 item --gap -- -------------------------------- Proxmox VE Installation --------------------------------
-item pve2        Debian 12 - PVE2 Auto Install
+item pve2        Debian 13 - PVE Dev Preseed Auto Install
 item --gap -- --------------------------------- Other Boot Options ----------------------------------
 item shell       Drop to iPXE shell
 choose --default netbootxyz --timeout 30000 target && goto ${target}
@@ -22,11 +22,11 @@ set preseed_url ${local_server}/preseed/proxmox-pve-test.cfg
 goto debian_boot
 
 :pve1
-set preseed_url ${local_server}/preseed/proxmox-pve1.cfg
+set preseed_url ${local_server}/preseed/proxmox-pve01.cfg
 goto debian_boot
 
 :pve2
-set preseed_url ${local_server}/preseed/proxmox-pve2.cfg
+set preseed_url ${local_server}/preseed/proxmox-pve02.cfg
 goto debian_boot
 
 :system-rescue

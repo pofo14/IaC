@@ -1,34 +1,26 @@
----
-pve_hostname: "dev-pve01"
+######################## HOST VARIABLES #####################
+pve_hostname: "pve01"
+pve_domain: "flopo.retropetro.net"
+pve_ip: 192.168.2.21
+ansible_host: 192.168.2.21
 pve_gateway: "192.168.2.1"
-
-pve_ip: 192.168.2.98
-ansible_host: 192.168.2.98
-network_interface: ens18
-os_disk: scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
-
-pve_auth_debug: true
 
 #################### Cluster Configuration ####################
 # Proxmox Cluster Configuration
 pve_cluster_enabled: true
-pve_group: dev-pve
-pve_cluster_clustername: dev-pve
+pve_group: pve
+pve_cluster_clustername: pve
 pve_cluster_setup: create # This is the FIRST node - creates cluster
 
 #################### PHASE 1 Variables ##############################
 ###############   Network Setup - Create vmbr0   ####################
 #####################################################################
-interfaces_template: "{{ playbook_dir }}/templates/proxmox_node_network_interface.j2"
+interfaces_template: "{{ playbook_dir }}/tasks/templates/proxmox_node_network_interface.j2"
+network_interface: enp2s0f1
 
 #################### PHASE 2 Variables ##############################
 ###############   ZFS Disks and Pool Info    ########################
 #####################################################################
-# zfs_pool_name: "zfs01" # <- Your data pool name
-# zfs_disks:
-#   - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
-#   - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2"
-
 # zfs_detect
 zfs_detect_debug: true
 zfs_detect_pools:
@@ -42,36 +34,47 @@ create_zfs_pool_pools:
     filesystem_properties:
       compression: lz4
     disks:
-      - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
-      - "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2"
+      - /dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_0055074C188500046602
+      - /dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_A39A074C181000024869
+      - /dev/disk/by-id/nvme-TEAM_TM8FP6001T_TPBF2412270020501869
+      - /dev/disk/by-id/nvme-TEAM_TM8FP6001T_TPBF2412270020502003
 
 #################### lae.proxmox ##############################
 ###############   Install Variables    ########################
 ###############################################################
-pve_reboot_on_kernel_update: true
 pve_version: "9"
+pve_enable_repo_pve_no_subscription: true
+pve_reboot_on_kernel_update: true
 
 pve_datacenter_cfg:
   keyboard: en-us
   console: xterm
 
 # Hardware Passrough Settings
-pve_pcie_passthrough_enabled: false
-pve_iommu_passthrough_mode: false
+pve_pcie_passthrough_enabled: true
+pve_iommu_passthrough_mode: true
 pve_iommu_unsafe_interrupts: false
 pve_mediated_devices_enabled: false
 pve_pcie_ovmf_enabled: false
 pve_pcie_ignore_msrs: false
 pve_pcie_report_msrs: true
 
-pve_zfs_enabled: true
+pve_pci_device_ids:
+  - id: "1000:0087" # LSI SAS2308 (Fusion-MPT SAS-2)
+
+pve_vfio_blacklist_drivers:
+  - name: "mpt3sas" # driver for SAS2 HBAs; prevents host from claiming it
+
+#############################################################
+#################### Storage Configuration ##################
+#############################################################
+
 pve_zfs_create_volumes:
   - zfs01/iso
   - zfs01/template
   - zfs01/backup
   - zfs01/snippets
 
-# Proxmox Storage Configuration
 pve_storages:
   - name: zfs01
     type: zfspool
@@ -95,6 +98,9 @@ pve_storages:
     path: /zfs01/snippets
     content: ["snippets"]
 
+###########################################################
+############# User, Role and ACL Management ###############
+###########################################################
 pve_users:
   - name: root@pam
     email: "petroplex56@gmail.com"
@@ -164,6 +170,7 @@ pve_acls:
 proxmox_api_user: "{{ vault_proxmox_root_user }}"
 proxmox_api_password: "{{ vault_proxmox_root_password }}"
 
+# List of API tokens to create
 proxmox_api_tokens:
   - user: terraform-user
     realm: pve

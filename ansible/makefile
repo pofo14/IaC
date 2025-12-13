@@ -34,6 +34,8 @@ prod-truenas:
 prod-proxmox:
 	ansible-playbook site.yml -v -i ./inventories/production --limit proxmox --ask-become-pass
 
+
+########################## DEV PROXMOX CLUSTER ###################################
 dev-pve01-install:
 	ansible-playbook site.yml -v -i ./inventories/dev --limit dev-pve01.flopo.retropetro.net --extra-vars "pve_cluster_enabled=false"
 
@@ -47,18 +49,18 @@ dev-pve-update:
 	ansible-playbook site.yml -v -i ./inventories/dev --tags update_dev_pve
 	@echo "Dev Proxmox cluster setup complete!"
 
-# Convenience target for full initial setup
-dev-pve-setup:
-	dev-pve01-install dev-pve02-install dev-pve-update
-
+########################## PRODUCTION PROXMOX CLUSTER ###################################
 prod-pve1:
-	ansible-playbook site.yml -v -i ./inventories/production --limit pve1.flopo.retropetro.net --ask-become-pass
+	ansible-playbook site.yml -v -i ./inventories/production --limit pve01.flopo.retropetro.net
+
+prod-pve2:
+	ansible-playbook site.yml -v -i ./inventories/production --limit pve02.flopo.retropetro.net
 
 test-pve1:
 	ansible-playbook site.yml -v -i ./inventories/test --limit pve1 --ask-become-pass
 
 prod-management:
-	ansible-playbook site.yml -v -i ./inventories/production --limit management --ask-become-pass
+	ansible-playbook site.yml -v -i ./inventories/production --limit management
 
 test-truenas:
 	ansible-playbook site.yml -v -i ./inventories/test --limit test-truenas1.flopo.retropetro.net --ask-become-pass

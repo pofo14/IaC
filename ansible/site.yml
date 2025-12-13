@@ -149,9 +149,6 @@
     # - role: artis3n.tailscale  # Kept HEAD version (commented out)
     #   tags: tailscale
 
-# TODO: last clean run it doesn't look like pofo14 got added to docker group
-# TODO: Create plays for TrueNas to configuring NFS Shares, Users, and Groups
-# TODO: Create plays for proxmox host post install, creation of pci passthrough, etc
 
 - name: Configure TrueNAS Server
   hosts: truenas
@@ -306,17 +303,17 @@
     - role: create_zfs_pool
       tags: zfs
 
-    # # Phase 3: Configure Proxmox ZFS storage
-    # - role: lae.proxmox
-    #   vars:
-    #     # Skip non-ZFS operations that were already completed
-    #     pve_skip_subscription_check: true
-    #     pve_skip_firewall: true
-    #     pve_skip_kernel: true
-    #     pve_skip_meta_packages: true
-    #   tags: [proxmox, proxmox_zfs_config]
+    # Phase 3: Configure Proxmox ZFS storage
+    - role: lae.proxmox
+      vars:
+        # Skip non-ZFS operations that were already completed
+        pve_skip_subscription_check: true
+        pve_skip_firewall: true
+        pve_skip_kernel: true
+        pve_skip_meta_packages: true
+      tags: [proxmox, proxmox_zfs_config]
 
-  # Phase 3: Finalize Proxmox setup
+  # Phase 4: Create API Keys and store in vault
   tasks:
     - name: Create Proxmox API token for Terraform
       ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
@@ -373,15 +370,6 @@
       ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
       tags: api_token, proxmox
 
-# - name: Gather facts from all dev-pve cluster nodes
-#   hosts: dev-pve
-#   gather_facts: true
-#   tags: update_dev_pve
-#   tasks:
-#     - name: Ensure facts are gathered
-#       ansible.builtin.debug:
-#         msg: "Facts gathered for {{ inventory_hostname }}"
-
 - name: Update dev-pve Nodes
   hosts: dev-pve
   tags: update_dev_pve
@@ -389,20 +377,8 @@
   roles:
     - role: lae.proxmox
 
-- name: Configure test-pve1 Node
-  hosts: test-pve1
-  become: true
-
-  roles:
-    - role: geerlingguy.ntp
-      tags: base_setup
-    - role: lae.proxmox
-      tags: base_setup
-    # - role: install_fancontrol
-    #  tags: fan_control
-
-- name: Configure pve1 Node
-  hosts: pve1.flopo.retropetro.net
+- name: Install Proxmox on pve01 (Prod) INITIAL INSTALL
+  hosts: pve01.flopo.retropetro.net
   become: true
   pre_tasks:
     - name: Create Proxmox API token for Terraform
@@ -454,6 +430,49 @@
     #   ansible.builtin.import_tasks: tasks/proxmox_terraform_user.yml
     #   tags: [terraform, proxmox, ssh]
 
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
+      tags: api_token, proxmox
+
+- name: Install Proxmox on pve02 (Prod) INITIAL INSTALL
+  hosts: pve02.flopo.retropetro.net
+  tags: [initial_install]
+
+  pre_tasks:
+    - name: Create Proxmox API token for Terraform
+      ansible.builtin.import_tasks: tasks/proxmox_network_setup.yml
+      tags: network_setup, proxmox
+
+  roles:
+    - role: geerlingguy.ntp
+      tags: ntp
+
+    # Install Proxmox without ZFS configuration
+    - role: lae.proxmox
+      vars:
+        # Skip ZFS-related operations in first pass
+        pve_storages: []
+        pve_zfs_create_volumes: []
+      tags: [proxmox, proxmox_install]
+
+    # Phase 2: Set up ZFS
+    - role: zfs_detect
+      tags: zfs
+    - role: create_zfs_pool
+      tags: zfs
+
+  # Phase 3: Rerun Role to Configure Proxmox ZFS storage
+    - role: lae.proxmox
+      vars:
+        # Skip non-ZFS operations that were already completed
+        pve_skip_subscription_check: true
+        pve_skip_firewall: true
+        pve_skip_kernel: true
+        pve_skip_meta_packages: true
+      tags: [proxmox, proxmox_zfs_config]
+
+  # Phase 4: Create API Keys and store in vault
+  tasks:
     - name: Create Proxmox API token for Terraform
       ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
       tags: api_token, proxmox

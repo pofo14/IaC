@@ -1,0 +1,33 @@
+- name: Get active network interface
+  ansible.builtin.shell: |
+    ip route | grep default | awk '{print $5}' | head -1
+  register: detected_interface
+  changed_when: false
+
+- name: Set network_interface fact
+  ansible.builtin.set_fact:
+    network_interface: "{{ detected_interface.stdout }}"
+
+- name: Install bridge-utils
+  ansible.builtin.apt:
+    name: bridge-utils
+    state: present
+
+- name: Configure /etc/network/interfaces for Proxmox with vmbr0
+  ansible.builtin.template:
+    src: "proxmox_node_network_interface.j2"
+    dest: /etc/network/interfaces
+    mode: "0644"
+  register: _configure_interfaces
+
+- name: Restart networking service
+  ansible.builtin.systemd:
+    name: networking
+    state: restarted
+
+- name: Wait for network to be available
+  ansible.builtin.wait_for:
+    host: "{{ pve_ip }}"
+    port: 22
+    delay: 5
+    timeout: 60

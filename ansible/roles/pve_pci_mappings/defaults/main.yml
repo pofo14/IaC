@@ -1,8 +1,0 @@
----
-# Default variables for pve_pci_mappings role
-# Provide an example mapping; override in inventory/host_vars or play vars.
-
-pve_pci_mappings_list: []
-
-# If true, the role will create /etc/pve/datacenter.cfg when missing. Use with caution.
-pve_pci_mappings_force_create_datacenter_cfg: false

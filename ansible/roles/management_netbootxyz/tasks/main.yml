@@ -1,33 +1,59 @@
 ---
+- name: Generate preseed configuration files for PVE nodes
+  ansible.builtin.template:
+    src: "proxmox-pve.cfg.j2"
+    dest: "{{ preseed_staging_dir }}/proxmox-{{ item.pve_hostname }}.cfg"
+    mode: "0644"
+  loop: "{{ pve_nodes }}"
+  vars:
+    pve_hostname: "{{ item.pve_hostname }}"
+    pve_ip: "{{ item.pve_ip }}"
+    network_mask: "{{ item.network_mask }}"
+    network_gateway: "{{ item.network_gateway }}"
+    network_dns: "{{ item.network_dns }}"
+    network_interface: "{{ item.network_interface }}"
+    pve_domain: "{{ item.pve_domain }}"
+    root_password_hash: "{{ item.root_password_hash }}"
+    user_fullname: "{{ item.user_fullname }}"
+    username: "{{ item.username }}"
+    user_password_hash: "{{ item.user_password_hash }}"
+    timezone: "{{ item.timezone }}"
+    os_disk: "{{ item.os_disk }}"
+    github_username: "{{ item.github_username }}"
+  delegate_to: localhost
+  run_once: true
+  tags:
+    - generate-preseed
+
 - name: Ensure NetbootXYZ Root Directory Exists
   ansible.builtin.file:
     path: "{{ docker_compose_generator_output_path }}/netboot_xyz"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Ensure Config Directory Exists
   ansible.builtin.file:
     path: "{{ docker_compose_generator_output_path }}/netboot_xyz/config"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Ensure Menus Directory Exists
   ansible.builtin.file:
     path: "{{ docker_compose_generator_output_path }}/netboot_xyz/config/menus"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Ensure Assets Directory Exists
   ansible.builtin.file:
     path: "{{ docker_compose_generator_output_path }}/netboot_xyz/assets"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Ensure Preseed Directory Exists
   ansible.builtin.file:
     path: "{{ docker_compose_generator_output_path }}/netboot_xyz/assets/preseed"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Synchronize PXE TFTP Files
   ansible.posix.synchronize:
@@ -46,18 +72,6 @@
     rsync_opts:
       - "--chmod=D0755,F0644"
   notify: Force Restart NetbootXYZ Container
-
-# - name: Generate preseed configuration files
-#   template:
-#     src: "pxe/preseed/proxmox-pve.cfg.j2"
-#     dest: "/var/www/html/pxe/preseed/{{ inventory_hostname }}.cfg"
-#     owner: www-data
-#     group: www-data
-#     mode: '0644'
-#   delegate_to: "{{ netboot_server }}"
-#   tags:
-#     - preseed
-#     - config
 
 # - name: Generate iPXE boot files
 #   template:
