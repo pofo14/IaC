@@ -7,7 +7,7 @@ pve_gateway: "192.168.2.1"
 
 #################### Cluster Configuration ####################
 # Proxmox Cluster Configuration
-pve_cluster_enabled: false
+pve_cluster_enabled: true
 pve_group: pve
 pve_cluster_clustername: pve
 pve_cluster_setup: join # This is the FIRST node - creates cluster
@@ -62,10 +62,6 @@ pve_pcie_report_msrs: true
 
 # pve_vfio_blacklist_drivers:
 #   - name: "mpt2sas" # driver for SAS2 HBAs; prevents host from claiming it
-
-# # My Custom PCIe Mappings
-# pve_pci_mappings:
-#   - { name: "hba_broadcom_1", host: "pve1", path: "0000:82:00.0" }
 
 #############################################################
 #################### Storage Configuration ##################
@@ -152,6 +148,8 @@ pve_roles:
       - VM.Config.Options
       - VM.Config.Cloudinit
       - VM.Console
+      - VM.GuestAgent.Audit
+      - VM.GuestAgent.Unrestricted
       - VM.PowerMgmt
       - VM.Snapshot
 

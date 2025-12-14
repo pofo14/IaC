@@ -1,9 +1,0 @@
----
-# Encrypted variables for utils group
-# Use ansible-vault edit this file to add encrypted variables
-
-# Media download user password
-mediadl_password: "your_encrypted_password"
-
-# Tailscale auth key
-tailscale_authkey_vault: "tskey-client-kw9sTXjkYb11CNTRL-mUgGYtU8tMaTrHUVdc4VJae7BshKPokwi"

@@ -14,6 +14,7 @@ roles:
   - src: geerlingguy.ntp
   - src: ironicbadger.snapraid
   - src: ironicbadger.docker_compose_generator
+    version: v2.1.0
   - src: grog.package
   - src: kevincoakley.disk
   - src: ryandaniels.create_users
@@ -25,3 +26,4 @@ roles:
 
 collections:
   - prometheus.prometheus
+  - arensb.truenas

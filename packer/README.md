@@ -70,15 +70,15 @@ Every build uses:
 
 ### Build TrueNAS
 
-make truenas VERSION=25.04 ENV=prod NODE=pve1 VMID=9001
+make truenas VERSION=25.04 ENV=prod NODE=pve01 VMID=9001
 
 ### Build OPNsense
 
-make opnsense VERSION=25.7 ENV=prod NODE=pve1 VMID=9002
+make opnsense VERSION=25.7 ENV=prod NODE=pve01 VMID=9002
 
 ### Build Ubuntu
 
-make ubuntu VERSION=24.04 ENV=prod NODE=pve1 VMID=9003
+make ubuntu VERSION=24.04 ENV=prod NODE=pve01 VMID=9003
 
 ---
 

@@ -1,9 +1,4 @@
 ---
-- name: Configure TrueNAS pools
-  ansible.builtin.include_tasks: pools.yml
-  tags: [truenas, pools]
-  when: truenas_pools is defined and truenas_pools | length > 0
-
 - name: Configure TrueNAS hostname
   ansible.builtin.include_tasks: hostname.yml
   tags: [truenas, hostname]

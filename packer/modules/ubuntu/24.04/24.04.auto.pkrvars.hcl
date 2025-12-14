@@ -1,5 +1,5 @@
 ubuntu_version        = "24.04"
-#iso_file              = "iso/ubuntu-24.0.3-live-server-amd64.iso"
+iso_file              = "iso/ubuntu-24.0.3-live-server-amd64.iso"
 iso_storage_pool      = "zfs01"
 default_ip           = "dhcp"
 

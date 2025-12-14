@@ -5,9 +5,8 @@
   become: true
 
   roles:
-  #  - role: joenyland.plexmediaserver
+    - role: joenyland.plexmediaserver
     - role: Oefenweb.nfs_client
-    - role: geerlingguy.node_exporter
 
   tasks:
     - name: Include create_users tasks
@@ -22,15 +21,15 @@
       ansible.builtin.include_tasks: tasks/create_users_nas.yml
 
   roles:
-    - role: grog.package
+  #  - role: grog.package
     - role: ironicbadger.snapraid
       tags: snapraid
     - role: tigattack.mergerfs
     - role: geerlingguy.docker
     - role: geerlingguy.sanoid
     - role: ironicbadger.docker_compose_generator
-    - role: geerlingguy.node_exporter
-    - role: prometheus.prometheus.smartctl_exporter
+#    - role: geerlingguy.node_exporter
+#    - role: prometheus.prometheus.smartctl_exporter
 
 - name: Configure Docker Host server
   hosts: docker
@@ -41,10 +40,10 @@
       ansible.builtin.include_tasks: tasks/create_users_docker.yml
 
   roles:
-    - role: grog.package
+   # - role: grog.package
     - role: geerlingguy.docker
     - role: ironicbadger.docker_compose_generator
-    - role: geerlingguy.node_exporter
+#    - role: geerlingguy.node_exporter
     - role: Oefenweb.nfs_client
 
 - name: Configure Nextcloud Server
@@ -163,21 +162,9 @@
   roles:
     - role: truenas
       tags: truenas
-      # This role uses API, ensure its become state is false, which it inherits from play
-
-    - name: Ensure Docker is installed on TrueNAS Scale # Added name for clarity
-      role: geerlingguy.docker
-      become: true # geerlingguy.docker usually needs root
-      tags:
-        - docker
-        - truenas_monitoring
-
-    - role: truenas_monitoring_exporters
-      tags: truenas_monitoring
-      # This role runs docker_compose. If the Ansible user is part of the
-      # docker group (managed by geerlingguy.docker), become: false (inherited) is fine.
-      # If issues arise with permissions (e.g. writing to /opt or docker socket),
-      # add 'become: true' to this role.
+      # Uses arensb.truenas collection for API calls
+      # Manages: hostname, domain, services, datasets, NFS shares
+      # Does NOT manage: pools (manual via UI)
 
 - name: Configure Test-TrueNAS1 Server
   hosts: test-truenas1.flopo.retropetro.net
@@ -377,6 +364,13 @@
   roles:
     - role: lae.proxmox
 
+- name: Update pve Nodes (Prod)
+  hosts: pve
+  tags: update_pve
+
+  roles:
+    - role: lae.proxmox
+
 - name: Install Proxmox on pve01 (Prod) INITIAL INSTALL
   hosts: pve01.flopo.retropetro.net
   become: true
@@ -413,23 +407,10 @@
         pve_skip_meta_packages: true
       tags: [proxmox, proxmox_zfs_config]
 
-    # Phase 4: Finalize Proxmox setup
-    - role: pve_pci_mappings
-      vars:
-        # optional: override delegate host, or leave unset to use first host in group 'pve'
-        # pve_delegate: pve1
-        # Allow creation of datacenter.cfg if it doesn't exist
-        pve_pci_mappings_force_create_datacenter_cfg: true
-      tags: pci_mappings
-
     - role: install_fancontrol
       tags: fancontrol
 
   tasks:
-    # - name: Create Proxmox terraform user for SSH access
-    #   ansible.builtin.import_tasks: tasks/proxmox_terraform_user.yml
-    #   tags: [terraform, proxmox, ssh]
-
     - name: Create Proxmox API token for Terraform
       ansible.builtin.import_tasks: tasks/proxmox_api_token.yml
       tags: api_token, proxmox
@@ -483,6 +464,34 @@
 
   roles:
     - role: geerlingguy.docker
-    - role: geerlingguy.node_exporter
     - role: ironicbadger.docker_compose_generator
     - role: management_netbootxyz
+
+# - name: Configure Monitoring Exporters
+#   hosts: monitoring
+#   become: true
+#   tags: monitoring
+
+#   pre_tasks:
+#     - name: Set monitoring facts for TrueNAS
+#       ansible.builtin.set_fact:
+#         use_truenas_docker: true
+#         skip_system_exporters: true
+#       when: "'truenas' in group_names"
+
+#   roles:
+#     # System-level exporters (for non-TrueNAS hosts)
+#     - role: geerlingguy.node_exporter
+#       when: not (use_truenas_docker | default(false))
+#       tags: node_exporter
+
+#     - role: prometheus.prometheus.smartctl_exporter
+#       when:
+#         - not (use_truenas_docker | default(false))
+#         - ansible_facts['devices'] | length > 0
+#       tags: smartctl_exporter
+
+#     # TrueNAS-specific monitoring (uses Docker)
+#     - role: truenas_monitoring_exporters
+#       when: use_truenas_docker | default(false)
+#       tags: truenas_monitoring

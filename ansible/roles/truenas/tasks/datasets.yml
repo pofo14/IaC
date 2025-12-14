@@ -1,70 +1,41 @@
 ---
-- name: Ensure monitoring dataset exists
-  arensb.truenas.dataset:
-    name: "{{ truenas_monitoring_dataset_name }}"
+# Create all TrueNAS datasets using arensb.truenas collection
+- name: Create TrueNAS datasets
+  arensb.truenas.filesystem:
+    name: "{{ item.path }}"
     state: present
-  # Assuming API connection details (user, password, host) are handled globally
-  # or by environment variables for the arensb.truenas collection.
-  # Add delegate_to: localhost and connection params if needed,
-  # similar to how the URI module is used in the original file,
-  # though arensb.truenas modules usually pick these from provider vars or env.
+    # Set common ZFS properties for better performance
+    compression: "{{ item.compression | default('lz4') }}"
+    atime: "{{ item.atime | default('off') }}"
+    recordsize: "{{ item.recordsize | default(omit) }}"
+    sync: "{{ item.sync | default(omit) }}"
+    quota: "{{ item.quota | default(omit) }}"
+  loop: "{{ truenas_datasets }}"
+  when: truenas_datasets is defined and truenas_datasets | length > 0
 
-- name: Manage datasets and directories
-  block:
-    - name: Verify datasets exist
-      ansible.builtin.uri:
-        url: "https://{{ ansible_host }}/api/v2.0/pool/dataset/id/{{ item.path | basename | regex_replace('/', '%2F') }}"
-        method: GET
-        user: "{{ ansible_user }}"
-        password: "{{ ansible_password }}"
-        force_basic_auth: true
-        validate_certs: false
-        status_code: [200, 404]
-      register: truenas_dataset_status
-      loop: "{{ truenas_datasets }}"
-      delegate_to: localhost
-
-    - name: Create directories within datasets
-      ansible.builtin.shell: >
-        ssh {{ ansible_user }}@{{ ansible_host }} "mkdir -p '{{ item.0.path }}/{{ item.1.path }}' &&
-        chown '{{ item.1.owner }}:{{ item.1.group }}' '{{ item.0.path }}/{{ item.1.path }}' &&
-        chmod {{ item.1.mode }} '{{ item.0.path }}/{{ item.1.path }}'"
-      args:
-        executable: /bin/bash
-      loop: "{{ truenas_datasets | subelements('directories') }}"
-      when: truenas_dataset_status.results[ansible_loop.index0].status == 200
-      changed_when: true
-      delegate_to: localhost
-
-  rescue:
-    - name: API Method for directory management
-      ansible.builtin.uri:
-        url: "https://{{ ansible_host }}/api/v2.0/filesystem/stat/{{ item.0.path | urlencode }}/{{ item.1.path | urlencode }}"
-        method: GET
-        user: "{{ ansible_user }}"
-        password: "{{ ansible_password }}"
-        force_basic_auth: true
-        validate_certs: false
-        status_code: [200, 404]
-      register: directory_status
-      loop: "{{ truenas_datasets|subelements('directories') }}"
-      delegate_to: localhost
-
-    - name: Create directories via API
-      ansible.builtin.uri:
-        url: "https://{{ ansible_host }}/api/v2.0/filesystem"
-        method: POST
-        user: "{{ ansible_user }}"
-        password: "{{ ansible_password }}"
-        force_basic_auth: true
-        body_format: json
-        body:
-          path: "{{ item.0.path }}/{{ item.1.path }}"
-          owner: "{{ item.1.owner }}"
-          group: "{{ item.1.group }}"
-          mode: "{{ item.1.mode }}"
-          options: {"recursive": true}
-        validate_certs: false
-      loop: "{{ truenas_datasets|subelements('directories') }}"
-      delegate_to: localhost
-      when: directory_status.results[ansible_loop.index0].status == 404
+# Create subdirectories and set permissions within datasets
+# Note: arensb.truenas.filesystem doesn't handle directory permissions,
+# so we use TrueNAS API's filesystem/setperm endpoint
+- name: Create directories and set permissions within datasets
+  ansible.builtin.uri:
+    url: "https://{{ ansible_host }}/api/v2.0/filesystem/setperm"
+    method: POST
+    user: "{{ ansible_user }}"
+    password: "{{ ansible_password }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      path: "{{ item.0.path }}/{{ item.1.path }}"
+      mode: "{{ item.1.mode }}"
+      user: "{{ item.1.owner }}"
+      group: "{{ item.1.group }}"
+      options:
+        recursive: true
+    validate_certs: false
+    status_code: [200]
+  loop: "{{ truenas_datasets | subelements('directories', skip_missing=True) }}"
+  when:
+    - truenas_datasets is defined
+    - item.1.path is defined
+    - item.1.path | length > 0
+  delegate_to: localhost

@@ -1,0 +1,7 @@
+environment = "prod"
+template_name_prefix = "prod-"
+proxmox_node = "pve02"
+storage_pool_zfs = "zfs01"
+iso_storage_pool = "iso"
+proxmox_api_url = "https://pve02.flopo.retropetro.net:8006/api2/json"
+node_suffix = "pve02"

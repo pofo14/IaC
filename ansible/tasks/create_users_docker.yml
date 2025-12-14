@@ -1,0 +1,12 @@
+# code: language=ansible
+
+---
+- name: Add pofo14 to Media Groups
+  ansible.builtin.user:
+    name: pofo14
+    append: true
+    group: pofo14
+    update_password: on_create
+    password: "{{ vault_pofo14_user_password | password_hash('sha512') }}"
+    groups:
+      - sudo

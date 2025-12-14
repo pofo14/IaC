@@ -45,7 +45,7 @@ source "proxmox-iso" "truenas" {
 }
 
 locals {
-  iso_file = "${var.iso_storage_pool}:iso/TrueNAS-SCALE-25.04.2.1.iso"
+  iso_file = "${var.iso_storage_pool}:iso/TrueNAS-SCALE-25.10.1.iso"
 
   boot_command = [
     # Wait for installer to start
@@ -80,7 +80,7 @@ locals {
     # wait for reboot, 75 seconds
     "<wait240>",
 
-    # At console menu, select option 9 (Shell)
+    # At console menu, select option 8 (Shell)
     "${var.truenas_shell_option}<enter>",
     # Wait for shell prompt
     "<wait5>",

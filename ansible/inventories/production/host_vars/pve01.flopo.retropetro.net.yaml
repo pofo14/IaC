@@ -16,7 +16,7 @@ pve_cluster_setup: create # This is the FIRST node - creates cluster
 ###############   Network Setup - Create vmbr0   ####################
 #####################################################################
 interfaces_template: "{{ playbook_dir }}/tasks/templates/proxmox_node_network_interface.j2"
-network_interface: enp2s0f1
+network_interface: enp2s0f0
 
 #################### PHASE 2 Variables ##############################
 ###############   ZFS Disks and Pool Info    ########################
@@ -150,6 +150,8 @@ pve_roles:
       - VM.Config.Options
       - VM.Config.Cloudinit
       - VM.Console
+      - VM.GuestAgent.Audit
+      - VM.GuestAgent.Unrestricted
       - VM.PowerMgmt
       - VM.Snapshot
 

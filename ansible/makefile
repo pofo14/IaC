@@ -46,15 +46,19 @@ dev-pve-install:
 	ansible-playbook site.yml -v -i ./inventories/dev --limit dev-pve
 
 dev-pve-update:
-	ansible-playbook site.yml -v -i ./inventories/dev --tags update_dev_pve
+	ansible-playbook site.yml -v -i ./inventories/dev --limit dev-pve --tags update_dev_pve
 	@echo "Dev Proxmox cluster setup complete!"
 
 ########################## PRODUCTION PROXMOX CLUSTER ###################################
-prod-pve1:
+prod-pve01:
 	ansible-playbook site.yml -v -i ./inventories/production --limit pve01.flopo.retropetro.net
 
-prod-pve2:
+prod-pve02:
 	ansible-playbook site.yml -v -i ./inventories/production --limit pve02.flopo.retropetro.net
+
+prod-pve-update:
+	ansible-playbook site.yml -v -i ./inventories/production --limit pve --tags update_pve
+	@echo "Production Proxmox cluster setup complete!"
 
 test-pve1:
 	ansible-playbook site.yml -v -i ./inventories/test --limit pve1 --ask-become-pass
@@ -70,8 +74,11 @@ check-vault:
 
 ######### Utility Calls #######
 # Manage ISOs for specific hosts
-manage-isos-pve1:
-	ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve1" --ask-become-pass
+manage-isos-pve01:
+	ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve01.flopo.retropetro.net" --ask-become-pass
+
+manage-isos-pve02:
+	ansible-playbook -i ./inventories/production ./playbooks/manage_proxmox_isos.yml -e "target_hosts=pve02.flopo.retropetro.net"
 
 # Updates prometheus target json file
 update_prometheus:

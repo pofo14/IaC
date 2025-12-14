@@ -62,8 +62,8 @@ source "proxmox-iso" "ubuntu" {
 
     cd_content = {
       "meta-data" = file("${path.cwd}/modules/ubuntu/24.04/cloud-init/meta-data")
-      "user-data" = file("${path.cwd}/modules/ubuntu/24.04/cloud-init/user-data")
-      #"user-data" = local.user_data_content
+      #"user-data" = file("${path.cwd}/modules/ubuntu/24.04/cloud-init/user-data")
+      "user-data" = local.user_data_content
     }
     cd_label = "cidata"
     unmount  = true

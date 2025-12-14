@@ -17,9 +17,9 @@
     "--dns=192.168.2.2",
     "--dns=8.8.8.8",
     "--dns=1.1.1.1",
-    "--add-host=pve1.flopo.retropetro.net:192.168.2.20",
-    "--add-host=pve2.flopo.retropetro.net:192.168.2.21",
-    "--add-host=pve3.flopo.retropetro.net:192.168.2.22",
+    "--add-host=pve01.flopo.retropetro.net:192.168.2.21",
+    "--add-host=pve02.flopo.retropetro.net:192.168.2.22",
+    "--add-host=pve03.flopo.retropetro.net:192.168.2.23",
     "--add-host=management.flopo.retropetro.net:192.168.2.7"
   ],
   "remoteUser": "vscode",

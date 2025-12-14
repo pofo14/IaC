@@ -18,11 +18,11 @@ docker.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.
 utils.flopo.retropetro.net  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
 management.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
 
-[monitoring]
-docker.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible
-utils.flopo.retropetro.net  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
-test-truenas.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible
-truenas1.flopo.retropetro.net  ansible_user=truenas_admin
+; [monitoring]
+; docker.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible
+; utils.flopo.retropetro.net  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
+; test-truenas.flopo.retropetro.net ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/ansible
+; truenas1.flopo.retropetro.net  ansible_user=truenas_admin
 
 [nextcloud]
 192.168.2.6  ansible_user=pofo14 ansible_ssh_private_key_file=~/.ssh/id_ed25519
@@ -32,8 +32,8 @@ pihole01.flopo.retropetro.net  ansible_host=192.168.2.2 ansible_user=root ansibl
 pihole02.flopo.retropetro.net  ansible_host=192.168.2.2 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
 
 [pve]
-#pve01.flopo.retropetro.net ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
-pve02.flopo.retropetro.net  ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
+pve01.flopo.retropetro.net ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
+pve02.flopo.retropetro.net ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
 
 # will chang to pxe
 [management]
