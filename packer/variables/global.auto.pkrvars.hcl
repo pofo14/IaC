@@ -9,7 +9,7 @@ memory = 8192
 
 # Default disk settings used by most builds
 disk_storage = "zfs01"
-disk_size_gb = 32
+#disk_size_gb = 32
 
 # Default network adapter bridge
 network_bridge = "vmbr0"

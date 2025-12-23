@@ -1,31 +1,97 @@
-pihole_dns_dns:
-  - { ip: 192.168.2.2, domain: pihole.flopo.retropetro.net }
-  - { ip: 192.168.2.3, domain: nas.flopo.retropetro.net }
-  - { ip: 192.168.2.4, domain: proxmox.flopo.retropetro.net }
-  - { ip: 192.168.2.5, domain: plex.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: utils.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: radarr.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: prowlarr.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: portainer.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: qbittorrent.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: traefik.flopo.retropetro.net }
-  - { ip: 192.168.2.10, domain: sonarr.flopo.retropetro.net }
-  - { ip: 192.168.2.7, domain: management.flopo.retropetro.net }
-  - { ip: 192.168.2.30, domain: test-pve1.flopo.retropetro.net }
-  - { ip: 192.168.2.20, domain: pve1.flopo.retropetro.net }
-  - { ip: 192.168.2.25, domain: truenas1.flopo.retropetro.net }
+---
+# ============================================================================
+# Pi-hole Configuration - sbarbett.pihole_ansible
+# ============================================================================
+# This configuration uses the Pi-hole API (via sbarbett.pihole_ansible role)
+# for managing blocklists. Changes are applied via API and reflected in the UI.
 
-# Transform the dns_entries into the format required by sixteenone.pihole-dns
-# pihole_dns_dns: >-
-#   {{
-#     dns_entries.hosts | map('combine',
-#       {'domain': '{{ item.name }}.' + dns_entries.base_domain},
-#       {'ip': '{{ item.ip }}'}
-#     ) | list
-#   }}
+# Pi-hole admin password (set during installation, used for API auth)
+# IMPORTANT: Value should come from vault
+pihole_admin_password: "{{ vault_pihole_admin_password }}"
 
-# If you need CNAME records, you can define them here
-# pihole_dns_cname: []
-  # Example if you need CNAMEs:
-  # - domain: www.flopo.retropetro.net
-  #   target: utils.flopo.retropetro.net
+# ============================================================================
+# Pi-hole API hosts configuration
+# During installation, pihole_hosts is set to localhost with the admin password
+# After installation, we define the actual Pi-hole instances to manage via API
+# ============================================================================
+pihole_hosts:
+  - name: "http://10.10.10.41"
+    password: "{{ pihole_admin_password }}"
+  - name: "http://10.10.10.42"
+    password: "{{ pihole_admin_password }}"
+
+# ============================================================================
+# Pi-hole blocklists (managed via API)
+# ============================================================================
+pihole_lists:
+  - address: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+    type: "block"
+    comment: "Steven Black hosts (default)"
+    enabled: true
+    state: present
+  - address: "https://adaway.org/hosts.txt"
+    type: "block"
+    comment: "AdAway list"
+    enabled: true
+    state: present
+  - address: "https://v.firebog.net/hosts/lists.php?type=tick"
+    type: "block"
+    comment: "Firebog tick list (safe)"
+    enabled: true
+    state: present
+
+# ============================================================================
+# Local DNS Records Configuration - sbarbett.pihole.manage_local_records
+# ============================================================================
+pihole_records:
+  - name: "stepca.flopo.retropetro.net"
+    type: A
+    data: "10.10.10.30"
+    state: present
+  - name: "pihole02.flopo.retropetro.net"
+    type: A
+    data: "10.10.10.42"
+    state: present
+  - name: "pxe.flopo.retropetro.net"
+    type: A
+    data: "10.10.10.50"
+    state: present
+  - name: "files.flopo.retropetro.net"
+    type: A
+    data: "10.10.20.103"
+    state: present
+
+# ============================================================================
+# Pi-hole Installation Configuration - pihole_install role
+# ============================================================================
+
+# Admin users with access to Pi-hole group
+pihole_admin_users:
+  - pofo14
+
+# Extra TOML configuration (beyond the basic pihole_install template)
+# This gets appended to /etc/pihole/pihole.toml
+pihole_toml_extra: |
+  # DNS Configuration
+  [dns]
+  blocking_enabled = true
+
+  # dnsmasq configuration for local DNS records
+  [misc]
+  etc_dnsmasq_d = true
+
+# ============================================================================
+# Upstream DNS Configuration (via API)
+# ============================================================================
+pihole_upstream_servers:
+  - "192.168.2.1"
+
+# ============================================================================
+# Conditional Forwarding Configuration
+# Allows local DNS records for specific domains to be resolved to a specific upstream server
+# ============================================================================
+pihole_conditional_forwarding:
+  enabled: true
+  cidr: "192.168.2.0/24"
+  ip: "192.168.2.1"
+  domain: "flopo.retropetro.net"

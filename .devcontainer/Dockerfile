@@ -27,7 +27,8 @@ RUN pip3 install --break-system-packages \
    ansible-lint==24.7.0 \
    pre-commit==3.7.1 \
    detect-secrets \
-   jmespath
+   jmespath \
+   "git+https://github.com/pofo14/pihole6api.git@fix-list-type-query-param#egg=pihole6api"
 
 # Terraform MCP server (specialized tool)
 RUN curl -L https://github.com/hashicorp/terraform-mcp-server/releases/latest/download/terraform-mcp-server_linux_amd64 \

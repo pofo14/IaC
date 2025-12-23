@@ -18,6 +18,7 @@ source "proxmox-iso" "truenas" {
   cores      = var.cores
   sockets    = var.sockets
   cpu_type   = "host"
+  machine    = "q35"  # Required for PCI device mappings in Proxmox 9
 
   scsi_controller = "virtio-scsi-single"
 

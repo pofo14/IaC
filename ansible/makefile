@@ -25,8 +25,25 @@ prod-utils:
 prod-utils-tags:
 	ansible-playbook site.yml -v -i ./inventories/production --limit utils --tags compose --ask-become-pass
 
-prod-pihole:
-	ansible-playbook site.yml -v -i ./inventories/production --limit pihole --ask-become-pass
+## ======================== PIHOLE TARGETS ======================== ##
+.PHONY: prod-pihole-install prod-pihole-config prod-pihole-update prod-pihole
+
+.PHONY: dev-pihole-config
+
+prod-pihole-install:
+	ansible-playbook -i ./inventories/production ./playbooks/infrastructure/pihole-install.yml --limit pihole -v
+
+prod-pihole-config:
+	ansible-playbook -i ./inventories/production ./playbooks/infrastructure/pihole-config.yml --limit pihole
+
+dev-pihole-config:
+	ansible-playbook -i ./inventories/dev ./playbooks/infrastructure/pihole-config.yml --limit pihole
+
+prod-pihole-update:
+	ansible-playbook -i ./inventories/production ./playbooks/updates/pihole-update.yml --limit pihole -v
+
+# Backward compatibility
+prod-pihole: prod-pihole-install
 
 prod-truenas:
 	ansible-playbook site.yml -v -i ./inventories/production --limit truenas --ask-become-pass

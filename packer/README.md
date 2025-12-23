@@ -70,7 +70,7 @@ Every build uses:
 
 ### Build TrueNAS
 
-make truenas VERSION=25.04 ENV=prod NODE=pve01 VMID=9001
+make truenas VERSION=25.10 ENV=prod NODE=pve01 VMID=9001
 
 ### Build OPNsense
 

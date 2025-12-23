@@ -1,0 +1,26 @@
+---
+# Pi-hole maintenance updates
+- name: Update Pi-hole host OS and Pi-hole gravity
+  hosts: pihole
+  become: true
+  tags:
+    - pihole
+    - update
+    - maintenance
+
+  tasks:
+    - name: Update and upgrade packages
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: yes
+      register: apt_result
+
+    - name: Refresh Pi-hole gravity database
+      ansible.builtin.command: pihole -g
+      register: gravity_update
+      changed_when: false
+
+    - name: Restart Pi-hole FTL service
+      ansible.builtin.service:
+        name: pihole-FTL
+        state: restarted

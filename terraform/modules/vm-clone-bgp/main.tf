@@ -1,9 +1,9 @@
 resource "proxmox_virtual_environment_vm" "vm_clone" {
 
-  name      = var.hostname
-  node_name = var.proxmox_host
-  tags      = length(var.tags) > 0 ? var.tags : ["default-tag"]
-
+  name        = var.hostname
+  node_name   = var.proxmox_host
+  tags        = length(var.tags) > 0 ? var.tags : ["default-tag"]
+  vm_id       = var.vm_id # null = auto-assign next available ID
   machine     = var.machine
   bios        = var.bios
   description = var.description
@@ -14,8 +14,13 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
     full         = true
   }
 
+  # Explicitly set boot order - critical when PCI passthrough devices are present
+  # Boot from VM's disk first, not from PCI-attached disks (like HBA's drives)
+  boot_order = ["scsi0"]
+
   agent {
-    enabled = true
+    enabled = var.qemu_guest_agent
+    timeout = "300s"
   }
 
   cpu {
@@ -46,25 +51,32 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
       device  = "hostpci${hostpci.key}"
       mapping = hostpci.value
       pcie    = true
-      rombar  = true
+      rombar  = var.pci_passthrough_options.rombar
+      xvga    = var.pci_passthrough_options.xvga
     }
   }
 
-  # # Override the template/rootfs disksize from template, if different
-  disk {
-    backup       = true
-    datastore_id = var.storage_pool
-    discard      = "on"
-    interface    = "scsi0" # ← Same interface as template
-    iothread     = true
-    replicate    = true
-    size         = var.disksize # ← This will RESIZE the template's disk
-    ssd          = true
+  # Disk configuration - only add disk block if NOT skipping (i.e., for non-template VMs)
+  # When skip_disk_config=true, the clone will use the template's disk as-is
+  # When skip_disk_config=false, this block creates/resizes the disk
+  dynamic "disk" {
+    for_each = var.skip_disk_config ? [] : [1]
+    content {
+      backup       = true
+      datastore_id = var.storage_pool
+      discard      = "on"
+      interface    = "scsi0"
+      iothread     = true
+      replicate    = true
+      size         = var.disksize
+      ssd          = true
+    }
   }
 
   # Add an additional disk beyond the template's disk if requested
+  # Also skip if skip_disk_config is true (pre-installed templates)
   dynamic "disk" {
-    for_each = var.add_extra_disk ? var.extra_disks : []
+    for_each = (var.skip_disk_config || !var.add_extra_disk) ? [] : var.extra_disks
     content {
       aio          = "io_uring"
       backup       = true
@@ -114,10 +126,11 @@ resource "proxmox_virtual_environment_vm" "vm_clone" {
   }
 
   network_device {
-    bridge = "vmbr0"
+    bridge  = "vmbr0"
+    vlan_id = var.vlan_tag != 0 ? var.vlan_tag : null
   }
 
-  depends_on = [proxmox_virtual_environment_file.user_data_cloud_config]
+  # Implicit dependency on cloud-init file through user_data_file_id reference
 }
 
 # Only create cloud-init file if content is provided

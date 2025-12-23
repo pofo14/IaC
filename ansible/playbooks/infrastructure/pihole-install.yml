@@ -1,0 +1,49 @@
+---
+# Pi-hole initial installation and configuration
+- name: Install and configure Pi-hole
+  hosts: pihole
+  become: true
+  tags:
+    - pihole
+    - install
+
+  roles:
+    # Stage 1: Base installation (user/group, prerequisites, unattended install)
+    - role: pihole_install
+
+  # tasks:
+  #   # Ensure Pi-hole FTL is ready before API calls
+  #   - name: Restart Pi-hole FTL and wait for API
+  #     ansible.builtin.service:
+  #       name: pihole-FTL
+  #       state: restarted
+
+    # - name: Ensure pihole6api is installed on the controller (for API config)
+    #   ansible.builtin.pip:
+    #     name: pihole6api
+    #     state: present
+    #     extra_args: --user
+    #   delegate_to: localhost
+    #   run_once: true
+    #   become: false
+
+    # - name: Wait for Pi-hole API to be ready
+    #   ansible.builtin.uri:
+    #     url: "http://localhost/admin/api.php"
+    #     status_code: 200
+    #   register: api_check
+    #   failed_when: false
+    #   retries: 10
+    #   delay: 3
+    #   until: api_check.status is defined and api_check.status == 200
+
+    # Stage 2: Configuration via Pi-hole API (blocklists, allow lists, settings)
+    # - name: Apply blocklists via API
+    #   ansible.builtin.include_role:
+    #     name: sbarbett.pihole.manage_lists
+    #     apply:
+    #       delegate_to: localhost
+    #       become: false
+    #       no_log: true
+    #   run_once: true
+    #   tags: pihole_config

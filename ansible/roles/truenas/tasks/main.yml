@@ -1,4 +1,9 @@
 ---
+- name: Setup TrueNAS API key (pre-task)
+  ansible.builtin.include_tasks: api_key_setup.yml
+  tags: [truenas, api_key]
+  run_once: true
+
 - name: Configure TrueNAS hostname
   ansible.builtin.include_tasks: hostname.yml
   tags: [truenas, hostname]

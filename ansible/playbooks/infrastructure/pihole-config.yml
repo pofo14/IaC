@@ -1,0 +1,88 @@
+---
+# # Pi-hole configuration only (no installation). Intended for a manually-installed Pi-hole VM.
+# - name: Configure Pi-hole via API
+#   hosts: pihole
+#   gather_facts: false
+#   become: false
+#   tags:
+#     - pihole
+#     - config
+
+#   roles:
+#     - role: sbarbett.pihole.manage_lists
+#       delegate_to: localhost
+#       run_once: true
+#       tags: pihole_config
+
+#     - role: sbarbett.pihole.manage_local_records
+#       delegate_to: localhost
+#       run_once: true
+#       tags: pihole_config
+- name: Configure Pi-hole via API
+  hosts: pihole
+  gather_facts: false
+  become: false
+  tags: [pihole, config]
+
+  tasks:
+    - name: Manage lists (run once, capture changed)
+      include_role:
+        name: sbarbett.pihole.manage_lists
+        apply:
+          delegate_to: localhost
+      run_once: true
+      register: manage_lists_result
+      tags: pihole_config
+
+    - name: Authenticate to each Pi-hole (resilient)
+      ansible.builtin.uri:
+        url: "{{ (item.name | regex_replace('/$', '')) }}/api/auth"
+        method: POST
+        body_format: json
+        body:
+          password: "{{ item.password }}"
+        status_code: 200
+      loop: "{{ pihole_hosts | default([]) }}"
+      loop_control:
+        label: "{{ (item.name | default('unknown')) }}"
+      delegate_to: localhost
+      no_log: true
+      register: pihole_auth
+      retries: 5
+      delay: 2
+      until: pihole_auth is succeeded and (pihole_auth.status | default(200)) == 200
+      tags: pihole_config
+
+    - name: Run Gravity on each Pi-hole
+      ansible.builtin.uri:
+        url: "{{ (item_host.name | regex_replace('/$', '')) }}/api/action/gravity"
+        method: POST
+        headers:
+          X-FTL-SID: "{{ item_auth.json.session.sid }}"
+          X-FTL-CSRF: "{{ item_auth.json.session.csrf }}"
+        status_code: 200
+        timeout: 300
+      loop: "{{ range(0, pihole_hosts | length) | list }}"
+      loop_control:
+        label: "{{ pihole_hosts[item].name }}"
+      vars:
+        item_host: "{{ pihole_hosts[item] }}"
+        item_auth: "{{ (pihole_auth.results | default([]))[item] | default({}) }}"
+      delegate_to: localhost
+      tags: pihole_config
+
+    - name: Configure Pi-hole settings (upstream DNS, conditional forwarding, etc.)
+      include_role:
+        name: pihole_config
+        apply:
+          delegate_to: localhost
+      run_once: true
+      tags: pihole_config
+
+    - name: Manage local DNS records
+      include_role:
+        name: sbarbett.pihole.manage_local_records
+        apply:
+          delegate_to: localhost
+      run_once: true
+      tags: pihole_config

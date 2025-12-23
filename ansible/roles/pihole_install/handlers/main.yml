@@ -1,0 +1,10 @@
+---
+- name: restart pihole-FTL
+  ansible.builtin.service:
+    name: pihole-FTL
+    state: restarted
+
+- name: restart pihole DNS
+  ansible.builtin.service:
+    name: pihole-FTL
+    state: restarted

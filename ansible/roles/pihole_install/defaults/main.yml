@@ -1,0 +1,14 @@
+---
+pihole_user: pihole
+pihole_group: pihole
+pihole_admin_users:
+  - pofo14
+pihole_toml_dir: /etc/pihole
+pihole_install_script_url: https://install.pi-hole.net
+pihole_install_creates: /etc/systemd/system/pihole-FTL.service
+pihole_install_packages:
+  - curl
+
+# Standard Pi-hole paths (v6)
+pihole_conf_dir: "/etc/pihole"
+pihole_dnsmasq_dir: "/etc/dnsmasq.d"

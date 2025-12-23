@@ -1,0 +1,42 @@
+---
+# Dev Pi-hole instance(s) to configure via API
+# NOTE: This is the API base URL used by sbarbett.pihole/pihole6api.
+# If auth fails, the first thing to try is changing between:
+# - http://<ip>/admin
+# - http://<ip>
+
+pihole_admin_password: "{{ vault_pihole_admin_password }}"
+pi_hole_url: "http://192.168.2.125/"
+pihole_hosts:
+  - name: "http://192.168.2.125/"
+    password: "{{ pihole_admin_password }}"
+
+pihole_lists:
+  - type: block
+    address: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+    comment: "Steven Black hosts (default)"
+    state: present
+    groups:
+      - Default
+  - type: block
+    address: "https://adaway.org/hosts.txt"
+    comment: "AdAway list"
+    state: present
+  - type: block
+    address: "https://v.firebog.net/hosts/lists.php?type=tick"
+    comment: "Firebog tick list (safe)"
+    state: present
+
+pihole_records:
+  - name: "test.local"
+    type: A
+    data: "192.168.2.100"
+    state: present
+  - name: "dev.local"
+    type: A
+    data: "192.168.2.101"
+    state: present
+  - name: "pihole-test.local"
+    type: A
+    data: "192.168.2.125"
+    state: present

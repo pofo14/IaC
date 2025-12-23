@@ -1,0 +1,88 @@
+---
+- name: Ensure Pi-hole group exists
+  ansible.builtin.group:
+    name: "{{ pihole_group }}"
+    state: present
+
+- name: Ensure Pi-hole service user exists
+  ansible.builtin.user:
+    name: "{{ pihole_user }}"
+    group: "{{ pihole_group }}"
+    home: "/home/{{ pihole_user }}"
+    shell: /usr/sbin/nologin
+    comment: Pi-hole service account
+    password: "*"
+    state: present
+    system: true
+    create_home: true
+
+- name: Add admin users to Pi-hole group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: "{{ pihole_group }}"
+    append: true
+  loop: "{{ pihole_admin_users | default([]) }}"
+  when: pihole_admin_users is defined and (pihole_admin_users | length) > 0
+
+- name: Install prerequisites
+  ansible.builtin.apt:
+    name: "{{ pihole_install_packages }}"
+    update_cache: yes
+    state: present
+
+- name: Ensure Pi-hole config directory exists (standard path)
+  ansible.builtin.file:
+    path: "{{ pihole_conf_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create minimal setupVars.conf to skip interactive prompts
+  ansible.builtin.copy:
+    dest: "{{ pihole_conf_dir }}/setupVars.conf"
+    owner: root
+    group: root
+    mode: "0644"
+    force: false
+    content: |
+      PIHOLE_INTERFACE=eth0
+      QUERY_LOGGING=true
+      INSTALL_WEB_SERVER=true
+      INSTALL_WEB_INTERFACE=true
+      LIGHTTPD_ENABLED=true
+
+- name: Run unattended Pi-hole install (idempotent)
+  ansible.builtin.shell:
+    cmd: "curl -sSL {{ pihole_install_script_url }} | PIHOLE_SKIP_OS_CHECK=true bash /dev/stdin --unattended"
+    creates: "{{ pihole_install_creates }}"
+  environment:
+    PIHOLE_SKIP_OS_CHECK: "true"
+  register: pihole_install_result
+
+- name: Create Pi-hole TOML configuration
+  ansible.builtin.template:
+    src: pihole.toml.j2
+    dest: "{{ pihole_toml_dir }}/pihole.toml"
+    owner: "{{ pihole_user }}"
+    group: "{{ pihole_group }}"
+    mode: "0640"
+  notify: restart pihole-FTL
+
+- name: Set Pi-hole web/UI/API password (once on install)
+  ansible.builtin.command:
+    cmd: "pihole setpassword {{ pihole_admin_password | quote }}"
+  no_log: true
+  when:
+    - pihole_admin_password is defined
+    - (pihole_admin_password | length) > 0
+  notify: restart pihole-FTL
+
+- name: Ensure dnsmasq include directory exists for local DNS records
+  ansible.builtin.file:
+    path: "{{ pihole_dnsmasq_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: pihole_local_dns_entries is defined and (pihole_local_dns_entries | length) > 0

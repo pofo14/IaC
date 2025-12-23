@@ -1,0 +1,26 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname}.flopo.retropetro.net
+
+timezone: America/New_York
+
+package_update: true
+package_upgrade: false
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - vim
+  - net-tools
+
+runcmd:
+  # Enable QGA now (don’t fail cloud-final if the unit name differs)
+  - [ bash, -lc, 'systemctl enable --now qemu-guest-agent || systemctl enable --now qemu-guest-agent.service' ]
+
+  # Create service directories
+  - [ mkdir, -p, /srv/pxe, /srv/traefik ]
+
+  # Set ownership (requires user/group to already exist)
+  - [ chown, -R, 'pofo14:pofo14', /srv/pxe, /srv/traefik ]
+
+final_message: "PXE VM ready for Ansible configuration"

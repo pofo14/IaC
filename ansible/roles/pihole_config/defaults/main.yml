@@ -1,0 +1,15 @@
+---
+# Upstream DNS servers for Pi-hole
+# Leave empty to skip upstream configuration
+pihole_upstream_servers: []
+
+# Conditional forwarding configuration
+# Allows local DNS records for a domain to be resolved to a specific upstream server
+# Leave empty to skip conditional forwarding configuration
+# Example:
+#   pihole_conditional_forwarding:
+#     enabled: true
+#     cidr: "192.168.2.0/24"
+#     ip: "192.168.2.1"
+#     domain: "flopo.retropetro.net"
+pihole_conditional_forwarding: {}

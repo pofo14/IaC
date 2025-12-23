@@ -195,12 +195,6 @@
       # If issues arise with permissions (e.g. writing to /opt or docker socket),
       # add 'become: true' to this role.
 
-- name: Configure Pihole Server
-  hosts: pihole
-  become: true
-
-  roles:
-    - role: sixteenone.pihole-dns   # Kept HEAD version (commented out missing role)
 
 - name: Configure Proxmox Node
   hosts: proxmox

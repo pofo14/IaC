@@ -1,0 +1,215 @@
+#######################################################################
+################## TRUENAS FILES CONFIGURATION ########################
+#######################################################################
+
+# System configuration
+truenas_hostname: "dev-files"
+truenas_domain: "flopo.retropetro.net"
+
+# API authentication
+truenas_api_protocol: "http" # or https
+truenas_api_port: 80 # or 443 for https
+truenas_api_key: "{{ vault_truenas_api_key }}" # Recommended: store in Ansible Vault
+
+truenas_media_dataset: "pool_media"
+truenas_media_user: "media"
+truenas_media_group: "media"
+truenas_media_user_id: 9000
+truenas_media_group_id: 9000
+
+truenas_roms_dataset: "tank"
+truenas_roms_user: "roms"
+truenas_roms_group: "roms"
+truenas_roms_user_id: 9100
+truenas_roms_group_id: 9100
+
+### Services
+truenas_services:
+  - name: "ssh"
+    enabled: true
+    state: started
+  - name: "nfs"
+    enabled: true
+    state: started
+  - name: "smartd"
+    enabled: true
+    state: started
+  - name: "cifs"
+    enabled: true
+    state: started
+
+### Datasets
+######## Media Dataset ########
+truenas_datasets:
+  - path: "{{truenas_media_dataset}}/data"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    recordsize: "1M" # Optional: record size
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    dnodesize: "auto" # Optional: dnode size
+    logbias: "throughput" # Optional: log bias
+    sync: "standard" # Optional: sync behavior
+    redundant_metadata: "most" # Optional: redundant metadata
+    directories: # Optional: subdirectories with permissions
+      - path: "downloads"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "downloads/torrents"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "downloads/usenet"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "media"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/movies"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/tv"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/audiobooks"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/ebooks"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/music"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/phone-pictures"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/pictures"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+      - path: "/media/videos"
+        owner: "{{truenas_media_user}}"
+        group: "{{truenas_media_group}}"
+        mode: "0755"
+
+  - path: "{{truenas_roms_dataset}}/arcade"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/cabinet"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/console"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/guides"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/pc-games"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/pinball"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/roms"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/roms/mame"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/roms/no-intro"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/roms/non-db"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/roms/redump"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+  - path: "{{truenas_roms_dataset}}/updates"
+    compression: "lz4" # Optional: compression algorithm
+    atime: "off" # Optional: access time updates
+    xattr: "sa" # Optional: extended attributes
+    acltype: "posixacl" # Optional: ACL type
+    redundant_metadata: "most" # Optional: redundant metadata
+    recordsize: "256K" # Optional: record size
+
+### NFS Configuration
+truenas_nfs:
+  v4: true
+  allow_nonroot: true
+  shares:
+    - path: "/{{truenas_media_dataset}}/data"
+      comment: "Media share"
+      networks: ["10.10.20.0/24"]
+      hosts: []
+      ro: false
+      mapall_user: "{{  truenas_media_user }}"
+      mapall_group: "{{ truenas_media_group }}"
+    - path: "/{{truenas_roms_dataset}}"
+      comment: "Media share"
+      networks: ["10.10.20.0/24"]
+      hosts: []
+      ro: false
+      mapall_user: "{{  truenas_roms_user }}"
+      mapall_group: "{{ truenas_roms_group }}"
+
+### S.M.A.R.T. Configuration
+
+truenas_smart:
+  power_mode: "never" # never, sleep, standby, idle
+  temp_difference: 2 # Temperature change to log
+  temp_info: 40 # Info level temperature
+  temp_crit: 45 # Critical temperature

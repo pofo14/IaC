@@ -1,0 +1,23 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname}.flopo.retropetro.net
+
+package_update: true
+package_upgrade: false
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - vim
+  - net-tools
+
+timezone: America/New_York
+
+runcmd:
+  - [
+      bash,
+      -lc,
+      "systemctl enable --now qemu-guest-agent || systemctl enable --now qemu-guest-agent.service",
+    ]
+
+final_message: "Pi-hole VM ready for Ansible configuration"

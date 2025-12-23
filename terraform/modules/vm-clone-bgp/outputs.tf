@@ -9,5 +9,6 @@ output "vm_name" {
 }
 
 output "vm_ipv4_address" {
-  value = proxmox_virtual_environment_vm.vm_clone.ipv4_addresses[1][0]
+  description = "The IPv4 address of the VM (from QEMU guest agent if available, or configured IP)"
+  value       = try(proxmox_virtual_environment_vm.vm_clone.ipv4_addresses[1][0], var.ipaddress, "N/A")
 }

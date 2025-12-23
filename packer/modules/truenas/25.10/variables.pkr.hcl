@@ -71,8 +71,8 @@ variable "disk_storage" {
 
 variable "disk_size_gb" {
   type        = number
-  default     = 32
-  description = "Primary disk size in GiB."
+  default     = 128
+  description = "Primary disk size in GiB. TrueNAS recommends 32GB minimum, 64-128GB for future updates."
 }
 
 variable "network_bridge" {
@@ -83,7 +83,7 @@ variable "network_bridge" {
 
 variable "github_user" {
   type        = string
-  default     = "pofo14" #env("$GITHUB_USER")
+  default     = "pofo14" # env("$GITHUB_USER")
   description = "GitHub username to fetch SSH keys for VM access."
 }
 

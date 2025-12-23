@@ -1,0 +1,32 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname}.flopo.retropetro.net
+
+timezone: America/New_York
+
+package_update: true
+package_upgrade: false
+
+packages:
+  - qemu-guest-agent
+  - curl
+  - vim
+  - net-tools
+  - openssl
+  - jq
+
+runcmd:
+  # Enable QEMU guest agent (tolerate unit-name differences)
+  - [
+      bash,
+      -lc,
+      "systemctl enable --now qemu-guest-agent || systemctl enable --now qemu-guest-agent.service",
+    ]
+
+  # Create Step CA directories
+  - [mkdir, -p, /etc/step-ca, /var/lib/step-ca]
+
+  # Set ownership (assumes user/group already exists)
+  - [chown, -R, "pofo14:pofo14", /etc/step-ca, /var/lib/step-ca]
+
+final_message: "Step CA VM ready for Ansible configuration"

@@ -1,0 +1,67 @@
+---
+- name: Configure Pi-hole via API (upstreams + conditional forwarding)
+  block:
+    - name: Authenticate to each Pi-hole (resilient)
+      ansible.builtin.uri:
+        url: "{{ (item.name | regex_replace('/$', '')) }}/api/auth"
+        method: POST
+        body_format: json
+        body:
+          password: "{{ item.password }}"
+        status_code: 200
+      loop: "{{ pihole_hosts | default([]) }}"
+      loop_control:
+        label: "{{ item.name }}"
+      register: pihole_auth
+      no_log: false
+      retries: 5
+      delay: 2
+      until: pihole_auth is succeeded and (pihole_auth.status | default(200)) == 200
+      delegate_to: localhost
+
+    - name: Build PATCH payload from variables
+      ansible.builtin.set_fact:
+        patch_payload: { config: { dns: {} } }
+      delegate_to: localhost
+
+    - name: Add upstreams if defined
+      ansible.builtin.set_fact:
+        patch_payload: "{{ patch_payload | combine({'config': {'dns': {'upstreams': pihole_upstream_servers}}}, recursive=True) }}"
+      when: pihole_upstream_servers is defined and (pihole_upstream_servers | length) > 0
+      delegate_to: localhost
+
+    - name: Add revServers if defined
+      vars:
+        cf_enabled: "{{ pihole_conditional_forwarding.enabled | default(true) }}"
+        cf_rev: >-
+          {{ cf_enabled | ternary('true','false') }},
+          {{ pihole_conditional_forwarding.cidr }},
+          {{ pihole_conditional_forwarding.ip }},
+          {{ pihole_conditional_forwarding.domain }}
+      ansible.builtin.set_fact:
+        patch_payload: "{{ patch_payload | combine({'config': {'dns': {'revServers': [ cf_rev | regex_replace('\\s+','') ]}}}, recursive=True) }}"
+      when: pihole_conditional_forwarding is defined and (pihole_conditional_forwarding | length) > 0
+      delegate_to: localhost
+
+    - name: PATCH config on each Pi-hole (restart=true)
+      ansible.builtin.uri:
+        url: "{{ (pihole_hosts[idx].name | regex_replace('/$', '')) }}/api/config?restart=true"
+        method: PATCH
+        body_format: json
+        body: "{{ patch_payload }}"
+        headers:
+          X-FTL-SID: "{{ pihole_auth.results[idx].json.session.sid }}"
+          X-FTL-CSRF: "{{ pihole_auth.results[idx].json.session.csrf }}"
+          Cookie: "sid={{ pihole_auth.results[idx].json.session.sid }}"
+        status_code: 200
+        timeout: 60
+      loop: "{{ range(pihole_hosts | length) }}"
+      loop_control:
+        label: "{{ pihole_hosts[item].name }}"
+      vars:
+        idx: "{{ item }}"
+      register: patch_result
+      retries: 5
+      delay: 2
+      until: patch_result is succeeded and (patch_result.status | default(200)) == 200
+      delegate_to: localhost

@@ -1,0 +1,84 @@
+---
+- name: Check if TrueNAS API key exists for this host
+  stat:
+    path: "{{ playbook_dir }}/inventories/{{ deploy_env | default('production') }}/host_vars/{{ inventory_hostname }}/vault.yml"
+  register: host_vault_file
+  delegate_to: localhost
+  run_once: true
+
+- name: Read host vault file if exists
+  slurp:
+    src: "{{ playbook_dir }}/inventories/{{ deploy_env | default('production') }}/host_vars/{{ inventory_hostname }}/vault.yml"
+  register: host_vault_content
+  when: host_vault_file.stat.exists
+  delegate_to: localhost
+  run_once: true
+
+- name: Check if API key is already defined for this host
+  set_fact:
+    api_key_exists: "{{ 'vault_truenas_api_key' in (host_vault_content.content | b64decode | from_yaml) }}"
+  when: host_vault_file.stat.exists
+  delegate_to: localhost
+  run_once: true
+
+- name: Set API key exists to false if vault file doesn't exist
+  set_fact:
+    api_key_exists: false
+  when: not host_vault_file.stat.exists
+  delegate_to: localhost
+  run_once: true
+
+- name: Create TrueNAS API key if not already set
+  block:
+    - name: Wait for TrueNAS SSH to be ready
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22
+        state: started
+        timeout: 300
+      delegate_to: localhost
+
+    - name: Create API key via midclt
+      shell: |
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            root@{{ inventory_hostname }} \
+            "midclt call -json api_key.create '{\"name\": \"terraform-ansible\"}'"
+      register: api_key_result
+      changed_when: false
+      delegate_to: localhost
+
+    - name: Extract API key from result
+      set_fact:
+        truenas_api_key_value: "{{ (api_key_result.stdout | from_json).key }}"
+
+    - name: Create host_vars directory if needed
+      file:
+        path: "{{ playbook_dir }}/inventories/{{ deploy_env | default('production') }}/host_vars/{{ inventory_hostname }}"
+        state: directory
+        mode: "0700"
+      delegate_to: localhost
+      run_once: true
+
+    - name: Update host vault file with API key
+      copy:
+        content: |
+          ---
+          vault_truenas_api_key: "{{ truenas_api_key_value }}"
+        dest: "{{ playbook_dir }}/inventories/{{ deploy_env | default('production') }}/host_vars/{{ inventory_hostname }}/vault.yml"
+        mode: "0600"
+      delegate_to: localhost
+      run_once: true
+
+    - name: Encrypt host vault file
+      shell: |
+        ansible-vault encrypt \
+          --vault-password-file="{{ playbook_dir }}/.vault_password" \
+          "{{ playbook_dir }}/inventories/{{ deploy_env | default('production') }}/host_vars/{{ inventory_hostname }}/vault.yml" 2>&1 || true
+      delegate_to: localhost
+      run_once: true
+
+    - name: Display API key creation success
+      debug:
+        msg: "TrueNAS API key created and stored in host_vars/{{ inventory_hostname }}/vault.yml"
+
+  when: not api_key_exists

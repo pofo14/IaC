@@ -19,6 +19,12 @@ variable "template_id" {
   type        = string
 }
 
+variable "vm_id" {
+  description = "The VM ID for the new VM. Set to null to auto-assign next available ID."
+  type        = number
+  default     = null
+}
+
 variable "cores" {
   description = "The number of CPU cores for the VM"
   type        = number
@@ -162,4 +168,38 @@ variable "pci_mappings" {
   description = "PCI device mappings to attach to the VM"
   type        = list(string)
   default     = []
+}
+
+variable "qemu_guest_agent" {
+  description = "QEMU Guest Agent options to configure"
+  type        = bool
+  default     = true
+}
+
+variable "pci_passthrough_options" {
+  description = "PCI passthrough device options (rombar, xvga, etc.)"
+  type = object({
+    rombar = optional(bool, false)
+    xvga   = optional(bool, false)
+  })
+  default = {
+    rombar = false
+    xvga   = false
+  }
+}
+variable "skip_disk_config" {
+  description = "Skip disk configuration block (use template disk as-is). Set to true for pre-installed OS templates like TrueNAS."
+  type        = bool
+  default     = false
+}
+
+variable "vlan_tag" {
+  description = "VLAN tag for the network interface. Set to 0 for no VLAN tagging."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.vlan_tag >= 0 && var.vlan_tag <= 4095
+    error_message = "VLAN tag must be between 0 and 4095 (0 = no VLAN)."
+  }
 }

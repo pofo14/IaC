@@ -23,7 +23,12 @@ roles:
   - src: artis3n.tailscale
   - src: sixteenone.pihole-dns
   - src: lae.proxmox
+  - src: HomeSecExplorer.pihole
+  - src: https://github.com/sbarbett/pihole-ansible.git
+    name: sbarbett.pihole_ansible
+    version: main
 
 collections:
   - prometheus.prometheus
   - arensb.truenas
+  - sbarbett.pihole
